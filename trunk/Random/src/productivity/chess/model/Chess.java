@@ -5,6 +5,7 @@ public class Chess {
 	public Chess()
 	{
 		board = new Board();
+		//System.out.print(board);
 	}
 	public static void main(String[] args)
 	{

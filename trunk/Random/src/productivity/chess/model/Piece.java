@@ -1,13 +1,16 @@
 package productivity.chess.model;
+import java.awt.Color;
 import java.io.Serializable;
 
 public class Piece implements Serializable {
 	private static final long serialVersionUID = 1L;
 	private PieceType type;
+	private Color color;
 	
-	public Piece(String s)
+	public Piece(String s, Color col)
 	{
 		setType(getTypeForString(s));
+		setColor(col);
 	}
 	public PieceType getTypeForString(String s)
 	{
@@ -31,5 +34,11 @@ public class Piece implements Serializable {
 	}
 	public PieceType getType() {
 		return type;
+	}
+	public void setColor(Color color) {
+		this.color = color;
+	}
+	public Color getColor() {
+		return color;
 	}
 }
