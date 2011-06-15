@@ -84,10 +84,39 @@ public class Board implements Serializable {
 	{
 		Piece p = board[loc.getCol()][loc.getRow()];
 		ArrayList<Location> locs = new ArrayList<Location>();
+		int col = loc.getCol(), row = loc.getRow();
 		switch(p.getType())
 		{
 			case PAWN:
-				
+				//One square forward
+				if (p.isWhite() && !isOccupied(row+1,col)) locs.add(new Location(row+1,col));
+				else if (!p.isWhite() && !isOccupied(row-1,col)) locs.add(new Location(row-1,col));
+				//Two squares forward
+				if (p.isWhite() && row == 2){
+					if (!isOccupied(3,col) && !isOccupied(4,col)) locs.add(new Location(4,col));
+				}
+				else if(!p.isWhite() && row == 7){
+					if (!isOccupied(6,col) && !isOccupied(5,col)) locs.add(new Location(5,col));
+				}
+				//Taking opponent
+				if (p.isWhite()){
+					if (p.getOppositeColor().equals(occupiedBy(row+1,col+1))) locs.add(new Location(row+1,col+1));
+					if (p.getOppositeColor().equals(occupiedBy(row+1,col-1))) locs.add(new Location(row+1, col-1));
+				}
+				else{
+					if (p.getOppositeColor().equals(occupiedBy(row-1,col+1))) locs.add(new Location(row-1,col+1));
+					if (p.getOppositeColor().equals(occupiedBy(row-1,col-1))) locs.add(new Location(row-1, col-1));
+				}
+				//En passant
+				if ((p.isWhite() && row >= 5) || (!p.isWhite() && row <=4)){
+					Piece other;
+					if (p.getOppositeColor().equals(occupiedBy(row,col+1))
+							&& (other = getPieceAt(row,col+1)).getType() == PieceType.PAWN
+							&& other.getLastMoved() == 0) locs.add(new Location(row,col+1));
+					if (p.getOppositeColor().equals(occupiedBy(row,col-1))
+							&& (other = getPieceAt(row,col-1)).getType() == PieceType.PAWN
+							&& other.getLastMoved() == 0) locs.add(new Location(row,col-1));
+				}
 				break;
 			case ROOK:
 				break;
@@ -105,6 +134,29 @@ public class Board implements Serializable {
 		
 		return locs;
 	}
+	
+	private boolean isValidLocation(int row, int col){
+		return (col>0&&col<=8&&row>0&&row<=8);
+	}
+	private boolean isOccupied(int row, int col){
+		if (!isValidLocation(row, col)) return false;
+		Piece p = board[col][row];
+		if (p == null) return false;
+		else return true;
+	}
+	private Color occupiedBy(int row, int col){
+		if (!isValidLocation(row, col)) return null;
+		Piece p = board[col][row];
+		if (p == null) return null;
+		else return p.getColor();
+	}
+	
+	public Piece getPieceAt(Location loc){
+		return board[loc.getCol()][loc.getRow()];
+	}
+	public Piece getPieceAt(int row, int col){
+		return board[col][row];
+	}
 	public void populateBoard()
 	{
 		Scanner scan = null;
@@ -114,14 +166,14 @@ public class Board implements Serializable {
 		}
 		catch(IOException e)
 		{}
-		Color color = Color.black;
+		Color color = Color.WHITE;
 		for(int i = 0; i < 8;i++)
 		{
 			for(int j = 0; j < 8; j++)
 			{
 				String c = scan.next();
 				if(c.equals("X"))
-					color = Color.white;
+					color = Color.BLACK;
 				else
 					board[i][j] = new Piece(c, color);
 			}

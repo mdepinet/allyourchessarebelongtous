@@ -6,6 +6,7 @@ public class Piece implements Serializable {
 	private static final long serialVersionUID = 1L;
 	private PieceType type;
 	private Color color;
+	private int scratch;
 	
 	public Piece(String s, Color col)
 	{
@@ -40,5 +41,44 @@ public class Piece implements Serializable {
 	}
 	public Color getColor() {
 		return color;
+	}
+	public Color getOppositeColor() {
+		return isWhite() ? Color.BLACK : Color.WHITE;
+	}
+	public boolean isWhite(){
+		return color.equals(Color.WHITE);
+	}
+	
+	public void setHasMoved(boolean moved){
+		if (type == PieceType.KING) scratch = moved ? 1 : 0;
+		else throw new UnsupportedOperationException("hasMoved can only be set for kings");
+	}
+	public boolean hasMoved(){
+		if (type == PieceType.KING) return scratch != 0;
+		else throw new UnsupportedOperationException("hasMoved can only be accessed for kings");
+	}
+	public int getMovesAlone(){
+		if (type == PieceType.KING) return scratch;
+		else throw new UnsupportedOperationException("movesAlone can only be accessed for kings");
+	}
+	public void incMovesAlone(){
+		if (type == PieceType.KING) scratch++;
+		else throw new UnsupportedOperationException("movesAlone can only be set for kings");
+	}
+	public void setAlone(){
+		if (type == PieceType.KING) scratch = 0;
+		else throw new UnsupportedOperationException("movesAlone can only be set for kings");
+	}
+	public int getLastMoved(){
+		if (type == PieceType.PAWN) return scratch;
+		else throw new UnsupportedOperationException("lastMoved can only be accessed for pawns");
+	}
+	public void resetLastMoved(){
+		if (type == PieceType.PAWN) scratch = 0;
+		else throw new UnsupportedOperationException("lastMoved can only be set for pawns");
+	}
+	public void incLastMoved(){
+		if (type == PieceType.PAWN) scratch++;
+		else throw new UnsupportedOperationException("lastMoved can only be set for pawns");
 	}
 }
