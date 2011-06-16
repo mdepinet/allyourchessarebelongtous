@@ -83,6 +83,7 @@ public class Board implements GameBoard {
 	{
 		Piece p = board[loc.getRow()][loc.getCol()];
 		List<Location> locs = new LinkedList<Location>();
+		if(p==null) return locs;
 		int col = loc.getCol(), row = loc.getRow();
 		switch(p.getType())
 		{

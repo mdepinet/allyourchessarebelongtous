@@ -78,12 +78,30 @@ public class GameCanvas extends Canvas implements MouseListener {
     }
 
     public void mouseClicked(MouseEvent e) {
-    	Location loc = new Location((e.getX()-50)/30,(e.getY()-50)/30);
-		clearMoves();
-    	if(board.isValidLocation(loc.getRow(),loc.getCol())){
+    	boolean repaint = false;
+    	Location loc = locationForClick(e.getX(), e.getY());
+		if(!moves.isEmpty())
+		{
+			repaint = true;
+			clearMoves();
+		}
+    	if(loc!=null && board.isValidLocation(loc.getRow(), loc.getCol())){
     		moves = board.getValidMovesForLocation(loc);
+    		if(!moves.isEmpty())
+    			repaint=true;
     	}
-       repaint();
+    	if(repaint)
+    		repaint();
+    }
+    public Location locationForClick(int x, int y)
+    {
+    	x = x-50;
+    	y = y-50;
+    	if(x>=0 && y>=0)
+    	{
+    		return new Location(x/30,y/30);
+    	}
+    	return null;
     }
 	 
 	public void setBoard(Board board) {
