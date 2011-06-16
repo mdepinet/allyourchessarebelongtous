@@ -1,8 +1,6 @@
 package productivity.chess.model;
-import java.awt.Color;
-import java.io.Serializable;
 
-public class Piece implements Serializable {
+public class Piece implements GamePiece {
 	private static final long serialVersionUID = 1L;
 	private PieceType type;
 	private String color;
