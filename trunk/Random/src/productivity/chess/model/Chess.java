@@ -1,11 +1,12 @@
 package productivity.chess.model;
 
+import productivity.chess.view.GameFrame;
+
 public class Chess {
-	private Board board;
 	public Chess()
 	{
-		board = new Board();
-		//System.out.print(board);
+		new GameFrame("Chess");
+		
 	}
 	public static void main(String[] args)
 	{
