@@ -5,8 +5,8 @@ public class Location {
 	private int row;
 	public Location(int x, int y)
 	{
-		setCol(x);
-		setRow(y);
+		setRow(x);
+		setCol(y);
 	}
 	public void setCol(int x) {
 		this.col = x;

@@ -22,12 +22,14 @@ public class GameCanvas extends Canvas implements MouseListener {
 	private static final long serialVersionUID = 1L;
 	private GameBoard board;
 	private List<Location> moves;
+	private String coordinates;
 	//private Image king, queen, bishop, knight, rook, pawn;
 	
 	public GameCanvas() {
 	  setBackground (Color.WHITE);
 	  moves = new LinkedList<Location>();
 	  board = new Board(); //Default board
+	  coordinates = "";
 	  System.out.print(board);
 	  addMouseListener(this);
 	}
@@ -56,6 +58,10 @@ public class GameCanvas extends Canvas implements MouseListener {
 				   g2.drawImage(img, 50+(i*30), 52+(j*30), this);
 			   }
 		   }
+	   }
+	   if(!coordinates.equals(""))
+	   {
+		   g2.drawString(coordinates, 20, 300);
 	   }
 	   g2.setColor(new Color(1.0f,1.0f,0.0f,0.5f));
 	   for(Location loc: moves)
@@ -87,9 +93,12 @@ public class GameCanvas extends Canvas implements MouseListener {
 		}
     	if(loc!=null && board.isValidLocation(loc.getRow(), loc.getCol())){
     		moves = board.getValidMovesForLocation(loc);
+    		coordinates = "(" + loc.getCol() + ", " + loc.getRow() + ")";
     		if(!moves.isEmpty())
     			repaint=true;
     	}
+    	else
+    		coordinates = "";
     	if(repaint)
     		repaint();
     }
