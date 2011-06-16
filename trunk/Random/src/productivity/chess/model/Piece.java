@@ -50,12 +50,12 @@ public class Piece implements Serializable {
 	}
 	
 	public void setHasMoved(boolean moved){
-		if (type == PieceType.KING) scratch = moved ? 1 : 0;
-		else throw new UnsupportedOperationException("hasMoved can only be set for kings");
+		if (type == PieceType.KING || type == PieceType.ROOK) scratch = moved ? 1 : 0;
+		else throw new UnsupportedOperationException("hasMoved can only be set for kings and rooks");
 	}
 	public boolean hasMoved(){
-		if (type == PieceType.KING) return scratch != 0;
-		else throw new UnsupportedOperationException("hasMoved can only be accessed for kings");
+		if (type == PieceType.KING || type == PieceType.ROOK) return scratch != 0;
+		else throw new UnsupportedOperationException("hasMoved can only be accessed for kings and rooks");
 	}
 	public int getMovesAlone(){
 		if (type == PieceType.KING) return scratch;
