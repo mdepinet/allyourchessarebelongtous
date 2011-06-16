@@ -8,6 +8,10 @@ public class Location {
 		setCol(x);
 		setRow(y);
 	}
+	public boolean isValid()
+	{
+		return (col>0&&col<=8&&row>0&&row<=8);
+	}
 	public void setCol(int x) {
 		this.col = x;
 	}
