@@ -6,7 +6,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Scanner;
 
 public class Board implements GameBoard {
@@ -78,10 +79,10 @@ public class Board implements GameBoard {
 			}
 		 }
 	}
-	public ArrayList<Location> getValidMovesForLocation(Location loc)
+	public List<Location> getValidMovesForLocation(Location loc)
 	{
 		Piece p = board[loc.getRow()][loc.getCol()];
-		ArrayList<Location> locs = new ArrayList<Location>();
+		List<Location> locs = new LinkedList<Location>();
 		int col = loc.getCol(), row = loc.getRow();
 		switch(p.getType())
 		{
@@ -123,8 +124,23 @@ public class Board implements GameBoard {
 				locs = getBishopMoves(row,col);
 				break;
 			case KNIGHT:
+				locs = getValidKnight(row,col);
+				for (int i = 0; i<locs.size(); i++){
+					if (p.getColor().equals(occupiedBy(locs.get(i).getRow(),locs.get(i).getCol()))){
+						locs.remove(i);
+						i--;
+					}
+				}
 				break;
 			case KING:
+				locs = getValidAdjacents(row,col);
+				for (int i = 0; i<locs.size(); i++){
+					if (p.getColor().equals(occupiedBy(locs.get(i).getRow(),locs.get(i).getCol()))){
+						locs.remove(i);
+						i--;
+					}
+				}
+				filterKing(locs);
 				break;
 			case QUEEN:
 				locs=getRookMoves(row,col);
@@ -136,45 +152,57 @@ public class Board implements GameBoard {
 		
 		return locs;
 	}
-	private ArrayList<Location> getRookMoves(int row, int col)
+	private List<Location> getRookMoves(int row, int col)
 	{
-		ArrayList<Location> locs = new ArrayList<Location>();
+		List<Location> locs = new LinkedList<Location>();
+		Piece p = (Piece)getPieceAt(row,col);
 		//horizontal
 		for(int r = row+1; r<8; ++r){
-			if(isOccupied(r, col))
-					break;
+			if(isOccupied(r, col)){
+				if (p.getOppositeColor().equals(occupiedBy(r,col))) locs.add(new Location(r,col));
+				break;
+			}
 			else
 				locs.add(new Location(r, col));
 		}
 		for(int r = row-1; r>=0; --r){
-			if(isOccupied(r, col))
-					break;
+			if(isOccupied(r, col)){
+				if (p.getOppositeColor().equals(occupiedBy(r,col))) locs.add(new Location(r,col));
+				break;
+			}
 			else
 				locs.add(new Location(r, col));
 		}
 		//vertical
 		for(int c = col+1; c<8; ++c){
-			if(isOccupied(row, c))
-					break;
+			if(isOccupied(row, c)){
+				if (p.getOppositeColor().equals(occupiedBy(row,c))) locs.add(new Location(row,c));
+				break;
+			}
 			else
-				locs.add(new Location(row, ++c));
+				locs.add(new Location(row, c));
 		}
 		for(int c = col-1; c>=0; --c){
-			if(isOccupied(row, c))
-					break;
+			if(isOccupied(row, c)){
+				if (p.getOppositeColor().equals(occupiedBy(row,c))) locs.add(new Location(row,c));
+				break;
+			}
 			else
 				locs.add(new Location(row, c));
 		}
 		return locs;
 	}
-	private ArrayList<Location> getBishopMoves(int row, int col)
+	private List<Location> getBishopMoves(int row, int col)
 	{
-		ArrayList<Location> locs = new ArrayList<Location>();
+		List<Location> locs = new LinkedList<Location>();
+		Piece p = (Piece)getPieceAt(row,col);
 		//down and right
 		int c = col+1;
 		for(int r = row+1; r<8; ++r){
-			if(isOccupied(r,c))
+			if(isOccupied(r,c)){
+				if (p.getOppositeColor().equals(occupiedBy(r,c))) locs.add(new Location(r,c));
 				break;
+			}
 			else
 				locs.add(new Location(r,c));
 			c++;
@@ -182,8 +210,10 @@ public class Board implements GameBoard {
 		//down and left
 		c = col-1;
 		for(int r = row+1; r<8; ++r){
-			if(isOccupied(r,c))
+			if(isOccupied(r,c)){
+				if (p.getOppositeColor().equals(occupiedBy(r,c))) locs.add(new Location(r,c));
 				break;
+			}
 			else
 				locs.add(new Location(r,c));
 			c--;
@@ -191,8 +221,10 @@ public class Board implements GameBoard {
 		//up and right
 		c = col+1;
 		for(int r = row-1; r>=0; --r){
-			if(isOccupied(r,c))
+			if(isOccupied(r,c)){
+				if (p.getOppositeColor().equals(occupiedBy(r,c))) locs.add(new Location(r,c));
 				break;
+			}
 			else
 				locs.add(new Location(r,c));
 			c++;
@@ -200,16 +232,47 @@ public class Board implements GameBoard {
 		//up and left
 		c = col-1;
 		for(int r = row-1; r>=0; --r){
-			if(isOccupied(r,c))
+			if(isOccupied(r,c)){
+				if (p.getOppositeColor().equals(occupiedBy(r,c))) locs.add(new Location(r,c));
 				break;
+			}
 			else
 				locs.add(new Location(r,c));
 			c--;
 		}
 		return locs;
 	}
+	private List<Location> getValidAdjacents(int row, int col) {
+		List<Location> locs = new LinkedList<Location>();
+		int r, c = col-1;
+		for (r=row-1;r<=row+1;r++){
+			if (isValidLocation(r,c)) locs.add(new Location(r,c));
+		}
+		for (r=row-1;r<=row+1;r++){
+			if (isValidLocation(r,c)) locs.add(new Location(r,c));
+		}
+		if (isValidLocation(row+1,col)) locs.add(new Location(row+1,col));
+		if (isValidLocation(row-1,col)) locs.add(new Location(row-1,col));
+		return locs;
+	}
+	private List<Location> getValidKnight(int row, int col){
+		//2,1;2,-1;-2,1;-2,-1;1,2;1,-2;-1,2;-1,-2;
+		List<Location> locs = new LinkedList<Location>();
+		if (isValidLocation(row+2,col+1)) locs.add(new Location(row+2,col+1));
+		if (isValidLocation(row+2,col-1)) locs.add(new Location(row+2,col-1));
+		if (isValidLocation(row-2,col+1)) locs.add(new Location(row-2,col+1));
+		if (isValidLocation(row-2,col-1)) locs.add(new Location(row-2,col-1));
+		if (isValidLocation(row+1,col+2)) locs.add(new Location(row+1,col+2));
+		if (isValidLocation(row+1,col-2)) locs.add(new Location(row+1,col-2));
+		if (isValidLocation(row-1,col+2)) locs.add(new Location(row-1,col+2));
+		if (isValidLocation(row-1,col-2)) locs.add(new Location(row-1,col-2));
+		return locs;
+	}
+	private void filterKing(List<Location> locs){
+		//TODO
+	}
 	private boolean isValidLocation(int row, int col){
-		return (col>0&&col<=8&&row>0&&row<=8);
+		return (col>=0&&col<8&&row>=0&&row<8);
 	}
 	private boolean isOccupied(int row, int col){
 		if (!isValidLocation(row, col)) return false;
