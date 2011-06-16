@@ -35,21 +35,16 @@ public class GameCanvas extends Canvas implements MouseListener {
 	   Graphics2D g2;
 	   g2 = (Graphics2D) g;
 	   g2.setColor(Color.BLACK);
+	   Image background = null;
+	   try {
+		   background = ImageIO.read(new File("resources/images/board.png"));
+		}
+		catch(Throwable t) {}
+		g2.drawImage(background, 50, 50, this);
 	   for(int i = 0; i < 8; i++)
 	   {
 		   for(int j = 0; j < 8; j++)
 		   {
-			   g2.drawRect(50+(i*30), 50+(j*30), 30, 30);
-			   if(i%2==0)
-			   {
-				   if(j%2==1)
-					   g2.fillRect(50+(i*30), 50+(j*30), 30, 30);
-			   }
-			   else
-			   {
-				   if(j%2==0)
-					   g2.fillRect(50+(i*30), 50+(j*30), 30, 30);
-			   }
 			   GamePiece p = board.getPieceAt(new Location(i,j));
 			   if(p!=null)
 			   {
@@ -65,7 +60,7 @@ public class GameCanvas extends Canvas implements MouseListener {
 	   g2.setColor(new Color(1.0f,1.0f,0.0f,0.5f));
 	   for(Location loc: moves)
 	   {
-		   g2.fillRect(50+(loc.getRow()*30), 50+(loc.getCol()*30), 30, 30);
+		   g2.fillRect(51+(loc.getRow()*30), 50+(loc.getCol()*30), 29, 29);
 	   }
 	 }
 
@@ -85,7 +80,7 @@ public class GameCanvas extends Canvas implements MouseListener {
     public void mouseClicked(MouseEvent e) {
     	Location loc = new Location((e.getX()-50)/30,(e.getY()-50)/30);
 		clearMoves();
-    	if(loc.isValid()){
+    	if(Board.isValidLocation(loc.getRow(), loc.getCol())){
     		moves = board.getValidMovesForLocation(loc);
     	}
        repaint();
