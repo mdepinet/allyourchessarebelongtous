@@ -20,7 +20,7 @@ import productivity.chess.model.Location;
 
 public class GameCanvas extends Canvas implements MouseListener {
 	private static final long serialVersionUID = 1L;
-	private Board board;
+	private GameBoard board;
 	private List<Location> moves;
 	//private Image king, queen, bishop, knight, rook, pawn;
 	
@@ -80,7 +80,7 @@ public class GameCanvas extends Canvas implements MouseListener {
     public void mouseClicked(MouseEvent e) {
     	Location loc = new Location((e.getX()-50)/30,(e.getY()-50)/30);
 		clearMoves();
-    	if(Board.isValidLocation(loc.getRow(), loc.getCol())){
+    	if(board.isValidLocation(loc.getRow(),loc.getCol())){
     		moves = board.getValidMovesForLocation(loc);
     	}
        repaint();
