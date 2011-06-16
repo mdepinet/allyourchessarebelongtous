@@ -117,40 +117,18 @@ public class Board implements GameBoard {
 				}
 				break;
 			case ROOK:
-				//horizontal
-				for(int r = row; r<8; r++){
-					if(isOccupied(r, col))
-							break;
-					else
-						locs.add(new Location(r, col));
-				}
-				for(int r = row; r>=0; r--){
-					if(isOccupied(r, col))
-							break;
-					else
-						locs.add(new Location(r, col));
-				}
-				//vertical
-				for(int c = col; c<8; c++){
-					if(isOccupied(row, c))
-							break;
-					else
-						locs.add(new Location(row, c));
-				}
-				for(int c = col; c>=0; c--){
-					if(isOccupied(row, c))
-							break;
-					else
-						locs.add(new Location(row, c));
-				}
+				locs=getRookMoves(row,col);
 				break;
 			case BISHOP:
+				locs = getBishopMoves(row,col);
 				break;
 			case KNIGHT:
 				break;
 			case KING:
 				break;
 			case QUEEN:
+				locs=getRookMoves(row,col);
+				locs.addAll(getBishopMoves(row,col));
 				break;
 			default:
 				break;
@@ -158,7 +136,78 @@ public class Board implements GameBoard {
 		
 		return locs;
 	}
-	
+	private ArrayList<Location> getRookMoves(int row, int col)
+	{
+		ArrayList<Location> locs = new ArrayList<Location>();
+		//horizontal
+		for(int r = row+1; r<8; ++r){
+			if(isOccupied(r, col))
+					break;
+			else
+				locs.add(new Location(r, col));
+		}
+		for(int r = row-1; r>=0; --r){
+			if(isOccupied(r, col))
+					break;
+			else
+				locs.add(new Location(r, col));
+		}
+		//vertical
+		for(int c = col+1; c<8; ++c){
+			if(isOccupied(row, c))
+					break;
+			else
+				locs.add(new Location(row, ++c));
+		}
+		for(int c = col-1; c>=0; --c){
+			if(isOccupied(row, c))
+					break;
+			else
+				locs.add(new Location(row, c));
+		}
+		return locs;
+	}
+	private ArrayList<Location> getBishopMoves(int row, int col)
+	{
+		ArrayList<Location> locs = new ArrayList<Location>();
+		//down and right
+		int c = col+1;
+		for(int r = row+1; r<8; ++r){
+			if(isOccupied(r,c))
+				break;
+			else
+				locs.add(new Location(r,c));
+			c++;
+		}
+		//down and left
+		c = col-1;
+		for(int r = row+1; r<8; ++r){
+			if(isOccupied(r,c))
+				break;
+			else
+				locs.add(new Location(r,c));
+			c--;
+		}
+		//up and right
+		c = col+1;
+		for(int r = row-1; r>=0; --r){
+			if(isOccupied(r,c))
+				break;
+			else
+				locs.add(new Location(r,c));
+			c++;
+		}
+		//up and left
+		c = col-1;
+		for(int r = row-1; r>=0; --r){
+			if(isOccupied(r,c))
+				break;
+			else
+				locs.add(new Location(r,c));
+			c--;
+		}
+		return locs;
+	}
 	private boolean isValidLocation(int row, int col){
 		return (col>0&&col<=8&&row>0&&row<=8);
 	}
