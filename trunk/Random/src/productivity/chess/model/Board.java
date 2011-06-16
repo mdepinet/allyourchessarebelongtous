@@ -266,6 +266,7 @@ public class Board implements GameBoard {
 		for (r=row-1;r<=row+1;r++){
 			if (isValidLocation(r,c)) locs.add(new Location(r,c));
 		}
+		c=col+1;
 		for (r=row-1;r<=row+1;r++){
 			if (isValidLocation(r,c)) locs.add(new Location(r,c));
 		}
