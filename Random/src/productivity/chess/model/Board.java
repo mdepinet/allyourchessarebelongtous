@@ -13,7 +13,7 @@ import java.io.Serializable;
 
 public class Board implements Serializable {
 	private static final long serialVersionUID = 1L;
-	private static final String fileName = "default.layout";
+	private static final String fileName = "resources/default.layout";
 	private Piece board[][];
 	
 	public Board()
@@ -82,7 +82,7 @@ public class Board implements Serializable {
 	}
 	public ArrayList<Location> getValidMovesForLocation(Location loc)
 	{
-		Piece p = board[loc.getCol()][loc.getRow()];
+		Piece p = board[loc.getRow()][loc.getCol()];
 		ArrayList<Location> locs = new ArrayList<Location>();
 		int col = loc.getCol(), row = loc.getRow();
 		switch(p.getType())
@@ -140,40 +140,40 @@ public class Board implements Serializable {
 	}
 	private boolean isOccupied(int row, int col){
 		if (!isValidLocation(row, col)) return false;
-		Piece p = board[col][row];
+		Piece p = board[row][col];
 		if (p == null) return false;
 		else return true;
 	}
-	private Color occupiedBy(int row, int col){
+	private String occupiedBy(int row, int col){
 		if (!isValidLocation(row, col)) return null;
-		Piece p = board[col][row];
+		Piece p = board[row][col];
 		if (p == null) return null;
 		else return p.getColor();
 	}
 	
 	public Piece getPieceAt(Location loc){
-		return board[loc.getCol()][loc.getRow()];
+		return board[loc.getRow()][loc.getCol()];
 	}
 	public Piece getPieceAt(int row, int col){
-		return board[col][row];
+		return board[row][col];
 	}
 	public void populateBoard()
 	{
 		Scanner scan = null;
 		try
 		{
-			scan = new Scanner(new File("default.layout"));
+			scan = new Scanner(new File(fileName));
 		}
 		catch(IOException e)
 		{}
-		Color color = Color.WHITE;
+		String color = "white";
 		for(int i = 0; i < 8;i++)
 		{
 			for(int j = 0; j < 8; j++)
 			{
 				String c = scan.next();
 				if(c.equals("X"))
-					color = Color.BLACK;
+					color = "black";
 				else
 					board[i][j] = new Piece(c, color);
 			}

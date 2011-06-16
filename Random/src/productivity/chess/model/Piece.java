@@ -5,10 +5,10 @@ import java.io.Serializable;
 public class Piece implements Serializable {
 	private static final long serialVersionUID = 1L;
 	private PieceType type;
-	private Color color;
+	private String color;
 	private int scratch;
 	
-	public Piece(String s, Color col)
+	public Piece(String s, String col)
 	{
 		setType(getTypeForString(s));
 		setColor(col);
@@ -36,17 +36,17 @@ public class Piece implements Serializable {
 	public PieceType getType() {
 		return type;
 	}
-	public void setColor(Color color) {
+	public void setColor(String color) {
 		this.color = color;
 	}
-	public Color getColor() {
+	public String getColor() {
 		return color;
 	}
-	public Color getOppositeColor() {
-		return isWhite() ? Color.BLACK : Color.WHITE;
+	public String getOppositeColor() {
+		return isWhite() ? "black" : "white";
 	}
 	public boolean isWhite(){
-		return color.equals(Color.WHITE);
+		return color.equals("white");
 	}
 	
 	public void setHasMoved(boolean moved){
