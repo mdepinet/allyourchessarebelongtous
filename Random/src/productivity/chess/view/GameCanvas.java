@@ -9,12 +9,12 @@ import productivity.chess.model.*;
 
 public class GameCanvas extends Canvas {
 	private static final long serialVersionUID = 1L;
-	private Board board;
-	private Image king, queen, bishop, knight, rook, pawn;
+	private GameBoard board;
+	//private Image king, queen, bishop, knight, rook, pawn;
 	
 	public GameCanvas() {
 	  setBackground (Color.WHITE);
-	  board = new Board();
+	  board = new Board(); //Default board
 	  System.out.print(board);
 	}
 	 public void paint (Graphics g) {
@@ -36,7 +36,7 @@ public class GameCanvas extends Canvas {
 				   if(j%2==1)
 					   g2.fillRect(50+(i*30), 50+(j*30), 30, 30);
 			   }
-			   Piece p = board.getPieceAt(new Location(i,j));
+			   GamePiece p = board.getPieceAt(new Location(i,j));
 			   if(p!=null)
 			   {
 				   Image img = null;
@@ -50,12 +50,12 @@ public class GameCanvas extends Canvas {
 	   }
 	 }
 
-	public void setBoard(Board board) {
+	public void setBoard(GameBoard board) {
 		this.board = board;
 		repaint();
 	}
 
-	public Board getBoard() {
+	public GameBoard getBoard() {
 		return board;
 	}
 }

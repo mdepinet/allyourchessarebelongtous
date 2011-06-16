@@ -1,4 +1,4 @@
-package productivity.chess.model;
+package productivity.chess.control;
 
 import productivity.chess.view.GameFrame;
 

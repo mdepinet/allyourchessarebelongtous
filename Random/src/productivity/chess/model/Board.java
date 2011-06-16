@@ -1,6 +1,5 @@
 package productivity.chess.model;
 
-import java.awt.Color;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -9,9 +8,8 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.Scanner;
-import java.io.Serializable;
 
-public class Board implements Serializable {
+public class Board implements GameBoard {
 	private static final long serialVersionUID = 1L;
 	private static final String fileName = "resources/default.layout";
 	private Piece board[][];
@@ -151,7 +149,7 @@ public class Board implements Serializable {
 		else return p.getColor();
 	}
 	
-	public Piece getPieceAt(Location loc){
+	public GamePiece getPieceAt(Location loc){
 		return board[loc.getRow()][loc.getCol()];
 	}
 	public Piece getPieceAt(int row, int col){
