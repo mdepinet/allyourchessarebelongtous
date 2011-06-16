@@ -90,11 +90,11 @@ public class Board implements GameBoard {
 				if (p.isWhite() && !isOccupied(row+1,col)) locs.add(new Location(row+1,col));
 				else if (!p.isWhite() && !isOccupied(row-1,col)) locs.add(new Location(row-1,col));
 				//Two squares forward
-				if (p.isWhite() && row == 2){
-					if (!isOccupied(3,col) && !isOccupied(4,col)) locs.add(new Location(4,col));
+				if (p.isWhite() && row ==1){
+					if (!isOccupied(2,col) && !isOccupied(3,col)) locs.add(new Location(3,col));
 				}
-				else if(!p.isWhite() && row == 7){
-					if (!isOccupied(6,col) && !isOccupied(5,col)) locs.add(new Location(5,col));
+				else if(!p.isWhite() && row == 6){
+					if (!isOccupied(5,col) && !isOccupied(4,col)) locs.add(new Location(4,col));
 				}
 				//Taking opponent
 				if (p.isWhite()){
@@ -117,6 +117,32 @@ public class Board implements GameBoard {
 				}
 				break;
 			case ROOK:
+				//horizontal
+				for(int r = row; r<8; r++){
+					if(isOccupied(r, col))
+							break;
+					else
+						locs.add(new Location(r, col));
+				}
+				for(int r = row; r>=0; r--){
+					if(isOccupied(r, col))
+							break;
+					else
+						locs.add(new Location(r, col));
+				}
+				//vertical
+				for(int c = col; c<8; c++){
+					if(isOccupied(row, c))
+							break;
+					else
+						locs.add(new Location(row, c));
+				}
+				for(int c = col; c>=0; c--){
+					if(isOccupied(row, c))
+							break;
+					else
+						locs.add(new Location(row, c));
+				}
 				break;
 			case BISHOP:
 				break;
