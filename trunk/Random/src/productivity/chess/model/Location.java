@@ -20,4 +20,8 @@ public class Location {
 	public int getRow() {
 		return row;
 	}
+	public String toString()
+	{
+		return "Row: "+row+" Col: "+col;
+	}
 }
