@@ -1,6 +1,8 @@
 package productivity.chess.view;
 
 import java.awt.*;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.io.File;
 import java.util.ArrayList;
 
@@ -8,9 +10,9 @@ import javax.imageio.ImageIO;
 
 import productivity.chess.model.*;
 
-public class GameCanvas extends Canvas {
+public class GameCanvas extends Canvas implements MouseListener {
 	private static final long serialVersionUID = 1L;
-	private GameBoard board;
+	private Board board;
 	private ArrayList<Location> moves;
 	//private Image king, queen, bishop, knight, rook, pawn;
 	
@@ -58,7 +60,27 @@ public class GameCanvas extends Canvas {
 	   }
 	 }
 
-	public void setBoard(GameBoard board) {
+	public void mousePressed(MouseEvent e) {
+       
+    }
+
+    public void mouseReleased(MouseEvent e) {
+    }
+
+    public void mouseEntered(MouseEvent e) {
+    }
+
+    public void mouseExited(MouseEvent e) {
+    }
+
+    public void mouseClicked(MouseEvent e) {
+    	Location loc = new Location((e.getX()-50)/30,(e.getY()-50)/30);
+    	if(loc.isValid())
+    		moves = board.getValidMovesForLocation(loc);
+       repaint();
+    }
+	 
+	public void setBoard(Board board) {
 		this.board = board;
 		repaint();
 	}
