@@ -24,4 +24,11 @@ public class Location {
 	{
 		return "Row: "+row+" Col: "+col;
 	}
+	
+	@Override
+	public boolean equals(Object obj){
+		if (!(obj instanceof Location)) return false;
+		Location loc = (Location)obj;
+		return getRow() == loc.getRow() && getCol() == loc.getCol();
+	}
 }
