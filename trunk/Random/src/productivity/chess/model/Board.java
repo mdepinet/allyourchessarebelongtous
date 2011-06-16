@@ -163,16 +163,20 @@ public class Board implements GameBoard {
 				if (p.getOppositeColor().equals(occupiedBy(r,col))) locs.add(new Location(r,col));
 				break;
 			}
-			else
-				locs.add(new Location(r, col));
+			else{
+				 if(isValidLocation(r,col))
+					 locs.add(new Location(r,col));
+			}
 		}
 		for(int r = row-1; r>=0; --r){
 			if(isOccupied(r, col)){
 				if (p.getOppositeColor().equals(occupiedBy(r,col))) locs.add(new Location(r,col));
 				break;
 			}
-			else
-				locs.add(new Location(r, col));
+			else{
+				 if(isValidLocation(r,col))
+					 locs.add(new Location(r,col));
+			}
 		}
 		//vertical
 		for(int c = col+1; c<8; ++c){
@@ -180,16 +184,20 @@ public class Board implements GameBoard {
 				if (p.getOppositeColor().equals(occupiedBy(row,c))) locs.add(new Location(row,c));
 				break;
 			}
-			else
-				locs.add(new Location(row, c));
+			else{
+				 if(isValidLocation(row,c))
+					 locs.add(new Location(row,c));
+			}
 		}
 		for(int c = col-1; c>=0; --c){
 			if(isOccupied(row, c)){
 				if (p.getOppositeColor().equals(occupiedBy(row,c))) locs.add(new Location(row,c));
 				break;
 			}
-			else
-				locs.add(new Location(row, c));
+			else{
+				 if(isValidLocation(row,c))
+					 locs.add(new Location(row,c));
+			}
 		}
 		return locs;
 	}
@@ -201,33 +209,39 @@ public class Board implements GameBoard {
 		int c = col+1;
 		for(int r = row+1; r<8; ++r){
 			if(isOccupied(r,c)){
-				if (p.getOppositeColor().equals(occupiedBy(r,c))) locs.add(new Location(r,c));
+				if (p.getOppositeColor().equals(occupiedBy(r,c)) && isValidLocation(r,c)) locs.add(new Location(r,c));
 				break;
 			}
-			else
-				locs.add(new Location(r,c));
+			else{
+				 if(isValidLocation(r,c))
+					 locs.add(new Location(r,c));
+			}
 			c++;
 		}
 		//down and left
 		c = col-1;
 		for(int r = row+1; r<8; ++r){
 			if(isOccupied(r,c)){
-				if (p.getOppositeColor().equals(occupiedBy(r,c))) locs.add(new Location(r,c));
+				if (p.getOppositeColor().equals(occupiedBy(r,c)) && isValidLocation(r,c)) locs.add(new Location(r,c));
 				break;
 			}
-			else
-				locs.add(new Location(r,c));
+			else{
+				 if(isValidLocation(r,c))
+					 locs.add(new Location(r,c));
+			}
 			c--;
 		}
 		//up and right
 		c = col+1;
 		for(int r = row-1; r>=0; --r){
 			if(isOccupied(r,c)){
-				if (p.getOppositeColor().equals(occupiedBy(r,c))) locs.add(new Location(r,c));
+				if (p.getOppositeColor().equals(occupiedBy(r,c)) && isValidLocation(r,c)) locs.add(new Location(r,c));
 				break;
 			}
-			else
-				locs.add(new Location(r,c));
+			else{
+				 if(isValidLocation(r,c))
+					 locs.add(new Location(r,c));
+			}
 			c++;
 		}
 		//up and left
@@ -237,12 +251,15 @@ public class Board implements GameBoard {
 				if (p.getOppositeColor().equals(occupiedBy(r,c))) locs.add(new Location(r,c));
 				break;
 			}
-			else
-				locs.add(new Location(r,c));
+			else{
+				 if(isValidLocation(r,c))
+					 locs.add(new Location(r,c));
+			}
 			c--;
 		}
 		return locs;
 	}
+
 	private List<Location> getValidAdjacents(int row, int col) {
 		List<Location> locs = new LinkedList<Location>();
 		int r, c = col-1;
