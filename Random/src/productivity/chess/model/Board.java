@@ -271,7 +271,7 @@ public class Board implements GameBoard {
 	private void filterKing(List<Location> locs){
 		//TODO
 	}
-	private boolean isValidLocation(int row, int col){
+	public static boolean isValidLocation(int row, int col){
 		return (col>=0&&col<8&&row>=0&&row<8);
 	}
 	private boolean isOccupied(int row, int col){
