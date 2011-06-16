@@ -28,12 +28,12 @@ public class GameCanvas extends Canvas {
 			   g2.drawRect(50+(i*30), 50+(j*30), 30, 30);
 			   if(i%2==0)
 			   {
-				   if(j%2==0)
+				   if(j%2==1)
 					   g2.fillRect(50+(i*30), 50+(j*30), 30, 30);
 			   }
 			   else
 			   {
-				   if(j%2==1)
+				   if(j%2==0)
 					   g2.fillRect(50+(i*30), 50+(j*30), 30, 30);
 			   }
 			   GamePiece p = board.getPieceAt(new Location(i,j));
