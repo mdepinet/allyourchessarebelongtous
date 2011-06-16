@@ -63,6 +63,7 @@ public class Chess implements MouseListener{
 	    	if (board.getPieceAt(loc) != null) selected = loc;
     	}
     	else{
+    		//System.out.println(((Board)board).canMove("white"));
     		Location loc = locationForClick(e.getY(), e.getX());
     		if (moves.contains(loc)) board.movePiece(selected,loc);
     		moves.clear();

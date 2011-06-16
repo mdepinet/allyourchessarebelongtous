@@ -305,7 +305,19 @@ public class Board implements GameBoard {
 		if (p == null) return null;
 		else return p.getColor();
 	}
-	
+	//horribly inefficient, I know. It should work for now.
+	public boolean canMove(String color)
+	{
+		for(int r = 0; r<8; r++)
+			for(int c =0; c<8; c++){
+				Piece p = board[r][c];
+				if(p!=null && p.getColor().equals(color)){
+					if(getValidMovesForLocation(new Location(r,c)).size()>0)
+						return true;
+				}
+			}
+		return false;
+	}
 	public GamePiece getPieceAt(Location loc){
 		return board[loc.getRow()][loc.getCol()];
 	}
