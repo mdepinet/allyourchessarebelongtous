@@ -324,4 +324,12 @@ public class Board implements GameBoard {
 	public void setBoard(Piece[][] board) {
 		this.board = board;
 	}
+	
+	public GamePiece movePiece(Location loc1, Location loc2){
+		int r1,c1,r2,c2;
+		Piece takenPiece = board[r2 = loc2.getRow()][c2 = loc2.getCol()];
+		board[r2][c2] = board[ r1 = loc1.getRow()][c1 = loc1.getCol()];
+		board[r1][c1] = null;
+		return takenPiece;
+	}
 }
