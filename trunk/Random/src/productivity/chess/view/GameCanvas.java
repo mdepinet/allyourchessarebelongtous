@@ -1,26 +1,35 @@
 package productivity.chess.view;
 
-import java.awt.*;
+import java.awt.Canvas;
+import java.awt.Color;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.Image;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.io.File;
-import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
 
 import javax.imageio.ImageIO;
 
-import productivity.chess.model.*;
+import productivity.chess.model.Board;
+import productivity.chess.model.GameBoard;
+import productivity.chess.model.GamePiece;
+import productivity.chess.model.Location;
 
 public class GameCanvas extends Canvas implements MouseListener {
 	private static final long serialVersionUID = 1L;
 	private Board board;
-	private ArrayList<Location> moves;
+	private List<Location> moves;
 	//private Image king, queen, bishop, knight, rook, pawn;
 	
 	public GameCanvas() {
 	  setBackground (Color.WHITE);
-	  moves = new ArrayList<Location>();
+	  moves = new LinkedList<Location>();
 	  board = new Board(); //Default board
 	  System.out.print(board);
+	  addMouseListener(this);
 	}
 	 public void paint (Graphics g) {
 	   Graphics2D g2;
@@ -75,8 +84,10 @@ public class GameCanvas extends Canvas implements MouseListener {
 
     public void mouseClicked(MouseEvent e) {
     	Location loc = new Location((e.getX()-50)/30,(e.getY()-50)/30);
-    	if(loc.isValid())
+		clearMoves();
+    	if(loc.isValid()){
     		moves = board.getValidMovesForLocation(loc);
+    	}
        repaint();
     }
 	 
@@ -90,12 +101,12 @@ public class GameCanvas extends Canvas implements MouseListener {
 	}
 	public void clearMoves()
 	{
-		moves = new ArrayList<Location>();
+		moves.clear();
 	}
-	public ArrayList<Location> getMoves() {
+	public List<Location> getMoves() {
 		return moves;
 	}
-	public void setMoves(ArrayList<Location> moves) {
+	public void setMoves(List<Location> moves) {
 		this.moves = moves;
 	}
 }
