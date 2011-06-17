@@ -15,6 +15,7 @@ public class Chess implements MouseListener{
 	private GameFrame frame;
 	private List<Location> moves;
 	private Location selected;
+	private boolean isWhiteTurn;
 	
 	public Chess()
 	{
@@ -23,6 +24,7 @@ public class Chess implements MouseListener{
 		moves = new LinkedList<Location>();
 		frame.getCanvas().setMoves(moves);
 		selected = null;
+		isWhiteTurn=true;
 	}
 	public static void main(String[] args)
 	{
@@ -44,14 +46,17 @@ public class Chess implements MouseListener{
 
     public void mouseClicked(MouseEvent e) {
     	if (selected == null){
-	    	boolean repaint = false;
-	    	Location loc = locationForClick(e.getY(), e.getX());
+    		Location loc = locationForClick(e.getY(), e.getX());
+    		//is it your turn?
+    		boolean correctTurn = isWhiteTurn==(board.getPieceAt(loc).getColor().equals("white"));
+	    	
+    		boolean repaint = false;
 			if(!moves.isEmpty())
 			{
 				repaint = true;
 				frame.getCanvas().clearMoves();
 			}
-	    	if(loc!=null && board.isValidLocation(loc.getRow(), loc.getCol())){
+	    	if(loc!=null && board.isValidLocation(loc.getRow(), loc.getCol()) && correctTurn){
 	    		moves.clear();
 	    		moves.addAll(board.getValidMovesForLocation(loc));
 	    		if(!moves.isEmpty())
@@ -60,12 +65,15 @@ public class Chess implements MouseListener{
 	    	if(repaint)
 	    		frame.getCanvas().repaint();
 	    	
-	    	if (board.getPieceAt(loc) != null) selected = loc;
+	    	if (board.getPieceAt(loc) != null && correctTurn) selected = loc;
     	}
     	else{
     		//System.out.println(((Board)board).canMove("white"));
     		Location loc = locationForClick(e.getY(), e.getX());
-    		if (moves.contains(loc)) board.movePiece(selected,loc);
+    		if (moves.contains(loc)){
+    			board.movePiece(selected,loc);
+    			isWhiteTurn=!isWhiteTurn;
+    		}
     		moves.clear();
     		frame.getCanvas().repaint();
     		selected = null;
