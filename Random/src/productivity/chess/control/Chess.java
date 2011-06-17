@@ -2,17 +2,22 @@ package productivity.chess.control;
 
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
 import productivity.chess.model.Board;
 import productivity.chess.model.GameBoard;
+import productivity.chess.model.GamePiece;
 import productivity.chess.model.Location;
+import productivity.chess.model.Piece;
 import productivity.chess.view.GameFrame;
 
 public class Chess implements MouseListener{
 	private GameBoard board;
 	private GameFrame frame;
+	private List<GamePiece> whites;
+	private List<GamePiece> aas;
 	private List<Location> moves;
 	private Location selected;
 	private boolean isWhiteTurn;
@@ -25,6 +30,16 @@ public class Chess implements MouseListener{
 		frame.getCanvas().setMoves(moves);
 		selected = null;
 		isWhiteTurn=true;
+		whites= new ArrayList<GamePiece>();
+		aas = new ArrayList<GamePiece>();
+		for(int r = 0; r<8; r++)
+			for(int c =0; c<8; c++){
+				GamePiece piece = board.getPieceAt(new Location(r,c));
+				if(piece.getColor().equals("white"))
+					whites.add(piece);
+				else
+					aas.add(piece);
+			}
 	}
 	public static void main(String[] args)
 	{
@@ -71,8 +86,8 @@ public class Chess implements MouseListener{
     		//System.out.println(((Board)board).canMove("white"));
     		Location loc = locationForClick(e.getY(), e.getX());
     		if (moves.contains(loc)){
-    			board.movePiece(selected,loc);
-    			isWhiteTurn=!isWhiteTurn;
+    			GamePiece taken = board.movePiece(selected,loc);
+    			updateStatus(selected, loc, taken);
     		}
     		moves.clear();
     		frame.getCanvas().repaint();
@@ -89,5 +104,52 @@ public class Chess implements MouseListener{
     	}
     	return null;
     }
-	
+    public void updateStatus(Location prev, Location curr, GamePiece taken)
+    {
+    	Piece piece =(Piece) board.getPieceAt(curr);
+    	boolean isWhite = piece.getColor().equals("white");
+    	switch(piece.getType()){
+    	case PAWN:
+    		break;
+    	case KING:
+    		if(isWhite && whites.size()==1)
+    			piece.incMovesAlone();
+    		else if(!isWhite && aas.size()==1)
+    			piece.incMovesAlone();
+    		if(piece.getMovesAlone()>50)
+    			stalemate();
+    	case ROOK:
+    		piece.setHasMoved();
+    		break;
+    	}
+    	isWhiteTurn=!isWhiteTurn;
+    	if (!board.canMove(isWhite ? "black" : "white")){
+    		if ((isWhite && isInCheck(getBlackKing())) || (!isWhite && isInCheck(getWhiteKing()))) checkmate(isWhite);
+    		else stalemate();
+    	}
+    	//TODO
+    	//increments ints for how long each pawn has been stationary, updates hasMoved for kings and rooks, check En passant
+    }
+    public void checkmate(boolean isWhite)
+    {
+    	//TODO
+    }
+    public void stalemate()
+    {
+    	//TODO
+    }
+    public GamePiece getBlackKing()
+    {
+    	return null;
+    }
+    public GamePiece getWhiteKing()
+    {
+    	return null;
+    }
+    public boolean isInCheck(GamePiece king)
+    {
+    	return true;
+    }
 }
+
+

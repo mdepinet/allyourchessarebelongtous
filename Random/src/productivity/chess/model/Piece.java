@@ -47,8 +47,11 @@ public class Piece implements GamePiece {
 		return color.equals("white");
 	}
 	
-	public void setHasMoved(boolean moved){
-		if (type == PieceType.KING || type == PieceType.ROOK) scratch = moved ? 1 : 0;
+	public void setHasMoved(){
+		if (type == PieceType.KING || type == PieceType.ROOK) {
+			if(scratch>0) return; 
+			scratch =  1;
+			}
 		else throw new UnsupportedOperationException("hasMoved can only be set for kings and rooks");
 	}
 	public boolean hasMoved(){
