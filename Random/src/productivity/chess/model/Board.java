@@ -391,6 +391,26 @@ public class Board implements GameBoard {
 		board[loc.getRow()][loc.getCol()]=dummy;
 		return false;
 	}
+	public boolean isCheckmate(boolean isWhite)
+	{
+		//king must already be in check!
+		String color = isWhite ? "white" : "black";
+		Location kingLocation = null;
+		for(int r = 0; r<8; r++)
+			for(int c = 0; c<8; c++)
+				if(getPieceAt(new Location(r,c)).getType()==PieceType.KING 
+						&& getPieceAt(new Location(r,c)).getColor().equals(color))
+					kingLocation = new Location(r,c);
+		if(getValidMovesForLocation(kingLocation).size()>0)
+			return false;
+		for(int r = 0; r<8; r++)
+			for(int c = 0; c<8; c++){
+				//TODO
+			}
+		
+		
+		return true;
+	}
 	public static String getOppositeColor(String color)
 	{
 		if(color.equals("white")) return "black";

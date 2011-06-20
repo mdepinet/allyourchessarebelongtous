@@ -151,7 +151,7 @@ public class Chess implements MouseListener{
     }
     public void checkmate(boolean isWhite)
     {
-    	//TODO
+    	
     }
     public void stalemate()
     {
