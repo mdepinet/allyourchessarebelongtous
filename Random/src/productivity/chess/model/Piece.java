@@ -48,7 +48,10 @@ public class Piece implements GamePiece {
 	public boolean isWhite(){
 		return color.equals("white");
 	}
-	
+	public void setPieceType(PieceType type)
+	{
+		this.type=type;
+	}
 	public void setHasMoved(){
 		if (type == PieceType.KING || type == PieceType.ROOK) {
 			if(scratch>0) return; 
