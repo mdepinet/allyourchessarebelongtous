@@ -25,6 +25,8 @@ public class Piece implements GamePiece {
 			return PieceType.BISHOP;
 		else if(s.equals("Q"))
 			return PieceType.QUEEN;
+		else if(s.equals("D"))
+			return PieceType.DUMMY;
 		else
 			return PieceType.KING;
 	}

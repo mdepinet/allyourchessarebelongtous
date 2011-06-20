@@ -10,4 +10,5 @@ public interface GameBoard extends Serializable{
 	List<Location> getValidMovesForLocation(Location loc);
 	GamePiece movePiece(Location loc1, Location loc2);
 	boolean isInCheck(String color);
+	boolean isBeingAttacked(String color, Location loc);
 }
