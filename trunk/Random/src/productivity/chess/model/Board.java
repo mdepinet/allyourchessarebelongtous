@@ -362,7 +362,7 @@ public class Board implements GameBoard {
 				for(int c = 0; c<8; c++)
 					if(getPieceAt(new Location(r,c))!=null && getPieceAt(new Location (r,c)).getColor().equals("black"))
 						for(Location loc :getValidMovesForLocation(new Location(r,c)))
-							if(getPieceAt(loc).getType().equals(PieceType.KING))
+							if(getPieceAt(loc)!=null && getPieceAt(loc).getType()==PieceType.KING)
 								return true;
 		}
 		else if(color.equals("black")){
