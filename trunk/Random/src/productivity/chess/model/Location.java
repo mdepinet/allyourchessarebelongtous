@@ -3,19 +3,19 @@ package productivity.chess.model;
 public class Location {
 	private int col;
 	private int row;
-	public Location(int x, int y)
+	public Location(int y, int x)
 	{
-		setRow(x);
-		setCol(y);
+		setRow(y);
+		setCol(x);
 	}
-	public void setCol(int x) {
-		this.col = x;
+	public void setCol(int y) {
+		this.col = y;
 	}
 	public int getCol() {
 		return col;
 	}
-	public void setRow(int y) {
-		this.row = y;
+	public void setRow(int x) {
+		this.row = x;
 	}
 	public int getRow() {
 		return row;

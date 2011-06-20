@@ -36,10 +36,12 @@ public class Chess implements MouseListener{
 		for(int r = 0; r<8; r++)
 			for(int c =0; c<8; c++){
 				GamePiece piece = board.getPieceAt(new Location(r,c));
-				if(piece.getColor().equals("white"))
-					whites.add(piece);
-				else
-					aas.add(piece);
+				if(piece !=null){
+					if(piece.getColor().equals("white"))
+						whites.add(piece);
+					else
+						aas.add(piece);
+				}
 			}
 	}
 	public static void main(String[] args)
@@ -64,7 +66,9 @@ public class Chess implements MouseListener{
     	if (selected == null){
     		Location loc = locationForClick(e.getY(), e.getX());
     		//is it your turn?
-    		boolean correctTurn = isWhiteTurn==(board.getPieceAt(loc).getColor().equals("white"));
+    		boolean correctTurn=false;
+    		if(board.getPieceAt(loc)!=null)
+    			correctTurn = isWhiteTurn==(board.getPieceAt(loc).getColor().equals("white"));
 	    	
     		boolean repaint = false;
 			if(!moves.isEmpty())
@@ -84,7 +88,6 @@ public class Chess implements MouseListener{
 	    	if (board.getPieceAt(loc) != null && correctTurn) selected = loc;
     	}
     	else{
-    		//System.out.println(((Board)board).canMove("white"));
     		Location loc = locationForClick(e.getY(), e.getX());
     		if (moves.contains(loc)){
     			GamePiece taken = board.movePiece(selected,loc);
@@ -126,6 +129,7 @@ public class Chess implements MouseListener{
     		break;
     	}
     	isWhiteTurn=!isWhiteTurn;
+    	System.out.println(((Board)board).isBeingAttacked("black", new Location(4,4)));
     	if (!board.canMove(isWhite ? "black" : "white")){
     		if ((isWhite && isInCheck("black")) || (!isWhite && isInCheck("white"))) checkmate(isWhite);
     		else stalemate();

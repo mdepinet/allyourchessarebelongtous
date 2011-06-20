@@ -365,6 +365,23 @@ public class Board implements GameBoard {
 							return true;
 		return false;
 	}
+	public boolean isBeingAttacked(String color, Location loc)
+	{
+		//does not work for pawns attacking unoccupied squares (since they aren't in their possible move list)
+		for(int r =0; r<8; r++)
+			for(int c = 0; c<8; c++){
+				GamePiece p = getPieceAt(new Location(r,c));
+				if(p!=null 
+						&& p.getColor().equals(color))
+					for(Location l :getValidMovesForLocation(new Location(r,c)))
+						if(loc.equals(l)){
+							//check if it's a pawn moving forward, in which case it cannot take
+							if(p.getType()!=PieceType.PAWN || c!=loc.getCol())
+								return true;
+						}
+			}
+		return false;
+	}
 	public static String getOppositeColor(String color)
 	{
 		if(color.equals("white")) return "black";
