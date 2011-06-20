@@ -11,6 +11,7 @@ import productivity.chess.model.GameBoard;
 import productivity.chess.model.GamePiece;
 import productivity.chess.model.Location;
 import productivity.chess.model.Piece;
+import productivity.chess.model.PieceType;
 import productivity.chess.view.GameFrame;
 
 public class Chess implements MouseListener{
@@ -106,6 +107,8 @@ public class Chess implements MouseListener{
     }
     public void updateStatus(Location prev, Location curr, GamePiece taken)
     {
+    	whites.remove(taken);
+    	aas.remove(taken);
     	Piece piece =(Piece) board.getPieceAt(curr);
     	boolean isWhite = piece.getColor().equals("white");
     	switch(piece.getType()){
@@ -124,7 +127,7 @@ public class Chess implements MouseListener{
     	}
     	isWhiteTurn=!isWhiteTurn;
     	if (!board.canMove(isWhite ? "black" : "white")){
-    		if ((isWhite && isInCheck(getBlackKing())) || (!isWhite && isInCheck(getWhiteKing()))) checkmate(isWhite);
+    		if ((isWhite && isInCheck("black")) || (!isWhite && isInCheck("white"))) checkmate(isWhite);
     		else stalemate();
     	}
     	//TODO
@@ -140,15 +143,22 @@ public class Chess implements MouseListener{
     }
     public GamePiece getBlackKing()
     {
+    	for(GamePiece b: aas)
+    		if(b.getType().equals(PieceType.KING))
+    			return b;
     	return null;
     }
     public GamePiece getWhiteKing()
     {
+    	for(GamePiece b: whites)
+    		if(b.getType().equals(PieceType.KING))
+    			return b;
     	return null;
     }
-    public boolean isInCheck(GamePiece king)
+    public boolean isInCheck(String color)
     {
-    	return true;
+    	return board.isInCheck(color);
+    	
     }
 }
 

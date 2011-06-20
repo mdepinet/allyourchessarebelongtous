@@ -354,7 +354,19 @@ public class Board implements GameBoard {
 	public void setBoard(Piece[][] board) {
 		this.board = board;
 	}
-	
+	public boolean isInCheck(String color)
+	{
+		if(color.equals("white")){
+			for(int r =0; r<8; r++)
+				for(int c = 0; c<8; c++)
+					for(Location loc :getValidMovesForLocation(new Location(r,c))){
+						if(getPieceAt(loc).getType().equals(PieceType.KING))
+							return true;
+				}
+					
+		}
+		return false;
+	}
 	public GamePiece movePiece(Location loc1, Location loc2){
 		int r1,c1,r2,c2;
 		Piece takenPiece = board[r2 = loc2.getRow()][c2 = loc2.getCol()];

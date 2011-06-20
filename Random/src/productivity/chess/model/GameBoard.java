@@ -9,4 +9,5 @@ public interface GameBoard extends Serializable{
 	boolean isValidLocation(int row, int col);
 	List<Location> getValidMovesForLocation(Location loc);
 	GamePiece movePiece(Location loc1, Location loc2);
+	boolean isInCheck(String color);
 }
