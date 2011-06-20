@@ -141,7 +141,7 @@ public class Board implements GameBoard {
 						i--;
 					}
 				}
-				filterKing(locs);
+				filterKing(locs, getOppositeColor(p.getColor()));
 				break;
 			case QUEEN:
 				locs=getRookMoves(row,col);
@@ -287,8 +287,13 @@ public class Board implements GameBoard {
 		if (isValidLocation(row-1,col-2)) locs.add(new Location(row-1,col-2));
 		return locs;
 	}
-	private void filterKing(List<Location> locs){
-		//TODO
+	private void filterKing(List<Location> locs, String enemyColor){
+		for(int i =0; i<locs.size();i++){
+			if(isBeingAttacked(enemyColor, locs.get(i))){
+				locs.remove(i);
+				i--;
+			}
+		}
 	}
 	public boolean isValidLocation(int row, int col){
 		return (col>=0&&col<8&&row>=0&&row<8);
@@ -368,6 +373,10 @@ public class Board implements GameBoard {
 	public boolean isBeingAttacked(String color, Location loc)
 	{
 		//does not work for pawns attacking unoccupied squares (since they aren't in their possible move list)
+		Piece dummy=board[loc.getRow()][loc.getCol()];
+		board[loc.getRow()][loc.getCol()]= new Piece("D",getOppositeColor(color));
+
+
 		for(int r =0; r<8; r++)
 			for(int c = 0; c<8; c++){
 				GamePiece p = getPieceAt(new Location(r,c));
@@ -375,11 +384,11 @@ public class Board implements GameBoard {
 						&& p.getColor().equals(color))
 					for(Location l :getValidMovesForLocation(new Location(r,c)))
 						if(loc.equals(l)){
-							//check if it's a pawn moving forward, in which case it cannot take
-							if(p.getType()!=PieceType.PAWN || c!=loc.getCol())
+								board[loc.getRow()][loc.getCol()]=dummy;
 								return true;
-						}
+							}
 			}
+		board[loc.getRow()][loc.getCol()]=dummy;
 		return false;
 	}
 	public static String getOppositeColor(String color)
