@@ -129,7 +129,6 @@ public class Chess implements MouseListener{
     		break;
     	}
     	isWhiteTurn=!isWhiteTurn;
-    	System.out.println(((Board)board).isBeingAttacked("black", new Location(4,4)));
     	if (!board.canMove(isWhite ? "black" : "white")){
     		if ((isWhite && isInCheck("black")) || (!isWhite && isInCheck("white"))) checkmate(isWhite);
     		else stalemate();
