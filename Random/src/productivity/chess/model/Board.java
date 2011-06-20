@@ -356,14 +356,22 @@ public class Board implements GameBoard {
 	}
 	public boolean isInCheck(String color)
 	{
+		//might be extremely slow...
 		if(color.equals("white")){
 			for(int r =0; r<8; r++)
 				for(int c = 0; c<8; c++)
-					for(Location loc :getValidMovesForLocation(new Location(r,c))){
-						if(getPieceAt(loc).getType().equals(PieceType.KING))
-							return true;
-				}
-					
+					if(getPieceAt(new Location(r,c))!=null && getPieceAt(new Location (r,c)).getColor().equals("black"))
+						for(Location loc :getValidMovesForLocation(new Location(r,c)))
+							if(getPieceAt(loc).getType().equals(PieceType.KING))
+								return true;
+		}
+		else if(color.equals("black")){
+			for(int r =0; r<8; r++)
+				for(int c = 0; c<8; c++)
+					if(getPieceAt(new Location(r,c))!=null && getPieceAt(new Location (r,c)).getColor().equals("white"))
+						for(Location loc :getValidMovesForLocation(new Location(r,c)))
+							if(getPieceAt(loc).getType().equals(PieceType.KING))
+								return true;
 		}
 		return false;
 	}
