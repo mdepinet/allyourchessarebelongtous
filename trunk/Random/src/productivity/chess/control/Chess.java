@@ -6,6 +6,8 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
+import javax.swing.JOptionPane;
+
 import productivity.chess.model.Board;
 import productivity.chess.model.GameBoard;
 import productivity.chess.model.GamePiece;
@@ -116,6 +118,8 @@ public class Chess implements MouseListener{
     	boolean isWhite = piece.getColor().equals("white");
     	switch(piece.getType()){
     	case PAWN:
+    		if(curr.getRow()==0 || curr.getRow()==7)
+    			pawnUpgrade(curr);
     		break;
     	case KING:
     		if(isWhite && whites.size()==1)
@@ -135,6 +139,15 @@ public class Chess implements MouseListener{
     	}
     	//TODO
     	//increments ints for how long each pawn has been stationary, updates hasMoved for kings and rooks, check En passant
+    }
+    public void pawnUpgrade(Location curr)
+    {
+    	String type = JOptionPane.showInputDialog("Enter a piece type").toUpperCase();
+    	if(type.equals("QUEEN")|| type.equals("KNIGHT")|| type.equals("BISHOP")
+    			|| type.equals("ROOK"))
+    		board.getPieceAt(curr).setType(PieceType.valueOf(type));
+    	else
+    		pawnUpgrade(curr);
     }
     public void checkmate(boolean isWhite)
     {
