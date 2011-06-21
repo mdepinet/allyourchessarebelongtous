@@ -40,6 +40,7 @@ public class ServerThread extends Thread {
 						oos.writeObject(c.getBoard());
 						lastBoard = c.getBoardCopy();
 						myMove = false;
+						c.setWhiteTurn(false);
 					}
 					else Thread.sleep(500);
 				}
@@ -50,6 +51,7 @@ public class ServerThread extends Thread {
 						c.setBoard(newBoard);
 						lastBoard = c.getBoardCopy();
 						myMove = true;
+						c.setWhiteTurn(true);
 					}
 					else System.err.println("Received non GameBoard object...");
 				}

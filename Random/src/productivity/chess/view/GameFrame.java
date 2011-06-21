@@ -15,7 +15,7 @@ public class GameFrame extends JFrame {
 	{
 		super(s);
 		this.setBounds(300,300,340,360);
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		this.setResizable(false);
 		canvas = new GameCanvas();
 		canvas.addMouseListener(ml);

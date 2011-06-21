@@ -143,7 +143,7 @@ public class Chess implements MouseListener{
     		piece.setHasMoved();
     		break;
     	}
-    	isWhiteTurn=!isWhiteTurn;
+//    	isWhiteTurn=!isWhiteTurn;
     	//System.out.println(board.isInCheck("white"));
     	if(board.isInCheck("white"))
     		if(board.isCheckmate(true))
@@ -202,6 +202,9 @@ public class Chess implements MouseListener{
     	this.board = board;
     	frame.getCanvas().setBoard(board);
     	frame.getCanvas().repaint();
+    }
+    public void setWhiteTurn(boolean whiteTurn){
+    	isWhiteTurn = whiteTurn;
     }
 }
 
