@@ -11,4 +11,5 @@ public interface GameBoard extends Serializable{
 	GamePiece movePiece(Location loc1, Location loc2);
 	boolean isInCheck(String color);
 	boolean isBeingAttacked(String color, Location loc);
+	boolean isCheckmate(boolean isWhite);
 }
