@@ -1,5 +1,6 @@
 package productivity.chess.control.networking;
 
-public class Network {
-
+public abstract class Network extends Thread {
+	protected Object data;
+	public void setData(Object d) { data = d; }
 }

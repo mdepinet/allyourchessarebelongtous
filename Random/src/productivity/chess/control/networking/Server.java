@@ -9,58 +9,47 @@ import productivity.chess.model.Board;
 public class Server extends Thread {
 
    private ServerSocket server;
-
+   private Board board;
+   private boolean end;
+   
    public Server() throws Exception {
-	   server = new ServerSocket(3000);
-     System.out.println("Server listening on port 3000.");
+	   server = new ServerSocket(3030);
+     System.out.println("Server listening on port 3030.");
      this.start();
    } 
 
    public void run() {
-     while(true) {
        try {
         System.out.println("Waiting for connections.");
         Socket client = server.accept();
-        System.out.println("Accepted a connection from: "+
-client.getInetAddress());
-        Connect c = new Connect(client);
+        System.out.println("Accepted a connection from: "+client.getInetAddress());
+        ObjectInputStream ois = new ObjectInputStream(client.getInputStream());
+        ObjectOutputStream oos = new ObjectOutputStream(client.getOutputStream());
+        while(!isEnd()) {
+        	if(board!=null)
+        		oos.writeObject(board);
+        }
+        oos.writeObject("end");
+        oos.flush();
+        ois.close();
+        oos.close();
+        client.close(); 
        } catch(Exception e) {}
-     }
    }
+
+public void setBoard(Board board) {
+	this.board = board;
 }
 
-class Connect extends Thread {
-   private Socket client = null;
-   private ObjectInputStream ois = null;
-   private ObjectOutputStream oos = null;
-    
-   public Connect() {}
+public Board getBoard() {
+	return board;
+}
 
-   public Connect(Socket clientSocket) {
-     client = clientSocket;
-     try {
-      ois = new ObjectInputStream(client.getInputStream());
-      oos = new ObjectOutputStream(client.getOutputStream());
-     } catch(Exception e1) {
-         try {
-            client.close();
-         }catch(Exception e) {
-           System.out.println(e.getMessage());
-         }
-         return;
-     }
-     this.start();
-   }
+public void setEnd(boolean end) {
+	this.end = end;
+}
 
-  
-   public void run() {
-      try {
-         oos.writeObject(new Board());
-         
-         //oos.flush();
-         //ois.close();
-         //oos.close();
-         //client.close(); 
-      } catch(Exception e) {}       
-   }
+public boolean isEnd() {
+	return end;
+}
 }

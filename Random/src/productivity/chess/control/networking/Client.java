@@ -8,24 +8,30 @@ import java.util.*;
 import productivity.chess.model.Board;
 
 public class Client {
-   public static void main(String argv[]) {
+   public static void main(String[] args) {
       ObjectOutputStream oos = null;
       ObjectInputStream ois = null;
       Socket socket = null;
-      Board board = null;
+      Object board = null;
       try {
         // open a socket connection
-        socket = new Socket("yourMachineNameORipAddress", 3000);
+        socket = new Socket("localhost", 3030);
         // open I/O streams for objects
         oos = new ObjectOutputStream(socket.getOutputStream());
         ois = new ObjectInputStream(socket.getInputStream());
         // read an object from the server
-        board = (Board) ois.readObject();
-        
+        for(;;)
+        {
+        	board = ois.readObject();
+        	if(board.getClass().equals(Board.class))
+        		System.out.print(board);
+        	else if(board.getClass().equals(String.class)&&((String)board).equals("end"))
+        		break;
+        }
         oos.close();
         ois.close();
       } catch(Exception e) {
-        System.out.println(e.getMessage());
+        System.out.println("Message" + e.getMessage());
       }
    }
 }
