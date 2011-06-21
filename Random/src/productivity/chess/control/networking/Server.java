@@ -6,7 +6,7 @@ import java.util.*;
 
 import productivity.chess.model.Board;
 
-public class Server extends Thread {
+public class Server {
 
    private ServerSocket server;
    private Board board;
@@ -15,7 +15,7 @@ public class Server extends Thread {
    public Server() throws Exception {
 	   server = new ServerSocket(3030);
      System.out.println("Server listening on port 3030.");
-     this.start();
+     this.run();
    } 
 
    public void run() {
