@@ -27,7 +27,10 @@ public class Server extends Thread {
         ObjectOutputStream oos = new ObjectOutputStream(client.getOutputStream());
         while(!isEnd()) {
         	if(board!=null)
+        	{
         		oos.writeObject(board);
+        		board=null;
+        	}
         }
         oos.writeObject("end");
         oos.flush();
