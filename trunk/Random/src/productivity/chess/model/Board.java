@@ -418,13 +418,101 @@ public class Board implements GameBoard {
 		if(attackingLocs.size()>1)
 			return true;
 		//now add all of the squares you can "block" to stop checkmate into attackingLocs
-		if(getPieceAt(attackingLocs.get(0)).getType()==PieceType.BISHOP){
+		Location attackLoc = attackingLocs.get(0);
+		Piece piece = (Piece)getPieceAt(attackLoc);
+		//if it's a queen, decide whether to treat it like a bishop or a rook attacking the king
+		boolean queenLikeRook = false;
+		boolean queenLikeBishop=false;
+		if(piece.getType()==PieceType.QUEEN){
+			if(kingLocation.getRow()!=attackLoc.getRow() && kingLocation.getCol()!= attackLoc.getCol())
+				queenLikeBishop=true;
+			else
+				queenLikeRook=true;
+		}
+		if(piece.getType()==PieceType.BISHOP || queenLikeBishop){
+			int kingR=kingLocation.getRow();
+			int kingC=kingLocation.getCol();
+			int bishR=attackLoc.getRow();
+			int bishC=attackLoc.getCol();
+			if(kingR<bishR && kingC<bishC){
+				//up and left
+				int c = bishC-1;
+				for(int r = bishR-1; r>=0; --r){
+					if(isOccupied(r,c)){
+						if (piece.getOppositeColor().equals(occupiedBy(r,c))) attackingLocs.add(new Location(r,c));
+						break;
+					}
+					else{
+						 if(isValidLocation(r,c))
+							 attackingLocs.add(new Location(r,c));
+					}
+					c--;
+				}
+			}
+			if(kingR>bishR && kingC<bishC){
+				//down and left
+				int c = bishC-1;
+				for(int r = bishR+1; r<=7; ++r){
+					if(isOccupied(r,c)){
+						if (piece.getOppositeColor().equals(occupiedBy(r,c))) attackingLocs.add(new Location(r,c));
+						break;
+					}
+					else{
+						 if(isValidLocation(r,c))
+							 attackingLocs.add(new Location(r,c));
+					}
+					c--;
+				}
+			}
+			if(kingR<bishR && kingC>bishC){
+				//up and right
+				int c = bishC+1;
+				for(int r = bishR-1; r>=0; --r){
+					if(isOccupied(r,c)){
+						if (piece.getOppositeColor().equals(occupiedBy(r,c))) attackingLocs.add(new Location(r,c));
+						break;
+					}
+					else{
+						 if(isValidLocation(r,c))
+							 attackingLocs.add(new Location(r,c));
+					}
+					c++;
+				}
+			}
+			if(kingR>bishR && kingC>bishC){
+				//down and right
+				int c = bishC+1;
+				for(int r = bishR+1; r<=8; ++r){
+					if(isOccupied(r,c)){
+						if (piece.getOppositeColor().equals(occupiedBy(r,c))) attackingLocs.add(new Location(r,c));
+						break;
+					}
+					else{
+						 if(isValidLocation(r,c))
+							 attackingLocs.add(new Location(r,c));
+					}
+					c++;
+				}
+			}
 			//TODO
 		}
-		else if(getPieceAt(attackingLocs.get(0)).getType()==PieceType.ROOK){
+		else if(piece.getType()==PieceType.ROOK || queenLikeRook){
+			//find out if row or column is different
+			if(kingLocation.getRow()==attackLoc.getRow()){
+				int kingC = kingLocation.getCol();
+				int rookC = attackLoc.getCol();
+				for(int c = rookC<kingC ? rookC : kingC; c< (rookC<kingC ? kingC : rookC); c++)
+					attackingLocs.add(new Location(kingLocation.getRow(), c));
+			}
+			else{
+				int kingR = kingLocation.getRow();
+				int rookR = attackLoc.getRow();
+				for(int r = rookR<kingR ? rookR : kingR; r< (rookR<kingR ? kingR : rookR); r++)
+					attackingLocs.add(new Location(r, kingLocation.getCol()));
+			}
 			//TODO
-		}
-			
+	}
+		System.out.println(attackingLocs);
 		//finally, see if any of your pieces can move into any of attackingLocs
 		for(int r = 0; r<8; r++)
 			for(int c = 0; c<8; c++){
