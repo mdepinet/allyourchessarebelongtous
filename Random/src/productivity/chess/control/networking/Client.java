@@ -19,7 +19,7 @@ public class Client {
         ObjectInputStream ois = null;
         Socket s = null;
         try{
-        	s = new Socket("10.0.0.95", 3030);
+        	s = new Socket("10.0.0.89", 3030);
         	oos = new ObjectOutputStream(s.getOutputStream());
         	ois = new ObjectInputStream(s.getInputStream());
         	while (!done){

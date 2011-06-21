@@ -1,25 +1,25 @@
 package productivity.chess.control.networking;
 
-import java.io.*;
-import java.net.*;
-import java.util.*;
-
-import productivity.chess.model.Board;
+import java.io.IOException;
+import java.net.ServerSocket;
+import java.net.Socket;
 
 public class Server {
 
 	public static void main(String[] args){
 		System.out.println("Waiting for connections.");
-		while (true){
-			ServerSocket servSoc;
-			try {
-				servSoc = new ServerSocket(3030);
-				Socket client = servSoc.accept();
-				System.out.println("Accepted a connection from: "+client.getInetAddress());
-				new ServerThread(client).start();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
+		ServerSocket servSoc = null;
+		try {
+		servSoc = new ServerSocket(3030);
+			while (true){
+					Socket client = servSoc.accept();
+					System.out.println("Accepted a connection from: "+client.getInetAddress());
+					new ServerThread(client).start();
+				} 
+		} catch (IOException e) {
+			e.printStackTrace();
+		} finally {
+			try{servSoc.close();}catch(Throwable t){}
 		}
 	}
 	
