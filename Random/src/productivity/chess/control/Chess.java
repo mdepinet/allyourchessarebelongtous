@@ -6,6 +6,11 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
+
+import productivity.chess.control.networking.*;
+import productivity.chess.model.*;
+import productivity.chess.view.*;
+
 import javax.swing.JOptionPane;
 
 import productivity.chess.model.Board;
@@ -16,6 +21,7 @@ import productivity.chess.model.Piece;
 import productivity.chess.model.PieceType;
 import productivity.chess.view.GameFrame;
 
+
 public class Chess implements MouseListener{
 	private GameBoard board;
 	private GameFrame frame;
@@ -24,6 +30,7 @@ public class Chess implements MouseListener{
 	private List<Location> moves;
 	private Location selected;
 	private boolean isWhiteTurn;
+//	private Server server;
 	
 	public Chess()
 	{
@@ -33,17 +40,29 @@ public class Chess implements MouseListener{
 		frame.getCanvas().setMoves(moves);
 		selected = null;
 		isWhiteTurn=true;
+//		try {
+//			server = new Server();
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//		}
 		whites= new ArrayList<GamePiece>();
 		aas = new ArrayList<GamePiece>();
 		for(int r = 0; r<8; r++)
 			for(int c =0; c<8; c++){
 				GamePiece piece = board.getPieceAt(new Location(r,c));
+
+				if(piece != null && piece.getColor().equals("white"))
+					whites.add(piece);
+				else
+					aas.add(piece);
+
 				if(piece !=null){
 					if(piece.getColor().equals("white"))
 						whites.add(piece);
 					else
 						aas.add(piece);
 				}
+
 			}
 	}
 	public static void main(String[] args)
@@ -94,6 +113,7 @@ public class Chess implements MouseListener{
     		if (moves.contains(loc)){
     			GamePiece taken = board.movePiece(selected,loc);
     			updateStatus(selected, loc, taken);
+//    			server.setBoard((Board)board);
     		}
     		moves.clear();
     		frame.getCanvas().repaint();
@@ -175,6 +195,13 @@ public class Chess implements MouseListener{
     {
     	return board.isInCheck(color);
     	
+    }
+    
+    public GameBoard getBoard(){
+    	return board;
+    }
+    public void setBoard(GameBoard board){
+    	this.board = board;
     }
 }
 
