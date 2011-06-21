@@ -20,7 +20,7 @@ public class ServerThread extends Thread {
 	public ServerThread(Socket client){
 		this.client = client;
 		c = new Chess("Server");
-		lastBoard = c.getBoard();
+		lastBoard = c.getBoardCopy();
 	}
 	
 	public void run(){
@@ -38,7 +38,7 @@ public class ServerThread extends Thread {
 				while (myMove){
 					if (!c.getBoard().equals(lastBoard)){
 						oos.writeObject(c.getBoard());
-						lastBoard = c.getBoard();
+						lastBoard = c.getBoardCopy();
 						myMove = false;
 					}
 					else Thread.sleep(500);
@@ -48,7 +48,7 @@ public class ServerThread extends Thread {
 					if (obj instanceof GameBoard){
 						GameBoard newBoard = (GameBoard)obj;
 						c.setBoard(newBoard);
-						lastBoard = newBoard;
+						lastBoard = c.getBoardCopy();
 						myMove = true;
 					}
 					else System.err.println("Received non GameBoard object...");

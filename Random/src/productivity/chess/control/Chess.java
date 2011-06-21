@@ -195,8 +195,12 @@ public class Chess implements MouseListener{
     public GameBoard getBoard(){
     	return board;
     }
+    public GameBoard getBoardCopy(){
+    	return new Board((Board)board);
+    }
     public void setBoard(GameBoard board){
     	this.board = board;
+    	frame.getCanvas().setBoard(board);
     	frame.getCanvas().repaint();
     }
 }

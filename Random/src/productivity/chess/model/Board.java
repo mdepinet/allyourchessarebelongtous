@@ -20,6 +20,9 @@ public class Board implements GameBoard {
 		board = new Piece[8][8];
 		loadDefaultBoard();
 	}
+	public Board(Board other){
+		board = other.copyBoard();
+	}
 	public void loadDefaultBoard()
 	{
 		try {
@@ -542,6 +545,28 @@ public class Board implements GameBoard {
 	@Override
 	public boolean equals(Object obj){
 		if (!(obj instanceof Board)) return false;
-		return board.equals(((Board)(obj)).getBoard());
+		Piece[][] oBoard = ((Board)obj).getBoard();
+		if (board.length != oBoard.length)return false; 
+		for (int r = 0; r<board.length; r++){
+			if (board[r].length != oBoard[r].length)return false; 
+			for (int c = 0; c<board[r].length; c++){
+				if (board[r][c] == null){
+					if (oBoard[r][c] == null) continue;
+					return false;
+				}
+				else if (!board[r][c].equals(oBoard[r][c])) return false;
+			}
+		}
+		return true;
+	}
+	
+	public Piece[][] copyBoard(){
+		Piece[][] newRay = new Piece[8][8];
+		for (int r = 0; r<board.length; r++){
+			for (int c = 0; c<board[r].length; c++){
+				newRay[r][c] = board[r][c];
+			}
+		}
+		return newRay;
 	}
 }

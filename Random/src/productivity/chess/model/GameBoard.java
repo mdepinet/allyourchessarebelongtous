@@ -12,4 +12,5 @@ public interface GameBoard extends Serializable{
 	boolean isInCheck(String color);
 	boolean isBeingAttacked(String color, Location loc);
 	boolean isCheckmate(boolean isWhite);
+	GamePiece[][] copyBoard();
 }

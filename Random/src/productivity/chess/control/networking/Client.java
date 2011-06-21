@@ -27,7 +27,7 @@ public class Client {
         		while (myMove){
 					if (!c.getBoard().equals(lastBoard)){
 						oos.writeObject(c.getBoard());
-						lastBoard = c.getBoard();
+						lastBoard = c.getBoardCopy();
 						myMove = false;
 					}
 					else Thread.sleep(500);
@@ -37,7 +37,7 @@ public class Client {
 					if (obj instanceof GameBoard){
 						GameBoard newBoard = (GameBoard)obj;
 						c.setBoard(newBoard);
-						lastBoard = newBoard;
+						lastBoard = c.getBoardCopy();
 						myMove = true;
 					}
 					else System.err.println("Received non GameBoard object...");
