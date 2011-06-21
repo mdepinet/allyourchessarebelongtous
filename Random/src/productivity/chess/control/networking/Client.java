@@ -12,10 +12,10 @@ public class Client {
       ObjectOutputStream oos = null;
       ObjectInputStream ois = null;
       Socket socket = null;
-      Object board = null;
+      Object board = new Object();
       try {
         // open a socket connection
-        socket = new Socket("localhost", 3030);
+        socket = new Socket("10.0.0.95", 3030);
         // open I/O streams for objects
         oos = new ObjectOutputStream(socket.getOutputStream());
         ois = new ObjectInputStream(socket.getInputStream());
@@ -23,9 +23,9 @@ public class Client {
         for(;;)
         {
         	board = ois.readObject();
-        	if(board.getClass().equals(Board.class))
-        		System.out.print(board);
-        	else if(board.getClass().equals(String.class)&&((String)board).equals("end"))
+        	if(board instanceof Board)
+        		System.out.print((Board)board);
+        	else if(board instanceof String &&((String)board).equals("end"))
         		break;
         }
         oos.close();
