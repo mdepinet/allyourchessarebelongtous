@@ -372,11 +372,8 @@ public class Board implements GameBoard {
 	}
 	public boolean isBeingAttacked(String color, Location loc)
 	{
-		//does not work for pawns attacking unoccupied squares (since they aren't in their possible move list)
 		Piece dummy=board[loc.getRow()][loc.getCol()];
 		board[loc.getRow()][loc.getCol()]= new Piece("D",getOppositeColor(color));
-
-
 		for(int r =0; r<8; r++)
 			for(int c = 0; c<8; c++){
 				GamePiece p = getPieceAt(new Location(r,c));
@@ -394,18 +391,48 @@ public class Board implements GameBoard {
 	public boolean isCheckmate(boolean isWhite)
 	{
 		//king must already be in check!
+		//get location of your king and enemy pieces
 		String color = isWhite ? "white" : "black";
 		Location kingLocation = null;
-		for(int r = 0; r<8; r++)
-			for(int c = 0; c<8; c++)
-				if(getPieceAt(new Location(r,c)).getType()==PieceType.KING 
-						&& getPieceAt(new Location(r,c)).getColor().equals(color))
-					kingLocation = new Location(r,c);
-		if(getValidMovesForLocation(kingLocation).size()>0)
-			return false;
+		List<Location> enemyLocs = new LinkedList<Location>();
 		for(int r = 0; r<8; r++)
 			for(int c = 0; c<8; c++){
-				//TODO
+				Location loc = new Location(r,c);
+				GamePiece piece = getPieceAt(loc);
+				if(piece !=null && piece.getColor().equals(getOppositeColor(color)))
+					enemyLocs.add(loc);
+				else if(piece!=null && piece.getType()==PieceType.KING 
+						&& piece.getColor().equals(color))
+					kingLocation = new Location(r,c);
+			}
+		//if king can move, it's not checkmate
+		if(getValidMovesForLocation(kingLocation).size()>0)
+			return false;
+		//get all of the pieces which are attacking the king
+		List<Location> attackingLocs = new LinkedList<Location>();
+		for(Location loc : enemyLocs){
+			if(getValidMovesForLocation(loc).contains(kingLocation))
+				attackingLocs.add(loc);
+		}
+		//if the king can't move and there is more than one enemy attacking him, it's checkmate
+		if(attackingLocs.size()>1)
+			return true;
+		//now add all of the squares you can "block" to stop checkmate into attackingLocs
+		if(getPieceAt(attackingLocs.get(0)).getType()==PieceType.BISHOP){
+			//TODO
+		}
+		else if(getPieceAt(attackingLocs.get(0)).getType()==PieceType.ROOK){
+			//TODO
+		}
+			
+		//finally, see if any of your pieces can move into any of attackingLocs
+		for(int r = 0; r<8; r++)
+			for(int c = 0; c<8; c++){
+				Location loc = new Location(r,c);
+				List<Location> valids = getValidMovesForLocation(loc);
+				valids.retainAll(attackingLocs);
+				if(valids.size()>0)
+					return false;
 			}
 		
 		
