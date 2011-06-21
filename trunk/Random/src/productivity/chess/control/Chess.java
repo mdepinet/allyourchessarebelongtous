@@ -13,6 +13,7 @@ import productivity.chess.view.*;
 
 import javax.swing.JOptionPane;
 
+import productivity.chess.control.networking.Server;
 import productivity.chess.model.Board;
 import productivity.chess.model.GameBoard;
 import productivity.chess.model.GamePiece;
@@ -30,10 +31,11 @@ public class Chess implements MouseListener{
 	private List<Location> moves;
 	private Location selected;
 	private boolean isWhiteTurn;
-//	private Server server;
+	//private Server server;
 	
 	public Chess()
 	{
+		
 		board = new Board();
 		frame = new GameFrame("Chess", board, (MouseListener) this);
 		moves = new LinkedList<Location>();
@@ -113,7 +115,7 @@ public class Chess implements MouseListener{
     		if (moves.contains(loc)){
     			GamePiece taken = board.movePiece(selected,loc);
     			updateStatus(selected, loc, taken);
-//    			server.setBoard((Board)board);
+    			//server.setBoard((Board)board);
     		}
     		moves.clear();
     		frame.getCanvas().repaint();
@@ -153,6 +155,10 @@ public class Chess implements MouseListener{
     		break;
     	}
     	isWhiteTurn=!isWhiteTurn;
+    	//System.out.println(board.isInCheck("white"));
+    	if(board.isInCheck("white"))
+    		if(board.isCheckmate(true))
+    			System.out.println("white loses");
     	if (!board.canMove(isWhite ? "black" : "white")){
     		if ((isWhite && isInCheck("black")) || (!isWhite && isInCheck("white"))) checkmate(isWhite);
     		else stalemate();
@@ -169,9 +175,9 @@ public class Chess implements MouseListener{
     	else
     		pawnUpgrade(curr);
     }
-    public void checkmate(boolean isWhite)
+    public boolean checkmate(boolean isWhite)
     {
-    	
+    	return board.isCheckmate(isWhite);
     }
     public void stalemate()
     {
