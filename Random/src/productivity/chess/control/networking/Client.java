@@ -11,9 +11,10 @@ import productivity.chess.model.GameBoard;
 
 public class Client {
 	public static void main(String[] args){
-		Chess c = new Chess();
+		Chess c = new Chess("Client");
 		boolean done = false;
 		GameBoard lastBoard = null;
+		boolean myMove = false;
 		
 		ObjectOutputStream oos = null;
         ObjectInputStream ois = null;
@@ -23,24 +24,31 @@ public class Client {
         	oos = new ObjectOutputStream(s.getOutputStream());
         	ois = new ObjectInputStream(s.getInputStream());
         	while (!done){
-        		Object obj = ois.readObject();
-        		if (obj instanceof GameBoard){
-        			c.setBoard((GameBoard)obj);
-        			lastBoard = (GameBoard)obj;
-        		}
-        		else System.err.println("Recieved non-GameBoard object");
-        		
-        		GameBoard newBoard = c.getBoard();
-        		if (!newBoard.equals(lastBoard)){
-        			lastBoard = newBoard;
-        			oos.writeObject(lastBoard);
-        		}
+        		while (myMove){
+					if (!c.getBoard().equals(lastBoard)){
+						oos.writeObject(c.getBoard());
+						lastBoard = c.getBoard();
+						myMove = false;
+					}
+					else Thread.sleep(500);
+				}
+				if (!myMove){
+					Object obj = ois.readObject();
+					if (obj instanceof GameBoard){
+						GameBoard newBoard = (GameBoard)obj;
+						c.setBoard(newBoard);
+						lastBoard = newBoard;
+						myMove = true;
+					}
+					else System.err.println("Received non GameBoard object...");
+				}
         	}
-        }
-        catch(IOException ex){
+        } catch(IOException ex){
         	ex.printStackTrace();
         } catch (ClassNotFoundException e) {
 			e.printStackTrace();
+		} catch (InterruptedException ex){
+			System.err.println(ex.getMessage());
 		}
 	}
 }

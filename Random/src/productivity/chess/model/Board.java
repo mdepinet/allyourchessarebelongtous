@@ -538,4 +538,10 @@ public class Board implements GameBoard {
 		board[r1][c1] = null;
 		return takenPiece;
 	}
+	
+	@Override
+	public boolean equals(Object obj){
+		if (!(obj instanceof Board)) return false;
+		return board.equals(((Board)(obj)).getBoard());
+	}
 }

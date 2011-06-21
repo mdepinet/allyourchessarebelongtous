@@ -6,14 +6,8 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
-
-import productivity.chess.control.networking.*;
-import productivity.chess.model.*;
-import productivity.chess.view.*;
-
 import javax.swing.JOptionPane;
 
-import productivity.chess.control.networking.Server;
 import productivity.chess.model.Board;
 import productivity.chess.model.GameBoard;
 import productivity.chess.model.GamePiece;
@@ -31,13 +25,12 @@ public class Chess implements MouseListener{
 	private List<Location> moves;
 	private Location selected;
 	private boolean isWhiteTurn;
-	//private Server server;
+//	private Server server;
 	
-	public Chess()
+	public Chess(String frameTitle)
 	{
-		
 		board = new Board();
-		frame = new GameFrame("Chess", board, (MouseListener) this);
+		frame = new GameFrame("Chess - "+frameTitle, board, (MouseListener) this);
 		moves = new LinkedList<Location>();
 		frame.getCanvas().setMoves(moves);
 		selected = null;
@@ -66,10 +59,6 @@ public class Chess implements MouseListener{
 				}
 
 			}
-	}
-	public static void main(String[] args)
-	{
-		new Chess();
 	}
 	
 	public void mousePressed(MouseEvent e) {
@@ -115,7 +104,7 @@ public class Chess implements MouseListener{
     		if (moves.contains(loc)){
     			GamePiece taken = board.movePiece(selected,loc);
     			updateStatus(selected, loc, taken);
-    			//server.setBoard((Board)board);
+//    			server.setBoard((Board)board);
     		}
     		moves.clear();
     		frame.getCanvas().repaint();
@@ -208,6 +197,7 @@ public class Chess implements MouseListener{
     }
     public void setBoard(GameBoard board){
     	this.board = board;
+    	frame.getCanvas().repaint();
     }
 }
 
