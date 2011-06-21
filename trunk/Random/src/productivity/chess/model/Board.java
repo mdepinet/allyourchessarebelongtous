@@ -145,6 +145,19 @@ public class Board implements GameBoard {
 					}
 				}
 				filterKing(locs, getOppositeColor(p.getColor()));
+				
+				//now for castling... yay!
+				if(!p.hasMoved()){
+					int r = loc.getRow();
+					int c = loc.getCol();
+					Piece rook = (Piece)getPieceAt(new Location(r,c-3));
+					if(rook.getType()==PieceType.ROOK && !rook.hasMoved())
+						locs.add(new Location(r,c-2));
+					rook = (Piece)getPieceAt(new Location(r, c+4));
+					if(rook.getType()==PieceType.ROOK && !rook.hasMoved())
+						locs.add(new Location(r,c+2));
+				}
+					
 				break;
 			case QUEEN:
 				locs=getRookMoves(row,col);
