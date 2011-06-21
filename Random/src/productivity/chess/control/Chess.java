@@ -133,6 +133,8 @@ public class Chess implements MouseListener{
     			pawnUpgrade(curr);
     		break;
     	case KING:
+    		if(!piece.hasMoved())
+    			piece.setHasMoved();
     		if(isWhite && whites.size()==1)
     			piece.incMovesAlone();
     		else if(!isWhite && aas.size()==1)
