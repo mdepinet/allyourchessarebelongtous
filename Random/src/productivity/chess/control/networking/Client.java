@@ -25,7 +25,7 @@ public class Client {
         Socket s = null;
         try{
         	Properties p = new Properties();
-        	p.load(new FileInputStream("props.properties"));
+        	p.load(new FileInputStream("resources/props.properties"));
         	String[] servers = ((String)p.get("servers")).split(",");
         	for (int i = 0; i<servers.length && s == null; i++){
         		try{
