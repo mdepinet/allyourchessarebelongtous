@@ -1,6 +1,8 @@
 package productivity.chess.control.networking;
 
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -10,6 +12,7 @@ import java.net.Socket;
 import java.util.Properties;
 
 import productivity.chess.control.Chess;
+import productivity.chess.encryption.BoardCrypter;
 import productivity.chess.model.GameBoard;
 
 public class Client {
@@ -20,8 +23,11 @@ public class Client {
 		GameBoard lastBoard = null;
 		boolean myMove = false;
 		
+		ObjectInputStream ois = null;
 		ObjectOutputStream oos = null;
-        ObjectInputStream ois = null;
+		byte[] boardish = new byte[4096];
+		ByteArrayInputStream bais = null;
+		ByteArrayOutputStream baos = null;
         Socket s = null;
         try{
         	Properties p = new Properties();
@@ -42,12 +48,16 @@ public class Client {
         	else{
         		System.out.println("Connected to server at "+s.getInetAddress().toString());
         	}
-        	oos = new ObjectOutputStream(s.getOutputStream());
-        	ois = new ObjectInputStream(s.getInputStream());
+        	
         	while (!done){
         		while (myMove){
 					if (!c.getBoard().equals(lastBoard)){
+						baos = new ByteArrayOutputStream();
+						oos = new ObjectOutputStream(baos);
 						oos.writeObject(c.getBoard());
+						boardish = baos.toByteArray();
+						boardish = BoardCrypter.encrypt(boardish);
+						s.getOutputStream().write(boardish);
 						lastBoard = c.getBoardCopy();
 						myMove = false;
 						c.setWhiteTurn(true);
@@ -55,6 +65,10 @@ public class Client {
 					else Thread.sleep(500);
 				}
 				if (!myMove){
+					s.getInputStream().read(boardish);
+					boardish = BoardCrypter.decrypt(boardish);
+					bais = new ByteArrayInputStream(boardish);
+					ois = new ObjectInputStream(bais);
 					Object obj = ois.readObject();
 					if (obj instanceof GameBoard){
 						GameBoard newBoard = (GameBoard)obj;
