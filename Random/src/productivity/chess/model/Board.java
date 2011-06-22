@@ -152,13 +152,21 @@ public class Board implements GameBoard {
 					int c = loc.getCol();
 					Piece rook = (Piece)getPieceAt(new Location(r,c-3));
 					if(rook.getType()==PieceType.ROOK && !rook.hasMoved())
-						if(getPieceAt(new Location(r,c-1))==null && getPieceAt(new Location(r, c-2))==null)
-							locs.add(new Location(r,c-2));
+						if(getPieceAt(new Location(r,c-1))==null && getPieceAt(new Location(r, c-2))==null){
+							String enemyColor=getOppositeColor(p.getColor());
+							if(!isBeingAttacked(enemyColor, new Location(r,c))
+									&&!isBeingAttacked(enemyColor,new Location(r,c-1)) && !isBeingAttacked(enemyColor,new Location(r,c-2)))
+								locs.add(new Location(r,c-2));
+						}
 					rook = (Piece)getPieceAt(new Location(r, c+4));
 					if(rook.getType()==PieceType.ROOK && !rook.hasMoved())
 						if(getPieceAt(new Location(r,c+1))==null && getPieceAt(new Location(r, c+2))==null
-								&& getPieceAt(new Location(r, c+3))==null)
-							locs.add(new Location(r,c+2));
+								&& getPieceAt(new Location(r, c+3))==null){
+							String enemyColor=getOppositeColor(p.getColor());
+							if(!isBeingAttacked(enemyColor, new Location(r,c))&&!isBeingAttacked(enemyColor,new Location(r,c+1)) 
+									&& !isBeingAttacked(enemyColor,new Location(r,c+2)) && !isBeingAttacked(enemyColor,new Location(r,c+3)))
+								locs.add(new Location(r,c+2));
+						}
 				}
 					
 				break;
