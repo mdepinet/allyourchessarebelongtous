@@ -11,6 +11,11 @@ public class Piece implements GamePiece {
 		setType(getTypeForString(s));
 		setColor(col);
 	}
+	public Piece(Piece p)
+	{
+		setType(p.getType());
+		setColor(p.getColor());
+	}
 	public PieceType getTypeForString(String s)
 	{
 		if(s.equals("X"))
