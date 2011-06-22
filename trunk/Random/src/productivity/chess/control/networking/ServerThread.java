@@ -1,5 +1,7 @@
 package productivity.chess.control.networking;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -7,6 +9,7 @@ import java.net.Socket;
 import java.net.SocketException;
 
 import productivity.chess.control.Chess;
+import productivity.chess.encryption.BoardCrypter;
 import productivity.chess.model.GameBoard;
 
 public class ServerThread extends Thread {
@@ -26,18 +29,19 @@ public class ServerThread extends Thread {
 	public void run(){
 		ObjectInputStream ois = null;
 		ObjectOutputStream oos = null;
-		try {
-			ois = new ObjectInputStream(client.getInputStream());
-			oos = new ObjectOutputStream(client.getOutputStream());
-		} catch (IOException e) {
-			done = true;
-			e.printStackTrace();
-		}
+		byte[] boardish = new byte[4096];
+		ByteArrayInputStream bais = null;
+		ByteArrayOutputStream baos = null;
 		while (!done){
 			try {
 				while (myMove){
 					if (!c.getBoard().equals(lastBoard)){
+						baos = new ByteArrayOutputStream();
+						oos = new ObjectOutputStream(baos);
 						oos.writeObject(c.getBoard());
+						boardish = baos.toByteArray();
+						boardish = BoardCrypter.encrypt(boardish);
+						client.getOutputStream().write(boardish);
 						lastBoard = c.getBoardCopy();
 						myMove = false;
 						c.setWhiteTurn(false);
@@ -45,6 +49,10 @@ public class ServerThread extends Thread {
 					else Thread.sleep(500);
 				}
 				if (!myMove){
+					client.getInputStream().read(boardish);
+					boardish = BoardCrypter.decrypt(boardish);
+					bais = new ByteArrayInputStream(boardish);
+					ois = new ObjectInputStream(bais);
 					Object obj = ois.readObject();
 					if (obj instanceof GameBoard){
 						GameBoard newBoard = (GameBoard)obj;
