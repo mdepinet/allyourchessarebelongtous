@@ -141,6 +141,11 @@ public class Chess implements MouseListener{
     			piece.incMovesAlone();
     		if(piece.getMovesAlone()>50)
     			stalemate();
+    		//castling
+    		if(Math.abs(prev.getCol()-curr.getCol())>1){
+    			boolean rookAt0 = prev.getCol()>curr.getCol();
+    			castle(rookAt0,isWhite);
+    		}
     	case ROOK:
     		piece.setHasMoved();
     		break;
@@ -207,6 +212,19 @@ public class Chess implements MouseListener{
     }
     public void setWhiteTurn(boolean whiteTurn){
     	isWhiteTurn = whiteTurn;
+    }
+    public void castle(boolean rookAt0,boolean isWhite)
+    {
+    	//checks are done in the king's validMoveLocations method
+    	if(rookAt0 && isWhite)
+    		board.movePiece(new Location(0,0), new Location(0,2));
+    	else if(!rookAt0 && isWhite)
+        	board.movePiece(new Location(0,7), new Location(0,4));
+    	else if(rookAt0 && !isWhite)
+        	board.movePiece(new Location(7,0), new Location(7,2));
+    	else if(!rookAt0 && !isWhite)
+        	board.movePiece(new Location(7,7), new Location(7,4));
+    	
     }
 }
 
