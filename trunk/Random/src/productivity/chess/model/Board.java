@@ -176,7 +176,7 @@ public class Board implements GameBoard {
 	{
 		List<Location> locs = new LinkedList<Location>();
 		Piece p = (Piece)getPieceAt(row,col);
-		//horizontal
+		//vertical
 		for(int r = row+1; r<8; ++r){
 			if(isOccupied(r, col)){
 				if (p.getOppositeColor().equals(occupiedBy(r,col))) locs.add(new Location(r,col));
@@ -197,7 +197,7 @@ public class Board implements GameBoard {
 					 locs.add(new Location(r,col));
 			}
 		}
-		//vertical
+		//horizontal
 		for(int c = col+1; c<8; ++c){
 			if(isOccupied(row, c)){
 				if (p.getOppositeColor().equals(occupiedBy(row,c))) locs.add(new Location(row,c));
@@ -391,18 +391,32 @@ public class Board implements GameBoard {
 	}
 	public boolean isBeingAttacked(String color, Location loc)
 	{
-		Piece dummy=board[loc.getRow()][loc.getCol()];
+		Piece dummy;
+		if(board[loc.getRow()][loc.getCol()]!=null)
+			dummy=new Piece(board[loc.getRow()][loc.getCol()]);
+		else
+			dummy=null;
 		board[loc.getRow()][loc.getCol()]= new Piece("D",getOppositeColor(color));
 		for(int r =0; r<8; r++)
 			for(int c = 0; c<8; c++){
 				GamePiece p = getPieceAt(new Location(r,c));
-				if(p!=null 
-						&& p.getColor().equals(color))
-					for(Location l :getValidMovesForLocation(new Location(r,c)))
-						if(loc.equals(l)){
+				if(p!=null && p.getColor().equals(color)){
+					if(p.getType() != PieceType.KING){
+						for(Location l :getValidMovesForLocation(new Location(r,c)))
+							if(loc.equals(l)){
 								board[loc.getRow()][loc.getCol()]=dummy;
 								return true;
 							}
+					}
+					else{ //the piece is a King and we don't want to call getValidMovesForLocation on it or else an infinite loop starts
+						if(getValidAdjacents(r,c).contains(loc)){
+							board[loc.getRow()][loc.getCol()]=dummy;
+							return true;
+						}
+							
+					}
+				}
+				
 			}
 		board[loc.getRow()][loc.getCol()]=dummy;
 		return false;
