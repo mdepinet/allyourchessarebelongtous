@@ -150,14 +150,16 @@ public class Chess implements MouseListener{
     		piece.setHasMoved();
     		break;
     	}
-//    	isWhiteTurn=!isWhiteTurn;
+    	//isWhiteTurn=!isWhiteTurn;
     	//System.out.println(board.isInCheck("white"));
-    	if(board.isInCheck("white"))
-    		if(board.isCheckmate(true))
-    			System.out.println("white loses");
-    	if (!board.canMove(isWhite ? "black" : "white")){
-    		if ((isWhite && isInCheck("black")) || (!isWhite && isInCheck("white"))) checkmate(isWhite);
-    		else stalemate();
+    	String color = isWhiteTurn ? "black" : "white";
+    	if(board.isInCheck(color)){
+    		if(board.isCheckmate(isWhiteTurn))
+    			System.out.println(color +" loses");
+    	}
+    	else if (!board.canMove(isWhiteTurn ? "black" : "white")){
+    		//if ((isWhite && isInCheck("black")) || (!isWhite && isInCheck("white"))) checkmate(isWhite); 
+    			stalemate();
     	}
     	//TODO
     	//increments ints for how long each pawn has been stationary, updates hasMoved for kings and rooks, check En passant

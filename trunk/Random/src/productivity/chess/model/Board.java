@@ -558,10 +558,12 @@ public class Board implements GameBoard {
 		for(int r = 0; r<8; r++)
 			for(int c = 0; c<8; c++){
 				Location loc = new Location(r,c);
-				List<Location> valids = getValidMovesForLocation(loc);
-				valids.retainAll(attackingLocs);
-				if(valids.size()>0)
-					return false;
+				if(isOccupied(r,c)&& getPieceAt(r,c).getColor().equals(color)&&getPieceAt(r,c).getType()!=PieceType.KING){
+					List<Location> valids = getValidMovesForLocation(loc);
+					valids.retainAll(attackingLocs);
+					if(valids.size()>0)
+						return false;
+				}
 			}
 		
 		
