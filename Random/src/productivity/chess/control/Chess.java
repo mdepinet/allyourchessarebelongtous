@@ -25,12 +25,14 @@ public class Chess implements MouseListener{
 	private List<Location> moves;
 	private Location selected;
 	private boolean isWhiteTurn;
+	private boolean flipped;
 //	private Server server;
 	
 	public Chess(String frameTitle)
 	{
 		board = new Board();
-		frame = new GameFrame("Chess - "+frameTitle, board, (MouseListener) this);
+		this.flipped = (frameTitle.equals("Server"));
+		frame = new GameFrame(frameTitle, board, (MouseListener) this);
 		moves = new LinkedList<Location>();
 		frame.getCanvas().setMoves(moves);
 		selected = null;
@@ -107,7 +109,7 @@ public class Chess implements MouseListener{
     	y = y-50;
     	if(x>=0 && y>=0)
     	{
-    		return new Location(y/30,x/30);
+    		return new Location((flipped)? 7-(y/30) : (y/30),(flipped)? 7-(x/30) : (x/30));
     	}
     	return null;
     }
