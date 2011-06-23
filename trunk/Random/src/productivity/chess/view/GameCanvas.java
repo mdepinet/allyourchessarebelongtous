@@ -11,6 +11,7 @@ import java.util.List;
 
 import javax.imageio.ImageIO;
 
+import productivity.chess.model.Board;
 import productivity.chess.model.GameBoard;
 import productivity.chess.model.GamePiece;
 import productivity.chess.model.Location;
@@ -19,9 +20,10 @@ public class GameCanvas extends Canvas {
 	private static final long serialVersionUID = 1L;
 	private GameBoard board;
 	private List<Location> moves;
-	
-	public GameCanvas() {
+	private boolean flipped;
+	public GameCanvas(boolean flipped) {
 	  setBackground (Color.WHITE);
+	  this.flipped = flipped;
 	  moves = new LinkedList<Location>();
 	}
 	 public void paint (Graphics g) {
@@ -34,11 +36,12 @@ public class GameCanvas extends Canvas {
 		}
 		catch(Throwable t) {}
 		g2.drawImage(background, 50, 50, this);
+		
 	   for(int i = 0; i < 8; i++)
 	   {
 		   for(int j = 0; j < 8; j++)
 		   {
-			   GamePiece p = board.getPieceAt(new Location(i,j));
+			   GamePiece p = board.getPieceAt(new Location((flipped ? 7 : 2*i)-i,(flipped ? 7 : 2*j)-j));
 			   if(p!=null)
 			   {
 				   Image img = null;
@@ -53,8 +56,9 @@ public class GameCanvas extends Canvas {
 	   g2.setColor(new Color(1.0f,1.0f,0.0f,0.5f));
 	   for(Location loc: moves)
 	   {
-		   g2.fillRect(51+(loc.getCol()*30), 50+(loc.getRow()*30), 29, 29);
+		   g2.fillRect(51+(((flipped ? 7 : 2*loc.getCol())-loc.getCol())*30), 50+(((flipped ? 7 : 2*loc.getRow())-loc.getRow())*30), 29, 29);
 	   }
+	   //board=new Board(((Board)board).flipBoard());
 	 }
 	 
 	public void setBoard(GameBoard board) {

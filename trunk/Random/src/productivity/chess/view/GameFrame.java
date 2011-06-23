@@ -13,11 +13,11 @@ public class GameFrame extends JFrame {
 
 	public GameFrame(String s, GameBoard board, MouseListener ml)
 	{
-		super(s);
+		super("Chess - "+s);
 		this.setBounds(300,300,340,360);
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		this.setResizable(false);
-		canvas = new GameCanvas();
+		canvas = new GameCanvas(s.equals("Server"));
 		canvas.addMouseListener(ml);
 		canvas.setBoard(board);
 		getContentPane().add(canvas);
