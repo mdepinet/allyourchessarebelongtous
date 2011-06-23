@@ -209,6 +209,7 @@ public class Chess implements MouseListener{
     }
     public void setBoard(GameBoard board){
     	this.board = board;
+    	moves.clear();
     	frame.getCanvas().setBoard(board);
     	frame.getCanvas().repaint();
     }
