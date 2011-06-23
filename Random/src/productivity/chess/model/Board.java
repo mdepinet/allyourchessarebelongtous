@@ -111,14 +111,14 @@ public class Board implements GameBoard {
 					if (p.getOppositeColor().equals(occupiedBy(row-1,col-1))) locs.add(new Location(row-1, col-1));
 				}
 				//En passant
-				if ((p.isWhite() && row >= 5) || (!p.isWhite() && row <=4)){
+				if ((p.isWhite() && row >= 4) || (!p.isWhite() && row <=3)){
 					Piece other;
 					if (p.getOppositeColor().equals(occupiedBy(row,col+1))
 							&& (other = getPieceAt(row,col+1)).getType() == PieceType.PAWN
-							&& other.getLastMoved() == 0) locs.add(new Location(row,col+1));
+							&& other.getLastMoved() == 0) locs.add(new Location((p.isWhite() ? row+1 : row - 1),col+1));
 					if (p.getOppositeColor().equals(occupiedBy(row,col-1))
 							&& (other = getPieceAt(row,col-1)).getType() == PieceType.PAWN
-							&& other.getLastMoved() == 0) locs.add(new Location(row,col-1));
+							&& other.getLastMoved() == 0) locs.add(new Location((p.isWhite() ? row+1 : row - 1),col-1));
 				}
 				break;
 			case ROOK:
@@ -352,6 +352,11 @@ public class Board implements GameBoard {
 	}
 	public GamePiece getPieceAt(Location loc){
 		return board[loc.getRow()][loc.getCol()];
+	}
+	public GamePiece removePieceAt(Location loc){
+		Piece p = board[loc.getRow()][loc.getCol()];
+		board[loc.getRow()][loc.getCol()] = null;
+		return p;
 	}
 	public Piece getPieceAt(int row, int col){
 		return board[row][col];

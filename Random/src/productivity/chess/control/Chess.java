@@ -42,23 +42,13 @@ public class Chess implements MouseListener{
 //		}
 		whites= new ArrayList<GamePiece>();
 		aas = new ArrayList<GamePiece>();
-		for(int r = 0; r<8; r++)
-			for(int c =0; c<8; c++){
-				GamePiece piece = board.getPieceAt(new Location(r,c));
-
-				if(piece != null && piece.getColor().equals("white"))
-					whites.add(piece);
-				else
-					aas.add(piece);
-
-				if(piece !=null){
-					if(piece.getColor().equals("white"))
-						whites.add(piece);
-					else
-						aas.add(piece);
-				}
-
+		for(int r = 0; r<8; r++) for(int c =0; c<8; c++){
+			GamePiece piece = board.getPieceAt(new Location(r,c));
+			if (piece != null){
+				if (piece.getColor().equals("white")) whites.add(piece);
+				else aas.add(piece);
 			}
+		}
 	}
 	
 	public void mousePressed(MouseEvent e) {
@@ -125,10 +115,22 @@ public class Chess implements MouseListener{
     {
     	whites.remove(taken);
     	aas.remove(taken);
+    	for (GamePiece p : whites){
+    		if (p.getType() == PieceType.PAWN) p.incLastMoved();
+    	}
+    	for (GamePiece p : aas){
+    		if (p.getType() == PieceType.PAWN) p.incLastMoved();
+    	}
     	Piece piece =(Piece) board.getPieceAt(curr);
     	boolean isWhite = piece.getColor().equals("white");
     	switch(piece.getType()){
     	case PAWN:
+    		piece.resetLastMoved();
+    		if (prev.getCol() != curr.getCol() && taken == null){
+    			board.removePieceAt(new Location(piece.isWhite() ? curr.getRow()-1 : curr.getRow()+1,curr.getCol()));
+    			if (piece.isWhite()) aas.remove(taken);
+    			else whites.remove(taken);
+    		}
     		if(curr.getRow()==0 || curr.getRow()==7)
     			pawnUpgrade(curr);
     		break;
@@ -210,6 +212,15 @@ public class Chess implements MouseListener{
     public void setBoard(GameBoard board){
     	this.board = board;
     	moves.clear();
+    	whites.clear();
+		aas.clear();
+		for(int r = 0; r<8; r++) for(int c =0; c<8; c++){
+			GamePiece piece = board.getPieceAt(new Location(r,c));
+			if (piece != null){
+				if (piece.getColor().equals("white")) whites.add(piece);
+				else aas.add(piece);
+			}
+		}
     	frame.getCanvas().setBoard(board);
     	frame.getCanvas().repaint();
     }

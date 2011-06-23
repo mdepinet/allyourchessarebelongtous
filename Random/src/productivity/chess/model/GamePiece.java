@@ -6,4 +6,6 @@ public interface GamePiece extends Serializable {
 	PieceType getType();
 	String getColor();
 	void setType(PieceType type);
+	void incLastMoved();
+	void resetLastMoved();
 }
