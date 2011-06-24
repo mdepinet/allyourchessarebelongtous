@@ -44,7 +44,7 @@ public class ServerThread extends Thread {
 						client.getOutputStream().write(boardish);
 						lastBoard = c.getBoardCopy();
 						myMove = false;
-						c.setWhiteTurn(false);
+						c.setWhiteTurn(false, "White");
 					}
 					else Thread.sleep(500);
 				}
@@ -59,7 +59,7 @@ public class ServerThread extends Thread {
 						c.setBoard(newBoard);
 						lastBoard = c.getBoardCopy();
 						myMove = true;
-						c.setWhiteTurn(true);
+						c.setWhiteTurn(true, "White");
 					}
 					else System.err.println("Received non GameBoard object...");
 				}

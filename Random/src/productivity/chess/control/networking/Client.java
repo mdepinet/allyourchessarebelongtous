@@ -18,7 +18,7 @@ import productivity.chess.model.GameBoard;
 public class Client {
 	public static void main(String[] args){
 		Chess c = new Chess("Client");
-		c.setWhiteTurn(false);
+		//c.setWhiteTurn(false);
 		boolean done = false;
 		GameBoard lastBoard = null;
 		boolean myMove = false;
@@ -60,7 +60,7 @@ public class Client {
 						s.getOutputStream().write(boardish);
 						lastBoard = c.getBoardCopy();
 						myMove = false;
-						c.setWhiteTurn(true);
+						c.setWhiteTurn(true, "Black");
 					}
 					else Thread.sleep(500);
 				}
@@ -75,7 +75,7 @@ public class Client {
 						c.setBoard(newBoard);
 						lastBoard = c.getBoardCopy();
 						myMove = true;
-						c.setWhiteTurn(false);
+						c.setWhiteTurn(false, "Black");
 					}
 					else System.err.println("Received non GameBoard object...");
 				}
