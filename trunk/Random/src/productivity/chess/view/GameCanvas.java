@@ -21,9 +21,13 @@ public class GameCanvas extends Canvas {
 	private GameBoard board;
 	private List<Location> moves;
 	private boolean flipped;
+	private boolean whitesMove;
+	private String pcolor;
 	public GameCanvas(boolean flipped) {
 	  setBackground (Color.WHITE);
+	  whitesMove=true;
 	  this.flipped = flipped;
+	  pcolor="";
 	  moves = new LinkedList<Location>();
 	}
 	 public void paint (Graphics g) {
@@ -35,6 +39,7 @@ public class GameCanvas extends Canvas {
 		   background = ImageIO.read(new File("resources/images/board.png"));
 		}
 		catch(Throwable t) {}
+		g2.drawString(((whitesMove && pcolor.equals("White")) || (!whitesMove && pcolor.equals("Black"))?"Your move":""), 25, 25);
 		g2.drawImage(background, 50, 50, this);
 		
 	   for(int i = 0; i < 8; i++)
@@ -78,5 +83,12 @@ public class GameCanvas extends Canvas {
 	}
 	public void setMoves(List<Location> moves) {
 		this.moves = moves;
+	}
+	public void setTurn(boolean turn, String pcolor) {
+		whitesMove = turn;
+		this.pcolor=pcolor;
+	}
+	public boolean getTurn() {
+		return whitesMove;
 	}
 }

@@ -26,6 +26,7 @@ public class Chess implements MouseListener{
 	private Location selected;
 	private boolean isWhiteTurn;
 	private boolean flipped;
+	private boolean moved;
 //	private Server server;
 	
 	public Chess(String frameTitle)
@@ -37,6 +38,7 @@ public class Chess implements MouseListener{
 		frame.getCanvas().setMoves(moves);
 		selected = null;
 		isWhiteTurn=true;
+		moved=false;
 //		try {
 //			server = new Server();
 //		} catch (Exception e) {
@@ -86,8 +88,10 @@ public class Chess implements MouseListener{
 	    		if(!moves.isEmpty())
 	    			repaint=true;
 	    	}
-	    	if(repaint)
+	    	if(repaint) {
 	    		frame.getCanvas().repaint();
+	    		//frame.getCanvas().setTurn(!isWhiteTurn);
+	    	}
 	    	
 	    	if (board.getPieceAt(loc) != null && correctTurn) selected = loc;
     	}
@@ -226,8 +230,15 @@ public class Chess implements MouseListener{
     	frame.getCanvas().setBoard(board);
     	frame.getCanvas().repaint();
     }
-    public void setWhiteTurn(boolean whiteTurn){
+    public void setWhiteTurn(boolean whiteTurn, String pcolor){
     	isWhiteTurn = whiteTurn;
+    	//if(moved) {
+    		frame.getCanvas().setTurn(whiteTurn, pcolor);
+    	   	frame.getCanvas().repaint();
+    	//}
+    }
+    public void setMoved(boolean move) {
+    	moved=move;
     }
     public void castle(boolean rookAt0,boolean isWhite)
     {
