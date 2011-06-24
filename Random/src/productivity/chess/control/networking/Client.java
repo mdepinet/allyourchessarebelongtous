@@ -60,7 +60,7 @@ public class Client {
 						s.getOutputStream().write(boardish);
 						lastBoard = c.getBoardCopy();
 						myMove = false;
-						c.setWhiteTurn(true, "Black");
+						c.setWhiteTurn(true, "black");
 					}
 					else Thread.sleep(500);
 				}
@@ -75,7 +75,8 @@ public class Client {
 						c.setBoard(newBoard);
 						lastBoard = c.getBoardCopy();
 						myMove = true;
-						c.setWhiteTurn(false, "Black");
+						c.setWhiteTurn(false, "black");
+						c.isInCheck("black");
 					}
 					else System.err.println("Received non GameBoard object...");
 				}
