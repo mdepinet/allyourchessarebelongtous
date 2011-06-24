@@ -23,12 +23,16 @@ public class GameCanvas extends Canvas {
 	private boolean flipped;
 	private boolean whitesMove;
 	private String pcolor;
+	private boolean inCheck;
+	private String ocolor;
 	public GameCanvas(boolean flipped) {
 	  setBackground (Color.WHITE);
 	  whitesMove=true;
 	  this.flipped = flipped;
 	  pcolor="";
+	  ocolor="";
 	  moves = new LinkedList<Location>();
+	  inCheck=false;
 	}
 	 public void paint (Graphics g) {
 	   Graphics2D g2;
@@ -39,7 +43,8 @@ public class GameCanvas extends Canvas {
 		   background = ImageIO.read(new File("resources/images/board.png"));
 		}
 		catch(Throwable t) {}
-		g2.drawString(((whitesMove && pcolor.equals("White")) || (!whitesMove && pcolor.equals("Black"))?"Your move":""), 25, 25);
+		g2.drawString(((whitesMove && pcolor.equals("white")) || (!whitesMove && pcolor.equals("black"))?"Your move":""), 25, 25);
+		g2.drawString((inCheck? "You are in check":""),25,315);
 		g2.drawImage(background, 50, 50, this);
 		
 	   for(int i = 0; i < 8; i++)
@@ -63,7 +68,6 @@ public class GameCanvas extends Canvas {
 	   {
 		   g2.fillRect(51+(((flipped ? 7 : 2*loc.getCol())-loc.getCol())*30), 50+(((flipped ? 7 : 2*loc.getRow())-loc.getRow())*30), 29, 29);
 	   }
-	   //board=new Board(((Board)board).flipBoard());
 	 }
 	 
 	public void setBoard(GameBoard board) {
@@ -90,5 +94,12 @@ public class GameCanvas extends Canvas {
 	}
 	public boolean getTurn() {
 		return whitesMove;
+	}
+	public void setCheck(boolean inCheck, String ocolor) {
+		this.inCheck=inCheck;
+		this.ocolor=ocolor;
+	}
+	public boolean getCheck() {
+		return inCheck;
 	}
 }
