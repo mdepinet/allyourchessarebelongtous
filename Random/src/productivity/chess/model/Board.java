@@ -353,6 +353,9 @@ public class Board implements GameBoard {
 	public GamePiece getPieceAt(Location loc){
 		return board[loc.getRow()][loc.getCol()];
 	}
+	public void putPieceAt(Location loc, GamePiece p) {
+		board[loc.getRow()][loc.getCol()]=(Piece)p;
+	}
 	public GamePiece removePieceAt(Location loc){
 		Piece p = board[loc.getRow()][loc.getCol()];
 		board[loc.getRow()][loc.getCol()] = null;
@@ -434,6 +437,14 @@ public class Board implements GameBoard {
 		board[loc.getRow()][loc.getCol()]=dummy;
 		return false;
 	}
+	/*
+	 * Is king in check?
+	 * Can king move?
+	 * If not, can another piece block the check?
+	 * If not, can another piece eliminate the piece putting the king in check?
+	 * (non-Javadoc)
+	 * @see productivity.chess.model.GameBoard#isCheckmate(boolean)
+	 */
 	public boolean isCheckmate(boolean isWhite)
 	{
 		//king must already be in check!
