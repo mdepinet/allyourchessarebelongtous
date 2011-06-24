@@ -56,10 +56,12 @@ public class ServerThread extends Thread {
 					Object obj = ois.readObject();
 					if (obj instanceof GameBoard){
 						GameBoard newBoard = (GameBoard)obj;
-						c.setBoard(newBoard);
-						lastBoard = c.getBoardCopy();
-						myMove = true;
-						c.setWhiteTurn(true, "White");
+						if(!newBoard.equals(lastBoard)){
+							c.setBoard(newBoard);
+							lastBoard = c.getBoardCopy();
+							myMove = true;
+							c.setWhiteTurn(true, "White");
+						}
 					}
 					else System.err.println("Received non GameBoard object...");
 				}
