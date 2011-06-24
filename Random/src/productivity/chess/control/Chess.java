@@ -97,13 +97,25 @@ public class Chess implements MouseListener{
     	}
     	else{
     		Location loc = locationForClick(e.getY(), e.getX());
+    		boolean good = true;
     		if (moves.contains(loc)){
-    			GamePiece taken = board.movePiece(selected,loc);
-    			updateStatus(selected, loc, taken);
+    			GamePiece temp = board.getPieceAt(selected);
+    			board.removePieceAt(selected);
+    			if(isInCheck(isWhiteTurn?"white":"black")) {
+    				((Board)board).putPieceAt(selected,temp);
+    				good=false;
+    			}
+    			else {
+    				((Board)board).putPieceAt(selected,temp);
+	    			GamePiece taken = board.movePiece(selected,loc);
+	    			updateStatus(selected, loc, taken);
+    			}
 //    			server.setBoard((Board)board);
     		}
-    		moves.clear();
-    		frame.getCanvas().repaint();
+    		if(good) {
+	    		moves.clear();
+	    		frame.getCanvas().repaint();
+    		}
     		selected = null;
     	}
     }
