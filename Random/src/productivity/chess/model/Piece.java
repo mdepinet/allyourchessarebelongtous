@@ -57,6 +57,13 @@ public class Piece implements GamePiece {
 	{
 		this.type=type;
 	}
+	public boolean equals(Object o){
+		if(!(o instanceof Piece)) return false;
+		Piece p = (Piece)o;
+		if(p.getType()!=getType()) return false;
+		if(!p.getColor().equals(getColor())) return false;
+		return true;
+	}
 	public void setHasMoved(){
 		if (type == PieceType.KING || type == PieceType.ROOK) {
 			if(scratch>0) return; 
