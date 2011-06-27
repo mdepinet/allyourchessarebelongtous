@@ -3,18 +3,23 @@ package productivity.chess.control.networking;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.*;
+
+import productivity.chess.view.PlayerPicker;
+
 
 public class Server {
 
 	public static void main(String[] args){
 		System.out.println("Waiting for connections.");
 		ServerSocket servSoc = null;
+		
+		PlayerPicker picker = new PlayerPicker();
 		try {
 		servSoc = new ServerSocket(3030);
 			while (true){
 					Socket client = servSoc.accept();
-					System.out.println("Accepted a connection from: "+client.getInetAddress());
-					new ServerThread(client).start();
+					picker.addClient(new ServerThread(client));
 				} 
 		} catch (IOException e) {
 			e.printStackTrace();
