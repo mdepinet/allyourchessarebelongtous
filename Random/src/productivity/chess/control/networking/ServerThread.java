@@ -22,11 +22,11 @@ public class ServerThread extends Thread {
 	
 	public ServerThread(Socket client){
 		this.client = client;
+	}
+
+	public void run(){
 		c = new Chess("Server");
 		lastBoard = c.getBoardCopy();
-	}
-	
-	public void run(){
 		ObjectInputStream ois = null;
 		ObjectOutputStream oos = null;
 		byte[] boardish = new byte[4096];
@@ -82,5 +82,13 @@ public class ServerThread extends Thread {
 			ois.close();
 			oos.close();
 		} catch(Throwable t){}
+	}
+
+	public Socket getClient() {
+		return client;
+	}
+
+	public void setClient(Socket client) {
+		this.client = client;
 	}
 }
