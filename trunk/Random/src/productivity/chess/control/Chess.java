@@ -103,7 +103,10 @@ public class Chess implements MouseListener{
     				((Board)board).putPieceAt(loc, taken);
     			}
     			else {
+    				((Board)board).putPieceAt(selected,temp);
+    				((Board)board).putPieceAt(loc, taken);
 	    			updateStatus(selected, loc, taken);
+	    			board.movePiece(selected,loc);
     			}
 //    			server.setBoard((Board)board);
     		}
@@ -132,7 +135,7 @@ public class Chess implements MouseListener{
     	for (GamePiece p : aas){
     		if (p.getType() == PieceType.PAWN) p.incLastMoved();
     	}
-    	Piece piece =(Piece) board.getPieceAt(curr);
+    	Piece piece =(Piece) board.getPieceAt(prev);
     	boolean isWhite = piece.getColor().equals("white");
     	switch(piece.getType()){
     	case PAWN:
@@ -143,7 +146,7 @@ public class Chess implements MouseListener{
     			else whites.remove(taken);
     		}
     		if(curr.getRow()==0 || curr.getRow()==7)
-    			pawnUpgrade(curr);
+    			pawnUpgrade(prev);
     		break;
     	case KING:
     		if(!piece.hasMoved())
