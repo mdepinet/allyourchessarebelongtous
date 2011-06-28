@@ -24,15 +24,19 @@ public class GameCanvas extends Canvas {
 	private boolean whitesMove;
 	private String pcolor;
 	private boolean inCheck;
+	private boolean mate;
+	private String winColor;
 	private String ocolor;
 	public GameCanvas(boolean flipped) {
 	  setBackground (Color.WHITE);
 	  whitesMove=true;
 	  this.flipped = flipped;
 	  pcolor="";
-	  ocolor="";
 	  moves = new LinkedList<Location>();
 	  inCheck=false;
+	  mate=false;
+	  winColor="";
+	  ocolor="";
 	}
 	 public void paint (Graphics g) {
 	   Graphics2D g2;
@@ -43,8 +47,9 @@ public class GameCanvas extends Canvas {
 		   background = ImageIO.read(new File("resources/images/board.png"));
 		}
 		catch(Throwable t) {}
-		g2.drawString(((whitesMove && pcolor.equals("white")) || (!whitesMove && pcolor.equals("black"))?"Your move":""), 25, 25);
-		g2.drawString((inCheck? "You are in check":""),25,315);
+		g2.drawString(!mate?((whitesMove && pcolor.equals("white")) || (!whitesMove && pcolor.equals("black"))?"Your move":""):"Checkmate", 25, 25);
+		g2.drawString(!mate?(inCheck? ocolor.equals(pcolor)?"You are in check":ocolor+" is in check":""):"Checkmate",25,315);
+		g2.drawString(!winColor.equals("")?winColor+" WINS":"", 150, 25);
 		g2.drawImage(background, 50, 50, this);
 		
 	   for(int i = 0; i < 8; i++)
@@ -101,5 +106,14 @@ public class GameCanvas extends Canvas {
 	}
 	public boolean getCheck() {
 		return inCheck;
+	}
+	public boolean getMate() {
+		return mate;
+	}
+	public void setMate(boolean bool) {
+		mate=bool;
+	}
+	public void setWin(String color) {
+		winColor=color;
 	}
 }
