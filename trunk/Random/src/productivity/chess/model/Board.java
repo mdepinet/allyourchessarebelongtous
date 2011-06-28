@@ -625,4 +625,5 @@ public class Board implements GameBoard {
 		}
 		return newRay;
 	}
+	
 }

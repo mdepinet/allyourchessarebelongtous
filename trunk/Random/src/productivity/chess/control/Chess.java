@@ -18,7 +18,7 @@ import productivity.chess.view.GameFrame;
 
 
 public class Chess implements MouseListener{
-	private GameBoard board;
+	private Board board;
 	private GameFrame frame;
 	private List<GamePiece> whites;
 	private List<GamePiece> aas;
@@ -47,6 +47,7 @@ public class Chess implements MouseListener{
 		for(int r = 0; r<8; r++) for(int c =0; c<8; c++){
 			GamePiece piece = board.getPieceAt(new Location(r,c));
 			if (piece != null){
+				((Piece)piece).setLocation(r,c);
 				if (piece.getColor().equals("white")) whites.add(piece);
 				else aas.add(piece);
 			}
@@ -105,6 +106,7 @@ public class Chess implements MouseListener{
     			else {
     				((Board)board).putPieceAt(selected,temp);
     				((Board)board).putPieceAt(loc, taken);
+	    			updateLoc(temp,loc);
 	    			updateStatus(selected, loc, taken);
 	    			board.movePiece(selected,loc);
     			}
@@ -169,9 +171,11 @@ public class Chess implements MouseListener{
     	//isWhiteTurn=!isWhiteTurn;
     	//System.out.println(board.isInCheck("white"));
     	String color = isWhiteTurn ? "black" : "white";
-    	if(board.isInCheck(color)){
-    		if(board.isCheckmate(isWhiteTurn))
+    	if(isInCheck(color)){
+    		if(board.isCheckmate(isWhiteTurn)) {
     			System.out.println(color +" loses");
+    			frame.getCanvas().setMate(true);
+    		}
     	}
     	else if (!board.canMove(isWhiteTurn ? "black" : "white")){
     		//if ((isWhite && isInCheck("black")) || (!isWhite && isInCheck("white"))) checkmate(isWhite); 
@@ -191,7 +195,157 @@ public class Chess implements MouseListener{
     }
     public boolean checkmate(boolean isWhite)
     {
-    	return board.isCheckmate(isWhite);
+//    	if(board.isCheckmate(isWhite)) frame.getCanvas().setMate(true);
+//    	return board.isCheckmate(isWhite);
+    	//Get the king
+    	GamePiece king = null; 
+    	if(!isWhite) {
+    		if(isInCheck("white")) {
+		    	for(int i=0;i<whites.size();i++) {
+		    		if(whites.get(i).getType()==PieceType.KING) {
+		    			king=whites.get(i);
+		    			break;
+		    		}
+		    	}
+		    	//Ensure king can't move
+		    	if(board.getValidMovesForLocation(((Piece)king).getLocation()).size()>0)
+					return false;
+		    	//Get all enemies that are attacking the king. If multiple enemies, then checkmate
+		    	ArrayList<GamePiece> enemiesAttack = new ArrayList<GamePiece>();
+		    	for(GamePiece piece:aas) {
+		    		if(board.getValidMovesForLocation(((Piece)piece).getLocation()).contains(((Piece)king).getLocation()))
+						enemiesAttack.add(piece);
+		    	}
+		    	if(enemiesAttack.size()>1) {
+		    		frame.getCanvas().setMate(true);
+		    		return true;
+		    	}
+		    	//Determine whether or not a move can be made by player to block/capture enemy piece
+		    	//Also determine path attacking piece takes to put king in check
+		    	GamePiece enemy = enemiesAttack.get(0);
+		    	if(enemy.getType()==PieceType.KNIGHT) {
+		    		ArrayList<GamePiece> allyAttack = new ArrayList<GamePiece>();
+		        	for(GamePiece piece:whites) {
+		        		if(board.getValidMovesForLocation(((Piece)piece).getLocation()).contains(((Piece)enemiesAttack.get(0)).getLocation()))
+		    				allyAttack.add(piece);
+		        	}
+		        	if(allyAttack.size()==0) {
+		        		frame.getCanvas().setMate(true);
+		        		return true;
+		        	}
+		    	}
+		    	if(enemy.getType()==PieceType.QUEEN || enemy.getType()==PieceType.BISHOP || enemy.getType()==PieceType.PAWN) {
+		    		ArrayList<Location> betweenPath = new ArrayList<Location>();
+		    		int row = ((Piece)enemy).getLocation().getRow();
+		    		for(int col = ((Piece)enemy).getLocation().getCol();col>((Piece)king).getLocation().getCol();col=(col>((Piece)king).getLocation().getCol()?col-1:col+1)) {
+		    			betweenPath.add(new Location(((Piece)enemy).getLocation().getRow()>((Piece)king).getLocation().getRow()?row--:row++,col));
+		    		}
+		    		ArrayList<GamePiece> allyAttack = new ArrayList<GamePiece>();
+		        	for(GamePiece piece:whites) {
+		        		for(Location spot:betweenPath)
+			        		if(board.getValidMovesForLocation(((Piece)piece).getLocation()).contains(spot))
+			    				allyAttack.add(piece);
+		        	}
+		        	if(allyAttack.size()==0) {
+		        		frame.getCanvas().setMate(true);
+		        		return true;
+		        	}
+		    	}
+		    	if(enemy.getType()==PieceType.QUEEN || enemy.getType()==PieceType.ROOK) {
+		    		ArrayList<Location> betweenPath = new ArrayList<Location>();
+		    		if(((Piece)enemy).getLocation().getRow()!=((Piece)king).getLocation().getRow()) 
+			    		for(int row = ((Piece)enemy).getLocation().getRow();row>((Piece)king).getLocation().getRow();row=(row>((Piece)king).getLocation().getRow()?row-1:row+1)) 
+			    			betweenPath.add(new Location(row,((Piece)enemy).getLocation().getCol()));
+			    	else if(((Piece)enemy).getLocation().getRow()!=((Piece)king).getLocation().getRow()) 
+			    		for(int col = ((Piece)enemy).getLocation().getCol();col>((Piece)king).getLocation().getCol();col=(col>((Piece)king).getLocation().getCol()?col-1:col+1)) 
+			    			betweenPath.add(new Location(((Piece)enemy).getLocation().getRow(),col));	
+		    		ArrayList<GamePiece> allyAttack = new ArrayList<GamePiece>();
+		        	for(GamePiece piece:whites) {
+		        		for(Location spot:betweenPath)
+			        		if(board.getValidMovesForLocation(((Piece)piece).getLocation()).contains(spot))
+			    				allyAttack.add(piece);
+		        	}
+		        	if(allyAttack.size()==0) {
+		        		frame.getCanvas().setMate(true);
+		        		return true;
+		        	}
+		    	}
+    		}
+    	}
+    	else {
+    		if(isInCheck("black")) {
+	    		for(int i=0;i<aas.size();i++) {
+		    		if(aas.get(i).getType()==PieceType.KING) {
+		    			king=aas.get(i);
+		    			break;
+		    		}
+		    	}
+		    	//Ensure king can't move
+		    	if(board.getValidMovesForLocation(((Piece)king).getLocation()).size()>0)
+					return false;
+		    	//Get all enemies that are attacking the king. If multiple enemies, then checkmate
+		    	ArrayList<GamePiece> enemiesAttack = new ArrayList<GamePiece>();
+		    	for(GamePiece piece:whites) {
+		    		if(board.getValidMovesForLocation(((Piece)piece).getLocation()).contains(((Piece)king).getLocation()))
+						enemiesAttack.add(piece);
+		    	}
+		    	if(enemiesAttack.size()>1) {
+		    		frame.getCanvas().setMate(true);
+		    		return true;
+		    	}
+		    	//Determine whether or not a move can be made by player to block/capture enemy piece
+		    	//Also determine path attacking piece takes to put king in check
+		    	GamePiece enemy = enemiesAttack.get(0);
+		    	if(enemy.getType()==PieceType.KNIGHT) {
+		    		ArrayList<GamePiece> allyAttack = new ArrayList<GamePiece>();
+		        	for(GamePiece piece:aas) {
+		        		if(board.getValidMovesForLocation(((Piece)piece).getLocation()).contains(((Piece)enemiesAttack.get(0)).getLocation()))
+		    				allyAttack.add(piece);
+		        	}
+		        	if(allyAttack.size()==0) {
+		        		frame.getCanvas().setMate(true);
+		        		return true;
+		        	}
+		    	}
+		    	if(enemy.getType()==PieceType.QUEEN || enemy.getType()==PieceType.BISHOP || enemy.getType()==PieceType.PAWN) {
+		    		ArrayList<Location> betweenPath = new ArrayList<Location>();
+		    		int row = ((Piece)enemy).getLocation().getRow();
+		    		for(int col = ((Piece)enemy).getLocation().getCol();col>((Piece)king).getLocation().getCol();col=(col>((Piece)king).getLocation().getCol()?col-1:col+1)) {
+		    			betweenPath.add(new Location(((Piece)enemy).getLocation().getRow()>((Piece)king).getLocation().getRow()?row--:row++,col));
+		    		}
+		    		ArrayList<GamePiece> allyAttack = new ArrayList<GamePiece>();
+		        	for(GamePiece piece:aas) {
+		        		for(Location spot:betweenPath)
+			        		if(board.getValidMovesForLocation(((Piece)piece).getLocation()).contains(spot))
+			    				allyAttack.add(piece);
+		        	}
+		        	if(allyAttack.size()==0) {
+		        		frame.getCanvas().setMate(true);
+		        		return true;
+		        	}
+		    	}
+		    	if(enemy.getType()==PieceType.QUEEN || enemy.getType()==PieceType.ROOK) {
+		    		ArrayList<Location> betweenPath = new ArrayList<Location>();
+		    		if(((Piece)enemy).getLocation().getRow()!=((Piece)king).getLocation().getRow()) 
+			    		for(int row = ((Piece)enemy).getLocation().getRow();row>((Piece)king).getLocation().getRow();row=(row>((Piece)king).getLocation().getRow()?row-1:row+1)) 
+			    			betweenPath.add(new Location(row,((Piece)enemy).getLocation().getCol()));
+			    	else if(((Piece)enemy).getLocation().getRow()!=((Piece)king).getLocation().getRow()) 
+			    		for(int col = ((Piece)enemy).getLocation().getCol();col>((Piece)king).getLocation().getCol();col=(col>((Piece)king).getLocation().getCol()?col-1:col+1)) 
+			    			betweenPath.add(new Location(((Piece)enemy).getLocation().getRow(),col));	
+		    		ArrayList<GamePiece> allyAttack = new ArrayList<GamePiece>();
+		        	for(GamePiece piece:aas) {
+		        		for(Location spot:betweenPath)
+			        		if(board.getValidMovesForLocation(((Piece)piece).getLocation()).contains(spot))
+			    				allyAttack.add(piece);
+		        	}
+		        	if(allyAttack.size()==0) {
+		        		frame.getCanvas().setMate(true);
+		        		return true;
+		        	}
+		    	}
+    		}
+    	}
+    	return false;
     }
     public void stalemate()
     {
@@ -213,8 +367,28 @@ public class Chess implements MouseListener{
     }
     public boolean isInCheck(String color)
     {
-    	frame.getCanvas().setCheck(board.isInCheck(color),color);
-    	return board.isInCheck(color);
+//    	frame.getCanvas().setCheck(board.isInCheck(color),color);
+//    	return board.isInCheck(color);
+    	if(color.equals("black")) {
+			for(GamePiece p:whites) {
+				for(Location loc :board.getValidMovesForLocation(((Piece)p).getLocation()))
+					if(board.getPieceAt(loc)!=null && board.getPieceAt(loc).getType()==PieceType.KING) {
+						frame.getCanvas().setCheck(true,color);
+						return true;
+					}
+			}
+		}
+    	if(color.equals("white")) {
+			for(GamePiece p:aas) {
+				for(Location loc :board.getValidMovesForLocation(((Piece)p).getLocation()))
+					if(board.getPieceAt(loc)!=null && board.getPieceAt(loc).getType()==PieceType.KING){
+						frame.getCanvas().setCheck(true,color);
+						return true;
+					}
+			}
+		}
+    	frame.getCanvas().setCheck(false,color);
+    	return false;
     	
     }
     
@@ -225,7 +399,7 @@ public class Chess implements MouseListener{
     	return new Board((Board)board);
     }
     public void setBoard(GameBoard board){
-    	this.board = board;
+    	this.board = (Board)board;
     	moves.clear();
     	whites.clear();
 		aas.clear();
@@ -259,6 +433,18 @@ public class Chess implements MouseListener{
         	board.movePiece(new Location(7,7), new Location(7,4));
     	
     }
+    public void updateLoc(GamePiece p, Location loc) {
+    	if(((Piece)p).getColor().equals("white")) {
+    		((Piece)whites.get(whites.indexOf(p))).setLocation(loc);
+    	}
+    	else if(((Piece)p).getColor().equals("black")) {
+    		((Piece)aas.get(aas.indexOf(p))).setLocation(loc);
+    	}
+    }
+
+	public GameFrame getFrame() {
+		return frame;
+	}
 }
 
 

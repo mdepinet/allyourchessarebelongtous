@@ -5,16 +5,27 @@ public class Piece implements GamePiece {
 	private PieceType type;
 	private String color;
 	private int scratch;
+	private Location loc;
+	private String status;
 	
 	public Piece(String s, String col)
 	{
 		setType(getTypeForString(s));
 		setColor(col);
+		status="";
+	}
+	public Piece(String s, String col, Location loc)
+	{
+		setType(getTypeForString(s));
+		setColor(col);
+		this.loc = loc;
+		status="";
 	}
 	public Piece(Piece p)
 	{
 		setType(p.getType());
 		setColor(p.getColor());
+		status="";
 	}
 	public PieceType getTypeForString(String s)
 	{
@@ -65,15 +76,15 @@ public class Piece implements GamePiece {
 		return true;
 	}
 	public void setHasMoved(){
-		if (type == PieceType.KING || type == PieceType.ROOK) {
+		if (type == PieceType.KING || type == PieceType.ROOK || type == PieceType.PAWN) {
 			if(scratch>0) return; 
 			scratch =  1;
 			}
 		else throw new UnsupportedOperationException("hasMoved can only be set for kings and rooks");
 	}
 	public boolean hasMoved(){
-		if (type == PieceType.KING || type == PieceType.ROOK) return scratch != 0;
-		else throw new UnsupportedOperationException("hasMoved can only be accessed for kings and rooks");
+		if (type == PieceType.KING || type == PieceType.ROOK || type == PieceType.PAWN) return scratch != 0;
+		else throw new UnsupportedOperationException("hasMoved can only be accessed for kings, rooks, and pawns");
 	}
 	public int getMovesAlone(){
 		if (type == PieceType.KING) return scratch;
@@ -98,5 +109,30 @@ public class Piece implements GamePiece {
 	public void incLastMoved(){
 		if (type == PieceType.PAWN) scratch++;
 		else throw new UnsupportedOperationException("lastMoved can only be set for pawns");
+	}
+	public Location getLocation() {
+		return loc;
+	}
+	public void setLocation(Location loc) {
+		this.loc = loc;
+	}
+	public void setLocation(int row, int col) {
+		this.loc = new Location(row,col);
+	}
+	public void setStatus(String s) {
+		status=s;
+	}
+	public String getStatus() {
+		return status;
+	}
+	public String toString() {
+		if(type.equals(PieceType.PAWN)) return color + "PAWN";
+		if(type.equals(PieceType.KING)) return color + "KING";
+		if(type.equals(PieceType.QUEEN)) return color + "QUEEN";
+		if(type.equals(PieceType.BISHOP)) return color + "BISHOP";
+		if(type.equals(PieceType.KNIGHT)) return color + "KNIGHT";
+		if(type.equals(PieceType.ROOK)) return color + "ROOK";
+		if(type.equals(PieceType.DUMMY)) return color + "DUMMY";
+		return "";
 	}
 }

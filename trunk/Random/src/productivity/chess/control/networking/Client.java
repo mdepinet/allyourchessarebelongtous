@@ -59,6 +59,8 @@ public class Client {
 						boardish = BoardCrypter.encrypt(boardish);
 						s.getOutputStream().write(boardish);
 						lastBoard = c.getBoardCopy();
+						if(c.checkmate(false))
+							c.getFrame().getCanvas().setWin("Black");
 						myMove = false;
 						c.setWhiteTurn(true, "black");
 					}
@@ -76,7 +78,9 @@ public class Client {
 						lastBoard = c.getBoardCopy();
 						myMove = true;
 						c.setWhiteTurn(false, "black");
-						c.isInCheck("black");
+						if(c.isInCheck("black"))
+							if(c.checkmate(true))
+								c.getFrame().getCanvas().setWin("White");
 					}
 					else System.err.println("Received non GameBoard object...");
 				}

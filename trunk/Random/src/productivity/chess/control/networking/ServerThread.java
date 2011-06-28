@@ -43,6 +43,8 @@ public class ServerThread extends Thread {
 						boardish = BoardCrypter.encrypt(boardish);
 						client.getOutputStream().write(boardish);
 						lastBoard = c.getBoardCopy();
+						if(c.checkmate(true))
+							c.getFrame().getCanvas().setWin("White");
 						myMove = false;
 						c.setWhiteTurn(false, "white");
 					}
@@ -61,7 +63,9 @@ public class ServerThread extends Thread {
 							lastBoard = c.getBoardCopy();
 							myMove = true;
 							c.setWhiteTurn(true, "white");
-							c.isInCheck("white");
+							if(c.isInCheck("white"))
+								if(c.checkmate(false))
+									c.getFrame().getCanvas().setWin("Black");
 						}
 					}
 					else System.err.println("Received non GameBoard object...");
