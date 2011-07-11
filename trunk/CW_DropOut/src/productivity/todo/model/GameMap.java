@@ -103,7 +103,7 @@ public class GameMap{
 	}
 	public boolean isValid(Point2D.Double loc, int radius)
 	{
-		if(loc.x>500 || loc.x<0 || loc.y <0 || loc.y>500) return false;
+		if(loc.x>500-radius || loc.x<radius || loc.y <radius || loc.y>500-radius) return false;
 		for(int i = 0; i < map.length; i++)
 		{
 			for(int j = 0; j < map[0].length;j++)
