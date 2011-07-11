@@ -16,7 +16,7 @@ public class Player {
 		name = "player1";
 		health = 100;
 		color = Color.black;
-		location=new Point2D.Double(150,150);
+		location=new Point2D.Double(140,140);
 		direction = new Point2D.Double(0,0);
 		radius = 8;
 		weapon=null;
@@ -27,7 +27,7 @@ public class Player {
 		health = 100;
 		color = Color.black;
 		radius = 8;
-		location=new Point2D.Double(150,150);
+		location=new Point2D.Double(140,140);
 		direction = new Point2D.Double(0,0);
 		weapon=null;
 		orientation=0;
