@@ -1,8 +1,11 @@
 package productivity.todo.control;
 
+import java.awt.Graphics2D;
+import java.awt.Rectangle;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseMotionListener;
+import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseEvent;
@@ -20,6 +23,7 @@ public class Shoot implements KeyListener, MouseListener, MouseMotionListener {
 		map = new GameMap();
 		frame = new GameFrame("Shoot", map);
 		frame.getCanvas().addKeyListener(this);
+		frame.getCanvas().setFocusable(true);
 		frame.getCanvas().addMouseListener(this);
 		frame.getCanvas().addMouseMotionListener(this);
 		gameStart();
@@ -63,19 +67,31 @@ public class Shoot implements KeyListener, MouseListener, MouseMotionListener {
 			switch(e.getKeyCode())
 			{
 				case KeyEvent.VK_DOWN:
-					map.getPlayer().setDirection(new Point2D.Double(map.getPlayer().getDirection().getX(),1));
+					map.getPlayerByName("player1").setDirection(new Point2D.Double(map.getPlayer().getDirection().getX(),1));
 					break;
 				case KeyEvent.VK_UP:
-					map.getPlayer().setDirection(new Point2D.Double(map.getPlayer().getDirection().getX(),-1));
+					map.getPlayerByName("player1").setDirection(new Point2D.Double(map.getPlayer().getDirection().getX(),-1));
 					break;
 				case KeyEvent.VK_LEFT:
-					map.getPlayer().setDirection(new Point2D.Double(-1,map.getPlayer().getDirection().getY()));
+					map.getPlayerByName("player1").setDirection(new Point2D.Double(-1,map.getPlayer().getDirection().getY()));
 					break;
 				case KeyEvent.VK_RIGHT:
-					map.getPlayer().setDirection(new Point2D.Double(1,map.getPlayer().getDirection().getY()));
+					map.getPlayerByName("player1").setDirection(new Point2D.Double(1,map.getPlayer().getDirection().getY()));
+					break;
+				case KeyEvent.VK_S:
+					map.getPlayerByName("player1").setDirection(new Point2D.Double(map.getPlayer().getDirection().getX(),1));
+					break;
+				case KeyEvent.VK_W:
+					map.getPlayerByName("player1").setDirection(new Point2D.Double(map.getPlayer().getDirection().getX(),-1));
+					break;
+				case KeyEvent.VK_A:
+					map.getPlayerByName("player1").setDirection(new Point2D.Double(-1,map.getPlayer().getDirection().getY()));
+					break;
+				case KeyEvent.VK_D:
+					map.getPlayerByName("player1").setDirection(new Point2D.Double(1,map.getPlayer().getDirection().getY()));
 					break;
 				default:
-					map.getPlayer().setDirection(new Point2D.Double(map.getPlayer().getDirection().getX(),map.getPlayer().getDirection().getY()));
+					map.getPlayerByName("").setDirection(new Point2D.Double(map.getPlayer().getDirection().getX(),map.getPlayer().getDirection().getY()));
 					break;
 			}
 		}
@@ -84,19 +100,19 @@ public class Shoot implements KeyListener, MouseListener, MouseMotionListener {
 			switch(e.getKeyCode())
 			{
 				case KeyEvent.VK_DOWN:
-					map.getPlayer().setDirection(new Point2D.Double(map.getPlayer().getDirection().getX(),0));
+					map.getPlayerByName("player1").setDirection(new Point2D.Double(map.getPlayer().getDirection().getX(),0));
 					break;
 				case KeyEvent.VK_UP:
-					map.getPlayer().setDirection(new Point2D.Double(map.getPlayer().getDirection().getX(),0));
+					map.getPlayerByName("player1").setDirection(new Point2D.Double(map.getPlayer().getDirection().getX(),0));
 					break;
 				case KeyEvent.VK_LEFT:
-					map.getPlayer().setDirection(new Point2D.Double(0,map.getPlayer().getDirection().getY()));
+					map.getPlayerByName("player1").setDirection(new Point2D.Double(0,map.getPlayer().getDirection().getY()));
 					break;
 				case KeyEvent.VK_RIGHT:
-					map.getPlayer().setDirection(new Point2D.Double(0,map.getPlayer().getDirection().getY()));
+					map.getPlayerByName("player1").setDirection(new Point2D.Double(0,map.getPlayer().getDirection().getY()));
 					break;
 				default:
-					map.getPlayer().setDirection(new Point2D.Double(map.getPlayer().getDirection().getX(),map.getPlayer().getDirection().getY()));
+					map.getPlayerByName("").setDirection(new Point2D.Double(map.getPlayer().getDirection().getX(),map.getPlayer().getDirection().getY()));
 					break;
 			}
 		}
@@ -111,13 +127,13 @@ public class Shoot implements KeyListener, MouseListener, MouseMotionListener {
 	@Override
 	public void mouseClicked(MouseEvent e) {
 		// TODO Auto-generated method stub
-		System.out.println("Click");
+		//System.out.println("Click");
 	}
 	@Override
 	public void mouseEntered(MouseEvent e) {
 		// TODO Auto-generated method stub
-		System.out.println(e.getX());
-		map.getPlayer().setOrientation((e.getY()-map.getPlayer().getLocation().y)/(e.getX()-map.getPlayer().getLocation().x));
+		//System.out.println(e.getX());
+		//map.getPlayer().setOrientation((e.getY()-map.getPlayer().getLocation().y)/(e.getX()-map.getPlayer().getLocation().x));
 	}
 	@Override
 	public void mouseExited(MouseEvent e) {
@@ -132,24 +148,19 @@ public class Shoot implements KeyListener, MouseListener, MouseMotionListener {
 	@Override
 	public void mouseReleased(MouseEvent e) {
 		// TODO Auto-generated method stub
-		
+		if(map.getPlayer().getWeapon().canShoot())
+			frame.getCanvas().shoot(e.getX(),e.getY(), map.getPlayer().getOrientation(),map.getPlayer().getGunLocation(), map.getPlayer().getWeapon());
 	}
 	@Override
 	public void mouseDragged(MouseEvent e) {
 		// TODO Auto-generated method stub
-		
+		map.getPlayer().setOrientation(Math.atan2((e.getY()-map.getPlayer().getLocation().y), (e.getX()-map.getPlayer().getLocation().x))-Math.PI/2);
+
 	}
 	@Override
 	public void mouseMoved(MouseEvent e) {
 		// TODO Auto-generated method stub
-		if(e.getID()==MouseEvent.MOUSE_MOVED) {
-			//System.out.println(e.getX());
-			double tan = Math.atan((e.getY()-map.getPlayer().getLocation().y)/(e.getX()-map.getPlayer().getLocation().x));
-			//map.getPlayer().setOrientation((e.getY()-map.getPlayer().getLocation().y)/(e.getX()-map.getPlayer().getLocation().x)<0 ?  : tan<0 ? tan*-1 : tan!=0 ?  )
-			map.getPlayer().setOrientation(/*(e.getY()-map.getPlayer().getLocation().y)/(e.getX()-map.getPlayer().getLocation().x)<0 ? */e.getX() < map.getPlayer().getLocation().x ? tan<0 ? tan+Math.PI/2 : tan!=0 ? tan + Math.PI/2 : map.getPlayer().getOrientation()<Math.PI/2 ? -Math.PI/2 : Math.PI/2 : tan-Math.PI/2);
-			//System.out.println(map.getPlayer().getOrientation());
-			//frame.getCanvas().repaint();
-		}
+		map.getPlayer().setOrientation(Math.atan2((e.getY()-map.getPlayer().getLocation().y), (e.getX()-map.getPlayer().getLocation().x))-Math.PI/2);
 	}
 	
 }

@@ -20,6 +20,15 @@ public class Player {
 		weapon=null;
 		orientation=0;
 	}
+	public Player(String pname){
+		name = pname;
+		health = 100;
+		color = Color.black;
+		location=new Point2D.Double(20,20);
+		direction = new Point2D.Double(0,0);
+		weapon=null;
+		orientation=0;
+	}
 	public void update()
 	{
 		location = new Point2D.Double(location.getX()+(direction.getX()*2), location.getY()+(direction.getY()*2));
@@ -68,5 +77,8 @@ public class Player {
 	}
 	public double getOrientation() {
 		return orientation;
+	}
+	public Point2D.Double getGunLocation() {
+		return new Point2D.Double(getLocation().x + Math.cos(getOrientation()+Math.PI/1.5)*12,getLocation().y + Math.sin(getOrientation()+Math.PI/1.5)*12);
 	}
 }

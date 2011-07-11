@@ -14,8 +14,13 @@ public class Weapon {
 	private String imgTopLoc;
 	private int bulletSpeed;
 	private String bulletImgLoc;
+	private int shotCounter;
 	public Weapon(String type){
 		//load stuff from file
+		this.type=type;
+		this.bulletSpeed = 10;
+		shotCounter=0;
+		shotsPerSec=3;
 	}
 	public String getType(){
 		return type;
@@ -56,5 +61,12 @@ public class Weapon {
 	public String getBulletImgLoc() {
 		return bulletImgLoc;
 	}
-
+	public boolean canShoot() {
+		if(shotCounter>=30/shotsPerSec) shotCounter=0;
+		else return false;
+		return true;
+	}
+	public void update() {
+		shotCounter++;
+	}
 }
