@@ -10,6 +10,7 @@ public class Player {
 	private Color color;
 	private Weapon weapon;
 	private double health;
+	private double orientation;
 	public Player(){
 		name = "default";
 		health = 100;
@@ -17,6 +18,7 @@ public class Player {
 		location=new Point2D.Double(20,20);
 		direction = new Point2D.Double(0,0);
 		weapon=null;
+		orientation=0;
 	}
 	public void update()
 	{
@@ -60,5 +62,11 @@ public class Player {
 	}
 	public void setDirection(Point2D.Double direction) {
 		this.direction = direction;
+	}
+	public void setOrientation(double orientation) {
+		this.orientation = orientation;
+	}
+	public double getOrientation() {
+		return orientation;
 	}
 }
