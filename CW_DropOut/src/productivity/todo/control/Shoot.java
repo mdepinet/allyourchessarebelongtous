@@ -2,12 +2,15 @@ package productivity.todo.control;
 
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.awt.event.MouseMotionListener;
 import java.awt.geom.Point2D;
+import java.awt.event.MouseListener;
+import java.awt.event.MouseEvent;
 
 import productivity.todo.model.GameMap;
 import productivity.todo.view.GameFrame;
 
-public class Shoot implements KeyListener {
+public class Shoot implements KeyListener, MouseListener, MouseMotionListener {
 	static final int UPDATE_RATE = 30;  // number of game update per second
 	static final long UPDATE_PERIOD = 1000000000L / UPDATE_RATE;  // nanoseconds
 	GameFrame frame;
@@ -16,7 +19,9 @@ public class Shoot implements KeyListener {
 	{
 		map = new GameMap();
 		frame = new GameFrame("Shoot", map);
-		frame.addKeyListener(this);
+		frame.getCanvas().addKeyListener(this);
+		frame.getCanvas().addMouseListener(this);
+		frame.getCanvas().addMouseMotionListener(this);
 		gameStart();
 	}
 	 public void gameStart() { 
@@ -103,4 +108,48 @@ public class Shoot implements KeyListener {
 	{
 		new Shoot();
 	}
+	@Override
+	public void mouseClicked(MouseEvent e) {
+		// TODO Auto-generated method stub
+		System.out.println("Click");
+	}
+	@Override
+	public void mouseEntered(MouseEvent e) {
+		// TODO Auto-generated method stub
+		System.out.println(e.getX());
+		map.getPlayer().setOrientation((e.getY()-map.getPlayer().getLocation().y)/(e.getX()-map.getPlayer().getLocation().x));
+	}
+	@Override
+	public void mouseExited(MouseEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+	@Override
+	public void mousePressed(MouseEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+	@Override
+	public void mouseReleased(MouseEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+	@Override
+	public void mouseDragged(MouseEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+	@Override
+	public void mouseMoved(MouseEvent e) {
+		// TODO Auto-generated method stub
+		if(e.getID()==MouseEvent.MOUSE_MOVED) {
+			//System.out.println(e.getX());
+			double tan = Math.atan((e.getY()-map.getPlayer().getLocation().y)/(e.getX()-map.getPlayer().getLocation().x));
+			//map.getPlayer().setOrientation((e.getY()-map.getPlayer().getLocation().y)/(e.getX()-map.getPlayer().getLocation().x)<0 ?  : tan<0 ? tan*-1 : tan!=0 ?  )
+			map.getPlayer().setOrientation(/*(e.getY()-map.getPlayer().getLocation().y)/(e.getX()-map.getPlayer().getLocation().x)<0 ? */e.getX() < map.getPlayer().getLocation().x ? tan<0 ? tan+Math.PI/2 : tan!=0 ? tan + Math.PI/2 : map.getPlayer().getOrientation()<Math.PI/2 ? -Math.PI/2 : Math.PI/2 : tan-Math.PI/2);
+			//System.out.println(map.getPlayer().getOrientation());
+			//frame.getCanvas().repaint();
+		}
+	}
+	
 }

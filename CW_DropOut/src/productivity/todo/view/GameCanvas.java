@@ -1,6 +1,7 @@
 package productivity.todo.view;
 
 import java.awt.*;
+import java.awt.geom.AffineTransform;
 import java.util.Set;
 
 import productivity.todo.model.GameMap;
@@ -16,9 +17,18 @@ public class GameCanvas extends Canvas {
 		Graphics2D g2;
 		g2 = (Graphics2D) g;
 		g2.setColor(Color.BLACK);
-		for(Player p: gameMap.getPlayers())
+		for(Player p: gameMap.getPlayers()) {
 			g2.fillOval((int)p.getLocation().getX()-8,(int)p.getLocation().getY()-8, 16, 16);
+			g2.fillRect((int)p.getLocation().getX()-32, (int)p.getLocation().getY()-8, 8, 32);
+			g2.rotate(p.getOrientation(),(int)p.getLocation().getX()-8,(int)p.getLocation().getY()-8);
+		}
 		g2.fillOval((int)gameMap.getPlayer().getLocation().getX()-8,(int)gameMap.getPlayer().getLocation().getY()-8, 16, 16);
+
+		Rectangle gun = new Rectangle((int)gameMap.getPlayer().getLocation().getX()-8,(int)gameMap.getPlayer().getLocation().getY(), 4, 12);
+		AffineTransform transform = new AffineTransform();
+		transform.rotate(gameMap.getPlayer().getOrientation(), gameMap.getPlayer().getLocation().x, gameMap.getPlayer().getLocation().y);
+		g2.draw(transform.createTransformedShape(gun));
+
 	}
 	public GameMap getGameMap() {
 		return gameMap;
