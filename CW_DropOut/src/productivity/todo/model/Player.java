@@ -6,17 +6,19 @@ import java.awt.geom.Point2D;
 public class Player {
 	private Point2D.Double location;
 	private Point2D.Double direction;
+	private int radius;
 	private String name;
 	private Color color;
 	private Weapon weapon;
 	private double health;
 	private double orientation;
 	public Player(){
-		name = "default";
+		name = "player1";
 		health = 100;
 		color = Color.black;
-		location=new Point2D.Double(20,20);
+		location=new Point2D.Double(150,150);
 		direction = new Point2D.Double(0,0);
+		radius = 8;
 		weapon=null;
 		orientation=0;
 	}
@@ -24,10 +26,17 @@ public class Player {
 		name = pname;
 		health = 100;
 		color = Color.black;
-		location=new Point2D.Double(20,20);
+		radius = 8;
+		location=new Point2D.Double(150,150);
 		direction = new Point2D.Double(0,0);
 		weapon=null;
 		orientation=0;
+	}
+	public int getRadius() {
+		return radius;
+	}
+	public void setRadius(int radius) {
+		this.radius = radius;
 	}
 	public void update()
 	{
