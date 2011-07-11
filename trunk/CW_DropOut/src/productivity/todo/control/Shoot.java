@@ -67,31 +67,30 @@ public class Shoot implements KeyListener, MouseListener, MouseMotionListener {
 			switch(e.getKeyCode())
 			{
 				case KeyEvent.VK_DOWN:
-					map.getPlayerByName("player1").setDirection(new Point2D.Double(map.getPlayer().getDirection().getX(),1));
+					map.getPlayer().setDirection(new Point2D.Double(map.getPlayer().getDirection().getX(),1));
 					break;
 				case KeyEvent.VK_UP:
-					map.getPlayerByName("player1").setDirection(new Point2D.Double(map.getPlayer().getDirection().getX(),-1));
+					map.getPlayer().setDirection(new Point2D.Double(map.getPlayer().getDirection().getX(),-1));
 					break;
 				case KeyEvent.VK_LEFT:
-					map.getPlayerByName("player1").setDirection(new Point2D.Double(-1,map.getPlayer().getDirection().getY()));
+					map.getPlayer().setDirection(new Point2D.Double(-1,map.getPlayer().getDirection().getY()));
 					break;
 				case KeyEvent.VK_RIGHT:
-					map.getPlayerByName("player1").setDirection(new Point2D.Double(1,map.getPlayer().getDirection().getY()));
+					map.getPlayer().setDirection(new Point2D.Double(1,map.getPlayer().getDirection().getY()));
 					break;
 				case KeyEvent.VK_S:
-					map.getPlayerByName("player1").setDirection(new Point2D.Double(map.getPlayer().getDirection().getX(),1));
+					map.getPlayer().setDirection(new Point2D.Double(map.getPlayer().getDirection().getX(),1));
 					break;
 				case KeyEvent.VK_W:
-					map.getPlayerByName("player1").setDirection(new Point2D.Double(map.getPlayer().getDirection().getX(),-1));
+					map.getPlayer().setDirection(new Point2D.Double(map.getPlayer().getDirection().getX(),-1));
 					break;
 				case KeyEvent.VK_A:
-					map.getPlayerByName("player1").setDirection(new Point2D.Double(-1,map.getPlayer().getDirection().getY()));
+					map.getPlayer().setDirection(new Point2D.Double(-1,map.getPlayer().getDirection().getY()));
 					break;
 				case KeyEvent.VK_D:
-					map.getPlayerByName("player1").setDirection(new Point2D.Double(1,map.getPlayer().getDirection().getY()));
+					map.getPlayer().setDirection(new Point2D.Double(1,map.getPlayer().getDirection().getY()));
 					break;
 				default:
-					map.getPlayerByName("").setDirection(new Point2D.Double(map.getPlayer().getDirection().getX(),map.getPlayer().getDirection().getY()));
 					break;
 			}
 		}
@@ -100,19 +99,18 @@ public class Shoot implements KeyListener, MouseListener, MouseMotionListener {
 			switch(e.getKeyCode())
 			{
 				case KeyEvent.VK_DOWN:
-					map.getPlayerByName("player1").setDirection(new Point2D.Double(map.getPlayer().getDirection().getX(),0));
+					map.getPlayer().setDirection(new Point2D.Double(map.getPlayer().getDirection().getX(),0));
 					break;
 				case KeyEvent.VK_UP:
-					map.getPlayerByName("player1").setDirection(new Point2D.Double(map.getPlayer().getDirection().getX(),0));
+					map.getPlayer().setDirection(new Point2D.Double(map.getPlayer().getDirection().getX(),0));
 					break;
 				case KeyEvent.VK_LEFT:
-					map.getPlayerByName("player1").setDirection(new Point2D.Double(0,map.getPlayer().getDirection().getY()));
+					map.getPlayer().setDirection(new Point2D.Double(0,map.getPlayer().getDirection().getY()));
 					break;
 				case KeyEvent.VK_RIGHT:
-					map.getPlayerByName("player1").setDirection(new Point2D.Double(0,map.getPlayer().getDirection().getY()));
+					map.getPlayer().setDirection(new Point2D.Double(0,map.getPlayer().getDirection().getY()));
 					break;
 				default:
-					map.getPlayerByName("").setDirection(new Point2D.Double(map.getPlayer().getDirection().getX(),map.getPlayer().getDirection().getY()));
 					break;
 			}
 		}
@@ -149,7 +147,7 @@ public class Shoot implements KeyListener, MouseListener, MouseMotionListener {
 	public void mouseReleased(MouseEvent e) {
 		// TODO Auto-generated method stub
 		if(map.getPlayer().getWeapon().canShoot())
-			frame.getCanvas().shoot(e.getX(),e.getY(), map.getPlayer().getOrientation(),map.getPlayer().getGunLocation(), map.getPlayer().getWeapon());
+			map.shoot(e.getX(),e.getY(), map.getPlayer().getOrientation(),map.getPlayer().getGunLocation(), map.getPlayer().getWeapon());
 	}
 	@Override
 	public void mouseDragged(MouseEvent e) {
