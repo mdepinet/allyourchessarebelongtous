@@ -15,7 +15,7 @@ public class GameFrame extends JFrame {
 	public GameFrame(String s, GameMap map)
 	{
 		super(s);
-		this.setBounds(300,300,map.WIDTH,map.HEIGHT+28);
+		this.setBounds(300,300,map.WIDTH+6,map.HEIGHT+28);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		this.setResizable(false);
 		canvas = new GameCanvas();
