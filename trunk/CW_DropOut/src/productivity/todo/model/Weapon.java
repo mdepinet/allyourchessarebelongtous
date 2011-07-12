@@ -1,6 +1,7 @@
 package productivity.todo.model;
 
 public class Weapon {
+	private static final int reloadMillis = 3000; //3 seconds
 	private String type;
 	private int power;
 	private int effRange;
@@ -15,8 +16,11 @@ public class Weapon {
 	private int bulletSpeed;
 	private String bulletImgLoc;
 	private int shotCounter;
+	private long reloadStartTime;
 	public Weapon(String name){
 		WeaponLoader.load(this,name);
+		shotCounter = 0;
+		reloadStartTime = 0;
 	}
 	public String getType(){
 		return type;
@@ -58,8 +62,22 @@ public class Weapon {
 		return bulletImgLoc;
 	}
 	public boolean canShoot() {
-		if(shotCounter>=30/shotsPerSec) shotCounter=0;
+		if(shotCounter>=30/shotsPerSec){
+			shotCounter=0;
+		}
 		else return false;
+		if (clipSize <= 0){
+			reloadStartTime = System.currentTimeMillis();
+			clipSize = maxClipSize;
+		}
+		if (reloadStartTime != 0){
+			if (System.currentTimeMillis() - (reloadStartTime + reloadMillis) > 0){
+				reloadStartTime = 0;
+				return true;
+			}
+			else return false;
+		}
+		
 		return true;
 	}
 	public void update() {

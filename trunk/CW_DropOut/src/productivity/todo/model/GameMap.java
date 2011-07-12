@@ -32,15 +32,14 @@ public class GameMap{
 		bullets = new ArrayList<Bullet>();
 		players = new HashSet<Player>();
 		player = new Player("player1");
-		player.setWeapon(new Weapon("Assault Rifle"));
+		player.setWeapon(new Weapon("Default"));
 		player.setTeam(1);
 		loadDefaultMap();
 		Player p2 = new Player("player2");
 		p2.setHealth(5000);
-		p2.getLocation().x=300;
-		p2.getLocation().y=300;
+		spawn(p2);
 		p2.setWeapon(new Weapon("Default"));
-		p2.setTeam(1);
+		p2.setTeam(2);
 		players.add(p2);
 		
 		spawn(player);
@@ -80,6 +79,7 @@ public class GameMap{
 		bullet.setVelocity(new Point2D.Double(Math.cos(angle+Math.PI/2)*weapon.getBulletSpeed(),Math.sin(angle+Math.PI/2)*weapon.getBulletSpeed()));
 		
 		bullets.add(bullet);
+		weapon.setClipSize(weapon.getClipSize()-1);
 	}
 	public boolean[][] getMap() {
 		return map;
@@ -110,7 +110,6 @@ public class GameMap{
 				double damage = b.getWeapon().getPower();
 				if (b.getDistanceTraveled() > effRange) damage -= ((b.getDistanceTraveled() - effRange)/effRange)*damage;
 				hit.takeDamage(damage);
-				System.out.println(hit.getHealth());
 				bullets.remove(b);
 			}
 		}
