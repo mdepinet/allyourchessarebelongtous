@@ -12,9 +12,11 @@ public class Shoot implements KeyListener, MouseListener, MouseMotionListener {
 	static final long UPDATE_PERIOD = 1000000000L / UPDATE_RATE;  // nanoseconds
 	GameFrame frame;
 	GameMap map;
+	private int holdCounter;
 	private Point mouseLoc;
 	public Shoot()
 	{
+		holdCounter = -1;
 		map = new GameMap();
 		mouseLoc = new Point();
 		frame = new GameFrame("Shoot", map);
@@ -46,6 +48,12 @@ public class Shoot implements KeyListener, MouseListener, MouseMotionListener {
 	      while (true) {
 	         beginTime = System.nanoTime();
 	         map.getPlayer().setOrientation(Math.atan2((mouseLoc.getY()-map.getPlayer().getLocation().y), (mouseLoc.getX()-map.getPlayer().getLocation().x))-Math.PI/2);
+	         if(holdCounter>=0)
+	         {
+	        	 holdCounter++;
+	        	 if(holdCounter > 15 && map.getPlayer().getWeapon().canShoot())
+	     			map.shoot((int)mouseLoc.getX(),(int)mouseLoc.getY(), map.getPlayer().getOrientation(),map.getPlayer().getGunLocation(), map.getPlayer().getWeapon());
+	         }
 	         map.gameUpdate();
 	         
 	         // Refresh the display
@@ -139,13 +147,14 @@ public class Shoot implements KeyListener, MouseListener, MouseMotionListener {
 	@Override
 	public void mousePressed(MouseEvent e) {
 		// TODO Auto-generated method stub
-		
+		holdCounter++;
 	}
 	@Override
 	public void mouseReleased(MouseEvent e) {
 		// TODO Auto-generated method stub
 		if(map.getPlayer().getWeapon().canShoot())
 			map.shoot(e.getX(),e.getY(), map.getPlayer().getOrientation(),map.getPlayer().getGunLocation(), map.getPlayer().getWeapon());
+		holdCounter=-1;
 	}
 	@Override
 	public void mouseDragged(MouseEvent e) {
