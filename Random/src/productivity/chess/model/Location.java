@@ -1,6 +1,9 @@
 package productivity.chess.model;
 
-public class Location {
+import java.io.Serializable;
+
+public class Location implements Serializable {
+	private static final long serialVersionUID = 1L;
 	private int col;
 	private int row;
 	public Location(int y, int x)
