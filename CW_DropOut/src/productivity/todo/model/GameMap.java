@@ -8,8 +8,10 @@ import java.awt.geom.Point2D;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.Scanner;
 import java.util.Set;
 
@@ -20,19 +22,29 @@ public class GameMap{
 	public static final int HEIGHT = 500;
 	public static final int WIDTH = 500;
 	private ArrayList<Bullet> bullets;
-	
+	private Map<Integer, ArrayList<Point2D.Double>> spawnLocs;
 	public GameMap()
 	{
+		spawnLocs = new HashMap<Integer, ArrayList<Point2D.Double>>();
+		spawnLocs.put(1, new ArrayList<Point2D.Double>());
+		spawnLocs.put(2, new ArrayList<Point2D.Double>());
+		spawnLocs.put(3, new ArrayList<Point2D.Double>());
 		bullets = new ArrayList<Bullet>();
 		players = new HashSet<Player>();
 		player = new Player("player1");
 		player.setWeapon(new Weapon("rifle"));
+		player.setTeam(1);
 		loadDefaultMap();
 		Player p2 = new Player("player2");
 		p2.getLocation().x=300;
 		p2.getLocation().y=300;
 		p2.setWeapon(new Weapon("grenade"));
+		p2.setTeam(2);
 		players.add(p2);
+		
+		player.setLocation(spawnLocs.get(player.getTeam()).get((int)(Math.random()*spawnLocs.size())));
+		for(Player p: players)
+			if(!spawnLocs.get(new Integer(p.getTeam())).isEmpty()) p.setLocation(spawnLocs.get(p.getTeam()).get((int)(Math.random()*spawnLocs.size())));
 	}
 	public ArrayList<Bullet> getBullets() {
 		return bullets;
@@ -52,8 +64,11 @@ public class GameMap{
 		{}
 		for(int i = 0; i < 20;i++)
 		{
-			for(int j = 0; j < 20; j++)
-				map[j][i] = scan.next().equals("X");
+			for(int j = 0; j < 20; j++) {
+				String next = scan.next();
+				map[j][i] = next.equals("X");
+				if(next.equals("1") || next.equals("2") || next.equals("3")) spawnLocs.get(new Integer(next)).add(new Point2D.Double((j+1)*12.5,(i+1)*12.5));
+			}
 			if(scan.hasNextLine())
 				scan.nextLine();
 		}
@@ -64,12 +79,6 @@ public class GameMap{
 		bullet.setVelocity(new Point2D.Double(Math.cos(angle+Math.PI/2)*weapon.getBulletSpeed(),Math.sin(angle+Math.PI/2)*weapon.getBulletSpeed()));
 		
 		bullets.add(bullet);
-		/*Graphics2D g2 = (Graphics2D)getGraphics();
-		Rectangle bullet = new Rectangle((int)map.getPlayer().getLocation().getX()-8,(int)map.getPlayer().getLocation().getY(), 1, 6);
-		AffineTransform transform = new AffineTransform();
-		transform.rotate(map.getPlayer().getOrientation(), map.getPlayer().getLocation().x, map.getPlayer().getLocation().y);
-		g2.draw(transform.createTransformedShape(bullet));
-		bulletUpdate(bullet);*/
 	}
 	public boolean[][] getMap() {
 		return map;

@@ -12,7 +12,9 @@ public class Player {
 	private Weapon weapon;
 	private double health;
 	private double orientation;
+	private int team;
 	public Player(){
+		setTeam(0);
 		name = "player1";
 		health = 100;
 		color = Color.black;
@@ -23,6 +25,7 @@ public class Player {
 		orientation=0;
 	}
 	public Player(String pname){
+		setTeam(0);
 		name = pname;
 		health = 100;
 		color = Color.black;
@@ -89,5 +92,11 @@ public class Player {
 	}
 	public Point2D.Double getGunLocation() {
 		return new Point2D.Double(getLocation().x + Math.cos(getOrientation()+Math.PI/1.5)*12,getLocation().y + Math.sin(getOrientation()+Math.PI/1.5)*12);
+	}
+	public void setTeam(int team) {
+		this.team = team;
+	}
+	public int getTeam() {
+		return team;
 	}
 }

@@ -1,14 +1,8 @@
 package productivity.todo.control;
 
-import java.awt.Graphics2D;
-import java.awt.Rectangle;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
-import java.awt.event.MouseMotionListener;
-import java.awt.geom.AffineTransform;
-import java.awt.geom.Point2D;
-import java.awt.event.MouseListener;
-import java.awt.event.MouseEvent;
+import java.awt.*;
+import java.awt.event.*;
+import java.awt.geom.*;
 
 import productivity.todo.model.GameMap;
 import productivity.todo.view.GameFrame;
@@ -18,9 +12,11 @@ public class Shoot implements KeyListener, MouseListener, MouseMotionListener {
 	static final long UPDATE_PERIOD = 1000000000L / UPDATE_RATE;  // nanoseconds
 	GameFrame frame;
 	GameMap map;
+	private Point mouseLoc;
 	public Shoot()
 	{
 		map = new GameMap();
+		mouseLoc = new Point();
 		frame = new GameFrame("Shoot", map);
 		frame.getCanvas().addKeyListener(this);
 		frame.getCanvas().setFocusable(true);
@@ -49,7 +45,9 @@ public class Shoot implements KeyListener, MouseListener, MouseMotionListener {
 	      long beginTime, timeTaken, timeLeft;
 	      while (true) {
 	         beginTime = System.nanoTime();
+	         map.getPlayer().setOrientation(Math.atan2((mouseLoc.getY()-map.getPlayer().getLocation().y), (mouseLoc.getX()-map.getPlayer().getLocation().x))-Math.PI/2);
 	         map.gameUpdate();
+	         
 	         // Refresh the display
 	         frame.getCanvas().updateGraphics();
 	         // Delay timer to provide the necessary delay to meet the target rate
@@ -153,11 +151,12 @@ public class Shoot implements KeyListener, MouseListener, MouseMotionListener {
 	public void mouseDragged(MouseEvent e) {
 		// TODO Auto-generated method stub
 		map.getPlayer().setOrientation(Math.atan2((e.getY()-map.getPlayer().getLocation().y), (e.getX()-map.getPlayer().getLocation().x))-Math.PI/2);
-
+		mouseLoc=new Point(e.getX(),e.getY());
 	}
 	@Override
 	public void mouseMoved(MouseEvent e) {
 		// TODO Auto-generated method stub
+		mouseLoc=new Point(e.getX(),e.getY());
 		map.getPlayer().setOrientation(Math.atan2((e.getY()-map.getPlayer().getLocation().y), (e.getX()-map.getPlayer().getLocation().x))-Math.PI/2);
 	}
 	
