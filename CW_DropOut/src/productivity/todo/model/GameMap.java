@@ -92,7 +92,7 @@ public class GameMap{
 		for(int i=0;i<bullets.size();i++) {
 			Bullet b = bullets.get(i);
 			b.update();
-			if(!isValid(b.getLocation(),3)) bullets.remove(i--);
+			if(!isValid(b.getLocation(),1)) bullets.remove(i--);
 		}
 		for(Player p: players)
 			p.update();
