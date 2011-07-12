@@ -6,7 +6,7 @@ public class Weapon {
 	private int effRange;
 	private double spread;
 	private int roundsPerShot;
-	private int shotsPerSec;
+	private double shotsPerSec;
 	private int clipSize;
 	private int maxClipSize;
 	private int splash;
@@ -15,12 +15,8 @@ public class Weapon {
 	private int bulletSpeed;
 	private String bulletImgLoc;
 	private int shotCounter;
-	public Weapon(String type){
-		//load stuff from file
-		this.type=type;
-		this.bulletSpeed = 10;
-		shotCounter=0;
-		shotsPerSec=3;
+	public Weapon(String name){
+		WeaponLoader.load(this,name);
 	}
 	public String getType(){
 		return type;
@@ -37,7 +33,7 @@ public class Weapon {
 	public int getRoundsPerShot() {
 		return roundsPerShot;
 	}
-	public int getShotsPerSec() {
+	public double getShotsPerSec() {
 		return shotsPerSec;
 	}
 	public int getClipSize() {
@@ -68,5 +64,66 @@ public class Weapon {
 	}
 	public void update() {
 		shotCounter++;
+	}
+	public int getShotCounter() {
+		return shotCounter;
+	}
+	public void setShotCounter(int shotCounter) {
+		this.shotCounter = shotCounter;
+	}
+	public void setType(String type) {
+		this.type = type;
+	}
+	public void setPower(int power) {
+		this.power = power;
+	}
+	public void setEffRange(int effRange) {
+		this.effRange = effRange;
+	}
+	public void setSpread(double spread) {
+		this.spread = spread;
+	}
+	public void setRoundsPerShot(int roundsPerShot) {
+		this.roundsPerShot = roundsPerShot;
+	}
+	public void setShotsPerSec(double shotsPerSec) {
+		this.shotsPerSec = shotsPerSec;
+	}
+	public void setClipSize(int clipSize) {
+		this.clipSize = clipSize;
+	}
+	public void setMaxClipSize(int maxClipSize) {
+		this.maxClipSize = maxClipSize;
+	}
+	public void setSplash(int splash) {
+		this.splash = splash;
+	}
+	public void setImgLoc(String imgLoc) {
+		this.imgLoc = imgLoc;
+	}
+	public void setImgTopLoc(String imgTopLoc) {
+		this.imgTopLoc = imgTopLoc;
+	}
+	public void setBulletSpeed(int bulletSpeed) {
+		this.bulletSpeed = bulletSpeed;
+	}
+	public void setBulletImgLoc(String bulletImgLoc) {
+		this.bulletImgLoc = bulletImgLoc;
+	}
+	
+	void setProperties(WeaponDefinition wepDef){
+		setType(wepDef.getType());
+		setPower(wepDef.getPower());
+		setEffRange(wepDef.getEffRange());
+		setSpread(wepDef.getSpread());
+		setRoundsPerShot(wepDef.getRoundsPerShot());
+		setShotsPerSec(wepDef.getShotsPerSec());
+		setClipSize(wepDef.getMaxClipSize());
+		setMaxClipSize(wepDef.getMaxClipSize());
+		setSplash(wepDef.getSplash());
+		setBulletSpeed(wepDef.getBulletSpeed());
+		setImgLoc(wepDef.getImgLoc());
+		setImgTopLoc(wepDef.getImgTopLoc());
+		setBulletImgLoc(wepDef.getBulletImgLoc());
 	}
 }
