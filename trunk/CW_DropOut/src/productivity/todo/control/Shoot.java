@@ -51,7 +51,7 @@ public class Shoot implements KeyListener, MouseListener, MouseMotionListener {
 	         beginTime = System.nanoTime();
 	         map.gameUpdate();
 	         // Refresh the display
-	         frame.getCanvas().repaint();
+	         frame.getCanvas().updateGraphics();
 	         // Delay timer to provide the necessary delay to meet the target rate
 	         timeTaken = System.nanoTime() - beginTime;
 	         timeLeft = (UPDATE_PERIOD - timeTaken) / 1000000L;  // in milliseconds

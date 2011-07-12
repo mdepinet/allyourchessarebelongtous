@@ -14,45 +14,61 @@ import productivity.todo.model.Weapon;
 
 public class GameCanvas extends Canvas {
 	private GameMap gameMap;
+	private Image backbuffer;
+	private Graphics2D backg;
 
 	public GameCanvas()
 	{
 		setBackground (Color.WHITE);
 	}
-	public void paint (Graphics g) {
-		Graphics2D g2;
-		g2 = (Graphics2D) g;
-		g2.setColor(Color.BLACK);
+	public void init()
+	{
+		backbuffer = createImage( GameMap.WIDTH, GameMap.HEIGHT );
+	    backg = (Graphics2D)backbuffer.getGraphics();
+	    backg.setBackground( Color.white );
+	    backg.clearRect(0, 0, GameMap.WIDTH, GameMap.HEIGHT);
+	}
+	public void updateGraphics()
+	{
+		backg.setColor(Color.BLACK);
+		backg.clearRect(0, 0, GameMap.WIDTH, GameMap.HEIGHT);
 		for(Player p: gameMap.getPlayers()) {
-			g2.fillOval((int)p.getLocation().getX()-8,(int)p.getLocation().getY()-8, 16, 16);
+			backg.fillOval((int)p.getLocation().getX()-8,(int)p.getLocation().getY()-8, 16, 16);
 			Rectangle gun2;
 			if(p.getWeapon().getType().equals("rifle")) gun2 = new Rectangle((int)p.getLocation().getX()-8,(int)p.getLocation().getY(), 4, 12);
 			else if(p.getWeapon().getType().equals("grenade")) gun2 = new Rectangle((int)p.getLocation().getX()-8,(int)p.getLocation().getY(), 7, 8);
 			else  gun2 = new Rectangle((int)p.getLocation().getX()-8,(int)p.getLocation().getY(), 4, 12);
 			AffineTransform transform = new AffineTransform();
 			transform.rotate(p.getOrientation(), p.getLocation().x, gameMap.getPlayer().getLocation().y);
-			g2.draw(transform.createTransformedShape(gun2));
-			//g2.rotate(p.getOrientation(),(int)p.getLocation().getX()-8,(int)p.getLocation().getY()-8);
+			backg.draw(transform.createTransformedShape(gun2));
+			//backg.rotate(p.getOrientation(),(int)p.getLocation().getX()-8,(int)p.getLocation().getY()-8);
 		}
 		for(int i = 0; i < 20;i++)
 		{
 			for(int j = 0; j < 20;j++)
-				if(gameMap.getMap()[i][j]) g2.fillRect(i*25, j*25, 25, 25);
+				if(gameMap.getMap()[i][j]) backg.fillRect(i*25, j*25, 25, 25);
 		}
-		g2.fillOval((int)gameMap.getPlayer().getLocation().getX()-8,(int)gameMap.getPlayer().getLocation().getY()-8, 16, 16);
+		backg.fillOval((int)gameMap.getPlayer().getLocation().getX()-8,(int)gameMap.getPlayer().getLocation().getY()-8, 16, 16);
 
 		Rectangle gun = new Rectangle((int)gameMap.getPlayer().getLocation().getX()-8,(int)gameMap.getPlayer().getLocation().getY(), 4, 12);
 		AffineTransform transform = new AffineTransform();
 		transform.rotate(gameMap.getPlayer().getOrientation(), gameMap.getPlayer().getLocation().x, gameMap.getPlayer().getLocation().y);
-		g2.draw(transform.createTransformedShape(gun));
+		backg.draw(transform.createTransformedShape(gun));
 		gameMap.getPlayer().getWeapon().update();
 		for(int i=0;i<gameMap.getBullets().size();i++) {
 			Bullet b = gameMap.getBullets().get(i);
 			Rectangle bullet = new Rectangle((int)b.getLocation().x,(int)b.getLocation().y, 1, 6);
 			AffineTransform transformb = new AffineTransform();
 			transformb.rotate(Math.atan2(b.getVelocity().y,b.getVelocity().x)+Math.PI/2, b.getLocation().x, b.getLocation().y);
-			g2.draw(transformb.createTransformedShape(bullet));
+			backg.draw(transformb.createTransformedShape(bullet));
 		}
+		repaint();
+	}
+	public void update(Graphics g) {
+		g.drawImage(backbuffer,0,0,this);
+	}
+	public void paint (Graphics g) {
+		update(g);
 	}
 	public GameMap getGameMap() {
 		return gameMap;

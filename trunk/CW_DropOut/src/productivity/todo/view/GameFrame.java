@@ -22,6 +22,7 @@ public class GameFrame extends JFrame {
 		canvas.setGameMap(map);
 		getContentPane().add(canvas);
 		this.setVisible(true);
+		canvas.init();
 	}
 	public GameCanvas getCanvas(){
 		return canvas;
