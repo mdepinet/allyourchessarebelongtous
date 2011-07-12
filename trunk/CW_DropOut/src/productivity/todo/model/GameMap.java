@@ -32,13 +32,13 @@ public class GameMap{
 		bullets = new ArrayList<Bullet>();
 		players = new HashSet<Player>();
 		player = new Player("player1");
-		player.setWeapon(new Weapon("rifle"));
+		player.setWeapon(new Weapon(".44 Magnum"));
 		player.setTeam(1);
 		loadDefaultMap();
 		Player p2 = new Player("player2");
 		p2.getLocation().x=300;
 		p2.getLocation().y=300;
-		p2.setWeapon(new Weapon("grenade"));
+		p2.setWeapon(new Weapon("Semtex"));
 		p2.setTeam(2);
 		players.add(p2);
 		
