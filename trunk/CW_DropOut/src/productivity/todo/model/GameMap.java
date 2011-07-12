@@ -1,9 +1,6 @@
 package productivity.todo.model;
 
 import java.awt.Rectangle;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
-import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
 import java.io.File;
 import java.io.IOException;
@@ -36,7 +33,6 @@ public class GameMap{
 		player.setTeam(1);
 		loadDefaultMap();
 		Player p2 = new Player("player2");
-		p2.setHealth(5000);
 		spawn(p2);
 		p2.setWeapon(new Weapon("Default"));
 		p2.setTeam(2);
@@ -110,6 +106,10 @@ public class GameMap{
 				double damage = b.getWeapon().getPower();
 				if (b.getDistanceTraveled() > effRange) damage -= ((b.getDistanceTraveled() - effRange)/effRange)*damage;
 				hit.takeDamage(damage);
+				if (hit.getHealth()<=0){
+					spawn(hit);
+					new RespawnThread(hit,5000).start();
+				}
 				bullets.remove(b);
 			}
 		}
