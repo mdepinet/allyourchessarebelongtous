@@ -67,7 +67,7 @@ public class GameMap{
 			for(int j = 0; j < 20; j++) {
 				String next = scan.next();
 				map[j][i] = next.equals("X");
-				if(next.equals("1") || next.equals("2") || next.equals("3")) spawnLocs.get(new Integer(next)).add(new Point2D.Double((j+1)*12.5,(i+1)*12.5));
+				if(next.equals("1") || next.equals("2") || next.equals("3")) spawnLocs.get(new Integer(next)).add(new Point2D.Double((j*25)+12.5,(i*25)+12.5));
 			}
 			if(scan.hasNextLine())
 				scan.nextLine();
