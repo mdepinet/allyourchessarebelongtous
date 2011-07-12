@@ -32,14 +32,15 @@ public class GameMap{
 		bullets = new ArrayList<Bullet>();
 		players = new HashSet<Player>();
 		player = new Player("player1");
-		player.setWeapon(new Weapon("Default"));
+		player.setWeapon(new Weapon("Assault Rifle"));
 		player.setTeam(1);
 		loadDefaultMap();
 		Player p2 = new Player("player2");
+		p2.setHealth(5000);
 		p2.getLocation().x=300;
 		p2.getLocation().y=300;
 		p2.setWeapon(new Weapon("Default"));
-		p2.setTeam(2);
+		p2.setTeam(1);
 		players.add(p2);
 		
 		spawn(player);
@@ -100,14 +101,16 @@ public class GameMap{
 	{
 		for(int i=0;i<bullets.size();i++) {
 			Bullet b = bullets.get(i);
-			b.update();
 			if(!isValid(b.getLocation(),1)) bullets.remove(i--);
 			Player hit = getHitPlayer(b);
+			b.update();
+			double effRange = b.getWeapon().getEffRange();
+			if(b.getDistanceTraveled() > effRange*2) { bullets.remove(b); continue; }
 			if (hit != null){
 				double damage = b.getWeapon().getPower();
-				int effRange = b.getWeapon().getEffRange();
-				if (b.getDistanceTraveled() > effRange) damage *= effRange/(b.getDistanceTraveled() - effRange);
+				if (b.getDistanceTraveled() > effRange) damage -= ((b.getDistanceTraveled() - effRange)/effRange)*damage;
 				hit.takeDamage(damage);
+				System.out.println(hit.getHealth());
 				bullets.remove(b);
 			}
 		}
@@ -124,6 +127,46 @@ public class GameMap{
 			else
 				player.setLocation(loc);
 		}
+	}
+	public Player getHitPlayer(Bullet bullet)
+	{
+		for(Player p:players)
+		{
+			if(bulletColDetect(bullet,p))
+				return p;
+		}
+		if(bulletColDetect(bullet,player))
+			return player;
+		return null;
+	}
+	public boolean bulletColDetect(Bullet bullet, Player p)
+	{
+		double velX = bullet.getVelocity().x;
+		double velY = bullet.getVelocity().y;
+		Point2D.Double vec = new Point2D.Double(p.getLocation().x - bullet.getLocation().x,p.getLocation().y-bullet.getLocation().y);
+		
+		double a = velX*velX + velY*velY;
+		double b = 2*(velX*vec.x + velY*vec.y);
+		double c = (vec.x*vec.x+vec.y*vec.y) - p.getRadius()*p.getRadius();
+
+		double discriminant = b*b-4*a*c;
+		if( discriminant >= 0 )
+		{
+		  // ray didn't totally miss sphere,
+		  // so there is a solution to
+		  // the equation.
+
+
+		  discriminant = Math.sqrt( discriminant );
+		  double t1 = (-b + discriminant)/(2*a);
+		  double t2 = (-b - discriminant)/(2*a);
+
+		  if( t1 >= 0 && t1 <= 1 )
+		  {
+		    return true;
+		  }
+		}
+		return false;
 	}
 	public boolean isValid(Point2D.Double loc, int radius)
 	{
