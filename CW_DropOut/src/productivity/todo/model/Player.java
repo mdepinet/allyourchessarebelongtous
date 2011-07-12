@@ -69,6 +69,10 @@ public class Player {
 	public double getHealth() {
 		return health;
 	}
+	public void takeDamage (double damage) {
+		health -= damage;
+		if (health <= 0) die();
+	}
 	public String toString(){
 		return "Health: "+health + " Color: "+color+ " Weapon: "+weapon+ " Point: "+location;
 	}
@@ -98,5 +102,12 @@ public class Player {
 	}
 	public int getTeam() {
 		return team;
+	}
+	
+	public void die(){
+		location = new Point2D.Double(-1000.,-1000.);
+	}
+	public void respawn(Point2D.Double loc){
+		location = loc;
 	}
 }
