@@ -14,6 +14,7 @@ public class WeaponDefinition {
 	private String imgTopLoc;
 	private int bulletSpeed;
 	private String bulletImgLoc;
+	private char representativeChar;
 	
 	public WeaponDefinition(String line){
 		String[] info = line.split(",");
@@ -31,6 +32,7 @@ public class WeaponDefinition {
 		imgLoc = info[i++];
 		imgTopLoc = info[i++];
 		bulletImgLoc = info[i++];
+		representativeChar = info[i++].charAt(0);
 	}
 
 	public String getName() {
@@ -135,5 +137,13 @@ public class WeaponDefinition {
 
 	public void setBulletImgLoc(String bulletImgLoc) {
 		this.bulletImgLoc = bulletImgLoc;
+	}
+
+	public char getRepresentativeChar() {
+		return representativeChar;
+	}
+
+	public void setRepresentativeChar(char representativeChar) {
+		this.representativeChar = representativeChar;
 	}
 }
