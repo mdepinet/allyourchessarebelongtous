@@ -7,12 +7,16 @@ public class Bullet {
 	private Point2D.Double location;
 	private Point2D.Double velocity;
 	private Weapon weapon;
+	private double distanceTraveled;
 	
 	public Bullet(Weapon weapon) {
 		this.weapon=weapon;
+		distanceTraveled = 0;
 	}
 	public void update() {
-		setLocation(new Point2D.Double(getLocation().x+getVelocity().x, getLocation().y+getVelocity().y));
+		Point2D.Double newLoc = new Point2D.Double(getLocation().x+getVelocity().x, getLocation().y+getVelocity().y);
+		distanceTraveled += location.distance(newLoc);
+		setLocation(newLoc);
 	}
 	public void setLocation(Point2D.Double location) {
 		this.location = location;
@@ -31,6 +35,15 @@ public class Bullet {
 	}
 	public void setVelocity(Point2D.Double velocity) {
 		this.velocity = velocity;
+	}
+	public Weapon getWeapon() {
+		return weapon;
+	}
+	public void setWeapon(Weapon weapon) {
+		this.weapon = weapon;
+	}
+	public double getDistanceTraveled() {
+		return distanceTraveled;
 	}
 	
 }

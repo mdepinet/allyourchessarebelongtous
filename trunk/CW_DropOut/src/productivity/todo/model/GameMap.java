@@ -42,7 +42,7 @@ public class GameMap{
 		p2.setTeam(2);
 		players.add(p2);
 		
-		player.setLocation(spawnLocs.get(player.getTeam()).get((int)(Math.random()*spawnLocs.size())));
+		spawn(player);
 		for(Player p: players)
 			if(!spawnLocs.get(new Integer(p.getTeam())).isEmpty()) p.setLocation(spawnLocs.get(p.getTeam()).get((int)(Math.random()*spawnLocs.size())));
 	}
@@ -102,6 +102,14 @@ public class GameMap{
 			Bullet b = bullets.get(i);
 			b.update();
 			if(!isValid(b.getLocation(),1)) bullets.remove(i--);
+			Player hit = getHitPlayer(b);
+			if (hit != null){
+				double damage = b.getWeapon().getPower();
+				int effRange = b.getWeapon().getEffRange();
+				if (b.getDistanceTraveled() > effRange) damage *= effRange/(b.getDistanceTraveled() - effRange);
+				hit.takeDamage(damage);
+				bullets.remove(b);
+			}
 		}
 		for(Player p: players)
 			p.update();
@@ -138,5 +146,9 @@ public class GameMap{
 			if(next.getName().equals(name)) return next;
 		}
 		return null;
+	}
+	
+	public void spawn(Player p){
+		p.respawn(spawnLocs.get(player.getTeam()).get((int)(Math.random()*spawnLocs.size())));
 	}
 }
