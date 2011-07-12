@@ -108,7 +108,14 @@ public class GameMap{
 		Point2D.Double loc = player.getLocation();
 		player.update();
 		if(!isValid(player.getLocation(), player.getRadius()))
-			player.setLocation(loc);
+		{
+			if(isValid(new Point2D.Double(player.getLocation().x,loc.y), player.getRadius()))
+				player.setLocation(new Point2D.Double(player.getLocation().x,loc.y));
+			else if(isValid(new Point2D.Double(loc.x,player.getLocation().y), player.getRadius()))
+				player.setLocation(new Point2D.Double(loc.x,player.getLocation().y));
+			else
+				player.setLocation(loc);
+		}
 	}
 	public boolean isValid(Point2D.Double loc, int radius)
 	{
@@ -120,7 +127,6 @@ public class GameMap{
 						return false;
 		}
 		return true;
-		//return !map[(int)(loc.x/25)][(int)(loc.y/25)];
 	}
 	public void setPlayers(Set<Player> players) {
 		this.players = players;
