@@ -62,8 +62,9 @@ public class GameCanvas extends Canvas {
 			AffineTransform transform = new AffineTransform();
 			transform.rotate(gameMap.getPlayer().getOrientation(), gameMap.getPlayer().getLocation().x, gameMap.getPlayer().getLocation().y);
 			backg.draw(transform.createTransformedShape(gun));
+			gameMap.getPlayer().getWeapon().update();
 		}
-		gameMap.getPlayer().getWeapon().update();
+		
 		for(int i=0;i<gameMap.getBullets().size();i++) {
 			Bullet b = gameMap.getBullets().get(i);
 			Rectangle bullet = new Rectangle((int)b.getLocation().x,(int)b.getLocation().y, 1, 6);
