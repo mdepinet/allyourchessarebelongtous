@@ -22,7 +22,6 @@ public class GameMap{
 	public static final int WIDTH = 500;
 	public static final int GRID_PIXELS = GameCanvas.GRID_PIXELS;
 	private ArrayList<Bullet> bullets;
-	private ArrayList<Weapon> weapons;
 	private Map<Integer, ArrayList<Point2D.Double>> spawnLocs;
 	public GameMap()
 	{
@@ -31,15 +30,14 @@ public class GameMap{
 		spawnLocs.put(2, new ArrayList<Point2D.Double>());
 		spawnLocs.put(3, new ArrayList<Point2D.Double>());
 		bullets = new ArrayList<Bullet>();
-		weapons = new ArrayList<Weapon>();
 		players = new HashSet<Player>();
 		player = new Player("player1");
-		player.setWeapon(new Weapon("Default"),0);
+		player.addWeapon(new Weapon("Default"));
 		player.setTeam(1);
 		loadDefaultMap();
 		Player p2 = new Player("player2");
 		spawn(p2);
-		p2.setWeapon(new Weapon("Default"),0);
+		p2.addWeapon(new Weapon("Default"));
 		p2.setTeam(2);
 		players.add(p2);
 		
@@ -138,8 +136,10 @@ public class GameMap{
 				player.setLocation(loc);
 		}
 		Weapon w;
-		if((w = getWeapon(player))!=null)
+		if((w = getWeapon(player))!=null){
 			player.addWeapon(w);
+			map[getPlayerGridX(player)][getPlayerGridY(player)] = '_';
+		}
 	}
 	public Weapon getWeapon(Player p)
 	{
@@ -173,19 +173,11 @@ public class GameMap{
 		double discriminant = b*b-4*a*c;
 		if( discriminant >= 0 )
 		{
-		  // ray didn't totally miss sphere,
-		  // so there is a solution to
-		  // the equation.
-
-
+		  // ray didn't totally miss sphere, so there is a solution to the equation.
 		  discriminant = Math.sqrt( discriminant );
 		  double t1 = (-b + discriminant)/(2*a);
-		  double t2 = (-b - discriminant)/(2*a);
-
-		  if( t1 >= 0 && t1 <= 1 )
-		  {
-		    return true;
-		  }
+		  //double t2 = (-b - discriminant)/(2*a);
+		  if( (t1 >= 0 && t1 <= 1) /*||  (t2 >= 0 && t2 <= 1)*/) return true;
 		}
 		return false;
 	}
@@ -216,12 +208,17 @@ public class GameMap{
 		p.respawn(spawnLocs.get(player.getTeam()).get((int)(Math.random()*spawnLocs.size())));
 	}
 	public char getObjectAtPlayer(Player p){
-		Point2D.Double loc = p.getLocation();
-		int x = (int) (Math.floor(loc.x/GRID_PIXELS));
-		int y = (int) (Math.floor(loc.y/GRID_PIXELS));
+		int x = getPlayerGridX(p);
+		int y = getPlayerGridY(p);
 		if (x >= 0 && x<map.length && y >= 0){
 			if (y<map[x].length) return map[x][y];
 		}
 		return '_';
+	}
+	private int getPlayerGridX(Player p){
+		return (int) (Math.floor(p.getLocation().x/GRID_PIXELS));
+	}
+	private int getPlayerGridY(Player p){
+		return (int) (Math.floor(p.getLocation().y/GRID_PIXELS));
 	}
 }

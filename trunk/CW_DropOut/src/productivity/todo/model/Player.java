@@ -23,7 +23,7 @@ public class Player {
 		location=new Point2D.Double(12,12);
 		direction = new Point2D.Double(0,0);
 		radius = 8;
-		weapon=new Weapon[8];
+		weapon=new Weapon[10];
 		currWeapon=0;
 		numWeapons=0;
 		orientation=0;
