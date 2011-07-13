@@ -22,6 +22,11 @@ public class Weapon {
 		shotCounter = 0;
 		reloadStartTime = 0;
 	}
+	public Weapon(char c) {
+		if(!WeaponLoader.load(this,c)) throw new IllegalArgumentException("This weapon doesn't exist");
+		shotCounter = 0;
+		reloadStartTime = 0;
+	}
 	public String getType(){
 		return type;
 	}
@@ -137,6 +142,7 @@ public class Weapon {
 	}
 	
 	void setProperties(WeaponDefinition wepDef){
+		if (wepDef == null) return;
 		setType(wepDef.getType());
 		setPower(wepDef.getPower());
 		setEffRange(wepDef.getEffRange());
