@@ -80,6 +80,13 @@ public class Weapon {
 		
 		return true;
 	}
+	public void reload() {
+		reloadStartTime = System.currentTimeMillis();
+		clipSize = maxClipSize;
+		if (System.currentTimeMillis() - (reloadStartTime + reloadMillis) > 0){
+			reloadStartTime = 0;
+		}
+	}
 	public void update() {
 		shotCounter++;
 	}
