@@ -32,12 +32,10 @@ public class GameMap{
 		bullets = new ArrayList<Bullet>();
 		players = new HashSet<Player>();
 		player = new Player("player1");
-		player.addWeapon(new Weapon("Default"));
 		player.setTeam(1);
 		loadDefaultMap();
 		Player p2 = new Player("player2");
 		spawn(p2);
-		p2.addWeapon(new Weapon("Default"));
 		p2.setTeam(2);
 		players.add(p2);
 		
@@ -88,6 +86,10 @@ public class GameMap{
 			tempAngle=angle;
 		}
 		weapon.setClipSize(weapon.getClipSize()-1);
+		if(weapon.getClipSize()==0 && weapon.getClipCount()==0) {
+			player.removeWeapon(weapon);
+			player.nextWeapon();
+		}
 	}
 	public char[][] getMap() {
 		return map;
@@ -148,7 +150,8 @@ public class GameMap{
 		}
 		Weapon w;
 		if((w = getWeapon(player))!=null){
-			player.addWeapon(w);
+			if(player.containsWeapon(w)) player.getWeapon(player.weaponIndex(w)).setClipCount(player.getWeapon(player.weaponIndex(w)).getClipCount()+3);
+			else player.addWeapon(w);
 			map[getPlayerGridX(player)][getPlayerGridY(player)] = '_';
 		}
 	}

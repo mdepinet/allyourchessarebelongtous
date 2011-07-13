@@ -17,6 +17,7 @@ public class Weapon {
 	private String bulletImgLoc;
 	private int shotCounter;
 	private long reloadStartTime;
+	private int clipCount;
 	public Weapon(String name){
 		WeaponLoader.load(this,name);
 		shotCounter = 0;
@@ -67,6 +68,7 @@ public class Weapon {
 		return bulletImgLoc;
 	}
 	public boolean canShoot() {
+		//if(clipCount==0) return false;
 		if(shotCounter>=30/shotsPerSec){
 			shotCounter=0;
 		}
@@ -74,6 +76,7 @@ public class Weapon {
 		if (clipSize <= 0){
 			reloadStartTime = System.currentTimeMillis();
 			clipSize = maxClipSize;
+			clipCount--;
 		}
 		if (reloadStartTime != 0){
 			if (System.currentTimeMillis() - (reloadStartTime + reloadMillis) > 0){
@@ -86,8 +89,10 @@ public class Weapon {
 		return true;
 	}
 	public void reload() {
+		if(clipCount==0) return;
 		reloadStartTime = System.currentTimeMillis();
 		clipSize = maxClipSize;
+		clipCount--;
 		if (System.currentTimeMillis() - (reloadStartTime + reloadMillis) > 0){
 			reloadStartTime = 0;
 		}
@@ -156,5 +161,12 @@ public class Weapon {
 		setImgLoc(wepDef.getImgLoc());
 		setImgTopLoc(wepDef.getImgTopLoc());
 		setBulletImgLoc(wepDef.getBulletImgLoc());
+		setClipCount(wepDef.getMaxClipCount());
+	}
+	public int getClipCount() {
+		return clipCount;
+	}
+	public void setClipCount(int clipCount) {
+		this.clipCount = clipCount;
 	}
 }
