@@ -9,10 +9,11 @@ public class Player {
 	private int radius;
 	private String name;
 	private Color color;
-	private Weapon weapon;
+	private Weapon[] weapon;
 	private double health;
 	private double orientation;
 	private int team;
+	private int currWeapon;
 	public Player(){
 		setTeam(0);
 		name = "player1";
@@ -21,7 +22,8 @@ public class Player {
 		location=new Point2D.Double(12,12);
 		direction = new Point2D.Double(0,0);
 		radius = 8;
-		weapon=null;
+		weapon=new Weapon[8];
+		currWeapon=0;
 		orientation=0;
 	}
 	public Player(String pname){
@@ -32,7 +34,8 @@ public class Player {
 		radius = 8;
 		location=new Point2D.Double(12,12);
 		direction = new Point2D.Double(0,0);
-		weapon=null;
+		weapon=new Weapon[8];
+		currWeapon=0;
 		orientation=0;
 	}
 	public int getRadius() {
@@ -51,11 +54,29 @@ public class Player {
 	public Color getColor() {
 		return color;
 	}
-	public void setWeapon(Weapon weapon) {
+	public void setWeapon(Weapon[] weapon) {
 		this.weapon = weapon;
 	}
+	public void setWeapon(Weapon weapon, int index) {
+		this.weapon[index] = weapon;
+	}
+	public Weapon getWeapon(int index) {
+		return weapon[index];
+	}
 	public Weapon getWeapon() {
-		return weapon;
+		return weapon[currWeapon];
+	}
+	public int getCurrWeapon() {
+		return currWeapon;
+	}
+	public void setCurrWeapon(int nextWeapon) {
+		currWeapon = nextWeapon;
+	}
+	public int nextWeapon() {
+		if(weapon[currWeapon+1]!=null)
+			return ++currWeapon;
+		currWeapon=0;
+		return currWeapon;
 	}
 	public void setLocation(Point2D.Double point) {
 		this.location = point;
