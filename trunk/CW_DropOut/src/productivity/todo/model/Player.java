@@ -2,6 +2,7 @@ package productivity.todo.model;
 
 import java.awt.Color;
 import java.awt.geom.Point2D;
+import java.util.ArrayList;
 
 public class Player {
 	private Point2D.Double location;
@@ -9,12 +10,11 @@ public class Player {
 	private int radius;
 	private String name;
 	private Color color;
-	private Weapon[] weapon;
+	private ArrayList<Weapon> weapon;
 	private double health;
 	private double orientation;
 	private int team;
 	private int currWeapon;
-	private int numWeapons;
 	public Player(){
 		setTeam(0);
 		name = "player1";
@@ -23,9 +23,8 @@ public class Player {
 		location=new Point2D.Double(12,12);
 		direction = new Point2D.Double(0,0);
 		radius = 8;
-		weapon=new Weapon[10];
+		weapon=new ArrayList<Weapon>();
 		currWeapon=0;
-		numWeapons=0;
 		orientation=0;
 	}
 	public Player(String pname){
@@ -36,9 +35,8 @@ public class Player {
 		radius = 8;
 		location=new Point2D.Double(12,12);
 		direction = new Point2D.Double(0,0);
-		weapon=new Weapon[8];
+		weapon=new ArrayList<Weapon>();
 		currWeapon=0;
-		numWeapons=0;
 		orientation=0;
 	}
 	public int getRadius() {
@@ -57,23 +55,32 @@ public class Player {
 	public Color getColor() {
 		return color;
 	}
+	public void removeWeapon(Weapon weapon) {
+		this.weapon.remove(weapon);
+	}
 	public int getNumWeapons() {
-		return numWeapons;
+		return weapon.size();
 	}
 	public void addWeapon(Weapon weapon) {
-		this.weapon[numWeapons++] = weapon;
+		this.weapon.add(weapon);
 	}
-	public void setWeapon(Weapon[] weapon) {
+	public void setWeapon(ArrayList<Weapon> weapon) {
 		this.weapon = weapon;
 	}
 	public void setWeapon(Weapon weapon, int index) {
-		this.weapon[index] = weapon;
+		this.weapon.set(index, weapon);
 	}
 	public Weapon getWeapon(int index) {
-		return weapon[index];
+		return weapon.get(index);
 	}
 	public Weapon getWeapon() {
-		return weapon[currWeapon];
+		return weapon.get(currWeapon);
+	}
+	public boolean containsWeapon(Weapon weapon) {
+		return this.weapon.contains(weapon);
+	}
+	public int weaponIndex(Weapon weapon) {
+		return this.weapon.indexOf(weapon);
 	}
 	public int getCurrWeapon() {
 		return currWeapon;
@@ -82,7 +89,7 @@ public class Player {
 		currWeapon = nextWeapon;
 	}
 	public int nextWeapon() {
-		if(weapon[currWeapon+1]!=null)
+		if(weapon.size()>currWeapon+1)
 			return ++currWeapon;
 		currWeapon=0;
 		return currWeapon;
@@ -135,10 +142,7 @@ public class Player {
 	}
 	
 	public void die(){
-		for (int i = 0; i<weapon.length; i++){
-			weapon[i] = null;
-		}
-		numWeapons = 0;
+		weapon.clear();
 		location = new Point2D.Double(-1000.,-1000.);
 	}
 	public void respawn(Point2D.Double loc){
