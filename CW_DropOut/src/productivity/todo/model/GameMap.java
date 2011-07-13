@@ -109,10 +109,17 @@ public class GameMap{
 	{
 		for(int i=0;i<bullets.size();i++) {
 			Bullet b = bullets.get(i);
-			if(!isValid(b.getLocation(),1)) { bullets.remove(i--); continue; }
+			if(!isValid(b.getLocation(),1)) { explode(b); bullets.remove(i--); continue; }
 			Player hit = getHitPlayer(b);
 			b.update();
 			double effRange = b.getWeapon().getEffRange();
+			//if it's outside effective range and it's an explosive, blow it and remove it
+			if(b.getDistanceTraveled()>effRange) 
+				if(explode(b)){
+					bullets.remove(b);
+					i--;
+					continue;
+				}
 			if(b.getDistanceTraveled() > effRange*2) { bullets.remove(b); i--; continue; }
 			if (hit != null){
 				double damage = b.getWeapon().getPower();
@@ -224,5 +231,18 @@ public class GameMap{
 	}
 	private int getPlayerGridY(Player p){
 		return (int) (Math.floor(p.getLocation().y/GRID_PIXELS));
+	}
+	private boolean explode(Bullet b){
+		int splash = b.getWeapon().getSplash();
+		if(splash<1) return false;
+		players.add(player);
+		for(Player p : players){
+			double distance = p.getLocation().distance(b.getLocation());
+			if(distance<splash)
+				p.takeDamage(b.getWeapon().getPower()*((splash-distance)/splash));
+		}
+		players.remove(player);
+		return true;
+		//TODO
 	}
 }
