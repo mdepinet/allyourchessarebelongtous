@@ -16,6 +16,8 @@ public class GameCanvas extends Canvas {
 	private GameMap gameMap;
 	private Image backbuffer;
 	private Graphics2D backg;
+	public static final int GRID_PIXELS = 25;
+	public static final int FRAMES_PER_SECOND = 30;
 
 	public GameCanvas()
 	{
@@ -27,7 +29,7 @@ public class GameCanvas extends Canvas {
 	    backg = (Graphics2D)backbuffer.getGraphics();
 	    backg.setBackground( Color.white );
 	    backg.clearRect(0, 0, GameMap.WIDTH, GameMap.HEIGHT);
-	    backg.setFont(backg.getFont().deriveFont(25));
+	    backg.setFont(backg.getFont().deriveFont(GRID_PIXELS));
 	}
 	public void updateGraphics()
 	{
@@ -49,8 +51,8 @@ public class GameCanvas extends Canvas {
 		for(int i = 0; i < 20;i++)
 		{
 			for(int j = 0; j < 20;j++)
-				if(gameMap.getMap()[i][j] == 'X') backg.fillRect(i*25, j*25, 25, 25);
-				else if( gameMap.getMap()[i][j] != '_')  { backg.drawRect(i*25, j*25, 25, 25); backg.drawString("" + gameMap.getMap()[i][j], i*25, (j+1)*25); }
+				if(gameMap.getMap()[i][j] == 'X') backg.fillRect(i*GRID_PIXELS, j*GRID_PIXELS, GRID_PIXELS, GRID_PIXELS);
+				else if( gameMap.getMap()[i][j] != '_')  { backg.drawRect(i*GRID_PIXELS, j*GRID_PIXELS, GRID_PIXELS, GRID_PIXELS); backg.drawString("" + gameMap.getMap()[i][j], i*GRID_PIXELS, (j+1)*GRID_PIXELS); }
 		}
 		
 		if (gameMap.getPlayer().getHealth() > 0){

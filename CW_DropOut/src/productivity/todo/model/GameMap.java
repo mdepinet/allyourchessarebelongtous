@@ -12,12 +12,15 @@ import java.util.Map;
 import java.util.Scanner;
 import java.util.Set;
 
+import productivity.todo.view.GameCanvas;
+
 public class GameMap{
 	private Set<Player> players;
 	private Player player;
 	private char[][] map;
 	public static final int HEIGHT = 500;
 	public static final int WIDTH = 500;
+	public static final int GRID_PIXELS = GameCanvas.GRID_PIXELS;
 	private ArrayList<Bullet> bullets;
 	private ArrayList<Weapon> weapons;
 	private Map<Integer, ArrayList<Point2D.Double>> spawnLocs;
@@ -64,11 +67,8 @@ public class GameMap{
 		{
 			for(int j = 0; j < 20; j++) {
 				String next = scan.next();
-				try {
-					Integer.parseInt(next);
-				}
-				catch(NumberFormatException e) { map[j][i] = next.charAt(0); }
-				finally { if(next.equals("1") || next.equals("2") || next.equals("3")) { spawnLocs.get(new Integer(next)).add(new Point2D.Double((j*25)+12.5,(i*25)+12.5)); map[j][i] = '_'; } }
+				map[j][i] = next.charAt(0);
+				if (next.matches("\\d+")) { if(next.equals("1") || next.equals("2") || next.equals("3")) { spawnLocs.get(new Integer(next)).add(new Point2D.Double((j*GRID_PIXELS)+12.5,(i*GRID_PIXELS)+12.5)); map[j][i] = '_'; } }
 			}
 			if(scan.hasNextLine())
 				scan.nextLine();
@@ -138,24 +138,15 @@ public class GameMap{
 				player.setLocation(loc);
 		}
 		Weapon w;
-		if((w = getWeapon(player.getLocation(),player.getRadius()))!=null)
-			player.setWeapon(w,0);
+		if((w = getWeapon(player))!=null)
+			player.addWeapon(w);
 	}
-	public Weapon getWeapon(Point2D.Double loc, int radius)
+	public Weapon getWeapon(Player p)
 	{
-		for(int i = 0; i < map.length; i++)
-		{
-			for(int j = 0; j < map[i].length;j++)
-			{
-				Weapon wep = null;
-				try {
-					wep = new Weapon(map[i][j]);
-				} 
-				catch(IllegalArgumentException e) { }
-				if(new Rectangle(i*25,j*25,25,25).intersects(new Rectangle((int)loc.x-radius,(int)loc.y-radius,radius*2,radius*2)))
-				{	map[i][j] = '_'; return wep; }
-			}
-		}
+		try {
+			return new Weapon(getObjectAtPlayer(p));
+		} 
+		catch(IllegalArgumentException e) { }
 		return null;
 	}
 	public Player getHitPlayer(Bullet bullet)
@@ -204,7 +195,7 @@ public class GameMap{
 		for(int i = 0; i < map.length; i++)
 		{
 			for(int j = 0; j < map[0].length;j++)
-				if(map[i][j] == 'X' && new Rectangle(i*25,j*25,25,25).intersects(new Rectangle((int)loc.x-radius,(int)loc.y-radius,radius*2,radius*2)))
+				if(map[i][j] == 'X' && new Rectangle(i*GRID_PIXELS,j*GRID_PIXELS,GRID_PIXELS,GRID_PIXELS).intersects(new Rectangle((int)loc.x-radius,(int)loc.y-radius,radius*2,radius*2)))
 						return false;
 		}
 		return true;
@@ -223,5 +214,14 @@ public class GameMap{
 	
 	public void spawn(Player p){
 		p.respawn(spawnLocs.get(player.getTeam()).get((int)(Math.random()*spawnLocs.size())));
+	}
+	public char getObjectAtPlayer(Player p){
+		Point2D.Double loc = p.getLocation();
+		int x = (int) (Math.floor(loc.x/GRID_PIXELS));
+		int y = (int) (Math.floor(loc.y/GRID_PIXELS));
+		if (x >= 0 && x<map.length && y >= 0){
+			if (y<map[x].length) return map[x][y];
+		}
+		return '_';
 	}
 }
