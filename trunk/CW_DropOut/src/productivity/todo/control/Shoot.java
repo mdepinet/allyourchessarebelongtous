@@ -118,8 +118,10 @@ public class Shoot implements KeyListener, MouseListener, MouseMotionListener {
 					break;
 				case KeyEvent.VK_Q:
 					map.getPlayer().nextWeapon();
+					break;
 				case KeyEvent.VK_R:
 					map.getPlayer().getWeapon().reload();
+					break;
 				default:
 					break;
 			}
