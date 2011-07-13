@@ -15,7 +15,7 @@ public class WeaponDefinition {
 	private int bulletSpeed;
 	private String bulletImgLoc;
 	private char representativeChar;
-	
+	private int maxClipCount;
 	public WeaponDefinition(String line){
 		String[] info = line.split(",");
 		int i = 0;
@@ -27,6 +27,7 @@ public class WeaponDefinition {
 		roundsPerShot = Integer.parseInt(info[i++]);
 		shotsPerSec = Double.parseDouble(info[i++]);
 		maxClipSize = Integer.parseInt(info[i++]);
+		maxClipCount = Integer.parseInt(info[i++]);
 		splash = Integer.parseInt(info[i++]);
 		bulletSpeed = Integer.parseInt(info[i++]);
 		imgLoc = info[i++];
@@ -97,6 +98,14 @@ public class WeaponDefinition {
 
 	public void setMaxClipSize(int maxClipSize) {
 		this.maxClipSize = maxClipSize;
+	}
+
+	public int getMaxClipCount() {
+		return maxClipCount;
+	}
+
+	public void setMaxClipCount(int maxClipCount) {
+		this.maxClipCount = maxClipCount;
 	}
 
 	public int getSplash() {
