@@ -135,9 +135,14 @@ public class Player {
 	}
 	
 	public void die(){
+		for (int i = 0; i<weapon.length; i++){
+			weapon[i] = null;
+		}
+		numWeapons = 0;
 		location = new Point2D.Double(-1000.,-1000.);
 	}
 	public void respawn(Point2D.Double loc){
+		addWeapon(new Weapon("Default"));
 		location = loc;
 	}
 }

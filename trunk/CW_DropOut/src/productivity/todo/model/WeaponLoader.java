@@ -49,4 +49,9 @@ public class WeaponLoader {
 		if (chars == null || chars.isEmpty()) loadAll();
 		return chars.get(c);
 	}
+	public static WeaponDefinition getWeaponDef(String s){
+		if (definitions == null || definitions.isEmpty()) loadAll();
+		if (s.equalsIgnoreCase("Default")) return defaultWeapon;
+		return definitions.get(s);
+	}
 }

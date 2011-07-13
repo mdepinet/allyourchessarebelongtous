@@ -44,6 +44,10 @@ public class GameMap{
 		spawn(player);
 		for(Player p: players)
 			if(!spawnLocs.get(new Integer(p.getTeam())).isEmpty()) p.setLocation(spawnLocs.get(p.getTeam()).get((int)(Math.random()*spawnLocs.size())));
+		
+		long seed = System.currentTimeMillis();
+		System.out.println("Started game with seed "+seed);
+		new WeaponAdderThread(map, seed).start();
 	}
 	public ArrayList<Bullet> getBullets() {
 		return bullets;
