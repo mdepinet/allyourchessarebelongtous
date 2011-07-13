@@ -32,6 +32,7 @@ public class GameMap{
 		player.setWeapon(new Weapon("Battle Rifle"),0);
 		player.setWeapon(new Weapon("Assault Rifle"), 1);
 		player.setWeapon(new Weapon("12 Gauge"),2);
+		player.setWeapon(new Weapon("Semtex"),2);
 		player.setTeam(1);
 		loadDefaultMap();
 		Player p2 = new Player("player2");
@@ -108,7 +109,7 @@ public class GameMap{
 			Player hit = getHitPlayer(b);
 			b.update();
 			double effRange = b.getWeapon().getEffRange();
-			if(b.getDistanceTraveled() > effRange*2) { bullets.remove(b); continue; }
+			if(b.getDistanceTraveled() > effRange*2) { bullets.remove(b); i--; continue; }
 			if (hit != null){
 				double damage = b.getWeapon().getPower();
 				if (b.getDistanceTraveled() > effRange) damage -= ((b.getDistanceTraveled() - effRange)/effRange)*damage;
@@ -118,6 +119,7 @@ public class GameMap{
 					new RespawnThread(hit,5000).start();
 				}
 				bullets.remove(b);
+				i--;
 			}
 		}
 		for(Player p: players)
