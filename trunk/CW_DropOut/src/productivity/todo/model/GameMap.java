@@ -29,10 +29,7 @@ public class GameMap{
 		bullets = new ArrayList<Bullet>();
 		players = new HashSet<Player>();
 		player = new Player("player1");
-		player.setWeapon(new Weapon("Battle Rifle"),0);
-		player.setWeapon(new Weapon("Assault Rifle"), 1);
-		player.setWeapon(new Weapon("12 Gauge"),2);
-		player.setWeapon(new Weapon("Semtex"),2);
+		player.setWeapon(new Weapon("Default"),0);
 		player.setTeam(1);
 		loadDefaultMap();
 		Player p2 = new Player("player2");
