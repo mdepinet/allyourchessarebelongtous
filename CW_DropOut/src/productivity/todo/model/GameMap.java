@@ -31,7 +31,8 @@ public class GameMap{
 		weapons = new ArrayList<Weapon>();
 		players = new HashSet<Player>();
 		player = new Player("player1");
-		player.setWeapon(new Weapon("Default"),0);
+		player.setWeapon(new Weapon("Battle Rifle"),0);
+		player.setWeapon(new Weapon("Assault Rifle"),1);
 		player.setTeam(1);
 		loadDefaultMap();
 		Player p2 = new Player("player2");
@@ -75,9 +76,9 @@ public class GameMap{
 		}
 	}
 	public void shoot(int x, int y, double angle, Point2D.Double shootLoc, Weapon weapon) {
-		int spreadModifier = Math.random()>.5? -1:1;
 		double tempAngle = angle;
 		for(int i = 1; i<=weapon.getRoundsPerShot(); i++){
+			int spreadModifier = Math.random()>.5? -1:1;
 			Bullet bullet = new Bullet(weapon);
 			bullet.setLocation(shootLoc);
 			tempAngle += spreadModifier*Math.toRadians(Math.random()*weapon.getSpread()/2);
@@ -107,11 +108,11 @@ public class GameMap{
 	{
 		for(int i=0;i<bullets.size();i++) {
 			Bullet b = bullets.get(i);
-			if(!isValid(b.getLocation(),1)) bullets.remove(i--);
+			if(!isValid(b.getLocation(),1)) { bullets.remove(i--); continue; }
 			Player hit = getHitPlayer(b);
 			b.update();
 			double effRange = b.getWeapon().getEffRange();
-			if(b.getDistanceTraveled() > effRange*2) { bullets.remove(b); /*i--; */ continue; }
+			if(b.getDistanceTraveled() > effRange*2) { bullets.remove(b); i--; continue; }
 			if (hit != null){
 				double damage = b.getWeapon().getPower();
 				if (b.getDistanceTraveled() > effRange) damage -= ((b.getDistanceTraveled() - effRange)/effRange)*damage;
@@ -121,6 +122,7 @@ public class GameMap{
 					new RespawnThread(hit,5000).start();
 				}
 				bullets.remove(b);
+				i--;
 			}
 		}
 		for(Player p: players)
@@ -138,7 +140,7 @@ public class GameMap{
 		}
 		Weapon w;
 		if((w = getWeapon(player.getLocation(),player.getRadius()))!=null)
-			player.setWeapon(w);
+			player.setWeapon(w,0);
 	}
 	public Weapon getWeapon(Point2D.Double loc, int radius)
 	{
