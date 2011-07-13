@@ -116,6 +116,8 @@ public class Shoot implements KeyListener, MouseListener, MouseMotionListener {
 				case KeyEvent.VK_RIGHT:
 					map.getPlayer().setDirection(new Point2D.Double(0,map.getPlayer().getDirection().getY()));
 					break;
+				case KeyEvent.VK_Q:
+					map.getPlayer().nextWeapon();
 				default:
 					break;
 			}
