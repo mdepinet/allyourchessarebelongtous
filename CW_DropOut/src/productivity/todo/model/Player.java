@@ -14,6 +14,7 @@ public class Player {
 	private double orientation;
 	private int team;
 	private int currWeapon;
+	private int numWeapons;
 	public Player(){
 		setTeam(0);
 		name = "player1";
@@ -24,6 +25,7 @@ public class Player {
 		radius = 8;
 		weapon=new Weapon[8];
 		currWeapon=0;
+		numWeapons=0;
 		orientation=0;
 	}
 	public Player(String pname){
@@ -36,6 +38,7 @@ public class Player {
 		direction = new Point2D.Double(0,0);
 		weapon=new Weapon[8];
 		currWeapon=0;
+		numWeapons=0;
 		orientation=0;
 	}
 	public int getRadius() {
@@ -53,6 +56,12 @@ public class Player {
 	}
 	public Color getColor() {
 		return color;
+	}
+	public int getNumWeapons() {
+		return numWeapons;
+	}
+	public void addWeapon(Weapon weapon) {
+		this.weapon[numWeapons++] = weapon;
 	}
 	public void setWeapon(Weapon[] weapon) {
 		this.weapon = weapon;
