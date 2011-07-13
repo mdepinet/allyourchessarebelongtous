@@ -1,6 +1,6 @@
 .44 Magnum,Pistol,20,100,1,1,2,6,1,10,resource/magnum,resource/magnumTop,resource/bullet,P
 Rockets,Explosive,100,150,1,1,0.25,2,50,6,resource/rockets,resource/rockets,resource/rocket,R
-Battle Rifle,Rifle,20,300,10,3,2,36,1,10,resource/br,resource/brTop,resource/bullet,B
+Battle Rifle,Rifle,20,300,5,3,2,12,1,10,resource/br,resource/brTop,resource/bullet,B
 Barret .50Cal,Sniper,100,600,1,1,1,4,1,50,resource/barret,resource/barretTop,resource/bullet,S
 12 Gauge,Shotgun,15,25,40,10,1,6,1,10,resource/12G,resource/12GTop,resource/bullet,H
 Semtex,Thrown,100,100,1,1,0.5,1,50,4,null,null,resource/grenade,G
