@@ -20,7 +20,13 @@ public class WeaponLoader {
 		}
 		WeaponDefinition def = definitions.get(name);
 		wep.setProperties(def);
-		return def == null;
+		return def != null;
+	}
+	public static boolean load(Weapon wep, char c){
+		if (definitions == null || definitions.isEmpty()) loadAll();
+		WeaponDefinition def = getWeaponDef(c);
+		wep.setProperties(def);
+		return def != null;
 	}
 	private static void loadAll(){
 		definitions = new TreeMap<String,WeaponDefinition>();
@@ -39,7 +45,7 @@ public class WeaponLoader {
 		}
 	}
 	
-	public WeaponDefinition getWeaponDef(char c){
+	public static WeaponDefinition getWeaponDef(char c){
 		if (chars == null || chars.isEmpty()) loadAll();
 		return chars.get(c);
 	}

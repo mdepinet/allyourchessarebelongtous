@@ -15,10 +15,11 @@ import java.util.Set;
 public class GameMap{
 	private Set<Player> players;
 	private Player player;
-	private boolean[][] map;
+	private char[][] map;
 	public static final int HEIGHT = 500;
 	public static final int WIDTH = 500;
 	private ArrayList<Bullet> bullets;
+	private ArrayList<Weapon> weapons;
 	private Map<Integer, ArrayList<Point2D.Double>> spawnLocs;
 	public GameMap()
 	{
@@ -27,6 +28,7 @@ public class GameMap{
 		spawnLocs.put(2, new ArrayList<Point2D.Double>());
 		spawnLocs.put(3, new ArrayList<Point2D.Double>());
 		bullets = new ArrayList<Bullet>();
+		weapons = new ArrayList<Weapon>();
 		players = new HashSet<Player>();
 		player = new Player("player1");
 		player.setWeapon(new Weapon("Default"),0);
@@ -50,7 +52,7 @@ public class GameMap{
 	}
 	public void loadDefaultMap()
 	{
-		map = new boolean[20][20];
+		map = new char[20][20];
 		Scanner scan = null;
 		try
 		{
@@ -62,8 +64,11 @@ public class GameMap{
 		{
 			for(int j = 0; j < 20; j++) {
 				String next = scan.next();
-				map[j][i] = next.equals("X");
-				if(next.equals("1") || next.equals("2") || next.equals("3")) spawnLocs.get(new Integer(next)).add(new Point2D.Double((j*25)+12.5,(i*25)+12.5));
+				try {
+					Integer.parseInt(next);
+				}
+				catch(NumberFormatException e) { map[j][i] = next.charAt(0); }
+				finally { if(next.equals("1") || next.equals("2") || next.equals("3")) { spawnLocs.get(new Integer(next)).add(new Point2D.Double((j*25)+12.5,(i*25)+12.5)); map[j][i] = '_'; } }
 			}
 			if(scan.hasNextLine())
 				scan.nextLine();
@@ -82,10 +87,10 @@ public class GameMap{
 		}
 		weapon.setClipSize(weapon.getClipSize()-1);
 	}
-	public boolean[][] getMap() {
+	public char[][] getMap() {
 		return map;
 	}
-	public void setMap(boolean[][] map) {
+	public void setMap(char[][] map) {
 		this.map = map;
 	}
 	public Set<Player> getPlayers() {
@@ -116,7 +121,6 @@ public class GameMap{
 					new RespawnThread(hit,5000).start();
 				}
 				bullets.remove(b);
-				/*i--;*/
 			}
 		}
 		for(Player p: players)
@@ -132,6 +136,26 @@ public class GameMap{
 			else
 				player.setLocation(loc);
 		}
+		Weapon w;
+		if((w = getWeapon(player.getLocation(),player.getRadius()))!=null)
+			player.setWeapon(w);
+	}
+	public Weapon getWeapon(Point2D.Double loc, int radius)
+	{
+		for(int i = 0; i < map.length; i++)
+		{
+			for(int j = 0; j < map[i].length;j++)
+			{
+				Weapon wep = null;
+				try {
+					wep = new Weapon(map[i][j]);
+				} 
+				catch(IllegalArgumentException e) { }
+				if(new Rectangle(i*25,j*25,25,25).intersects(new Rectangle((int)loc.x-radius,(int)loc.y-radius,radius*2,radius*2)))
+				{	map[i][j] = '_'; return wep; }
+			}
+		}
+		return null;
 	}
 	public Player getHitPlayer(Bullet bullet)
 	{
@@ -179,7 +203,7 @@ public class GameMap{
 		for(int i = 0; i < map.length; i++)
 		{
 			for(int j = 0; j < map[0].length;j++)
-				if(map[i][j] && new Rectangle(i*25,j*25,25,25).intersects(new Rectangle((int)loc.x-radius,(int)loc.y-radius,radius*2,radius*2)))
+				if(map[i][j] == 'X' && new Rectangle(i*25,j*25,25,25).intersects(new Rectangle((int)loc.x-radius,(int)loc.y-radius,radius*2,radius*2)))
 						return false;
 		}
 		return true;

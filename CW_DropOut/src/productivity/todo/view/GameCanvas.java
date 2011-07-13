@@ -27,6 +27,7 @@ public class GameCanvas extends Canvas {
 	    backg = (Graphics2D)backbuffer.getGraphics();
 	    backg.setBackground( Color.white );
 	    backg.clearRect(0, 0, GameMap.WIDTH, GameMap.HEIGHT);
+	    backg.setFont(backg.getFont().deriveFont(25));
 	}
 	public void updateGraphics()
 	{
@@ -48,7 +49,8 @@ public class GameCanvas extends Canvas {
 		for(int i = 0; i < 20;i++)
 		{
 			for(int j = 0; j < 20;j++)
-				if(gameMap.getMap()[i][j]) backg.fillRect(i*25, j*25, 25, 25);
+				if(gameMap.getMap()[i][j] == 'X') backg.fillRect(i*25, j*25, 25, 25);
+				else if( gameMap.getMap()[i][j] != '_')  { backg.drawRect(i*25, j*25, 25, 25); backg.drawString("" + gameMap.getMap()[i][j], i*25, (j+1)*25); }
 		}
 		
 		if (gameMap.getPlayer().getHealth() > 0){
