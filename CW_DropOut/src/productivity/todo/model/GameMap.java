@@ -31,7 +31,7 @@ public class GameMap{
 		player = new Player("player1");
 		player.setWeapon(new Weapon("Default"),0);
 		player.setWeapon(new Weapon("Assault Rifle"), 1);
-		player.setWeapon(new Weapon("Barret .50Cal"),2);
+		player.setWeapon(new Weapon("12 Gauge"),2);
 		player.setTeam(1);
 		loadDefaultMap();
 		Player p2 = new Player("player2");
@@ -72,11 +72,14 @@ public class GameMap{
 		}
 	}
 	public void shoot(int x, int y, double angle, Point2D.Double shootLoc, Weapon weapon) {
-		Bullet bullet = new Bullet(weapon);
-		bullet.setLocation(shootLoc);
-		bullet.setVelocity(new Point2D.Double(Math.cos(angle+Math.PI/2)*weapon.getBulletSpeed(),Math.sin(angle+Math.PI/2)*weapon.getBulletSpeed()));
-		
-		bullets.add(bullet);
+		for(int i = 1; i<=weapon.getRoundsPerShot(); i++){
+			Bullet bullet = new Bullet(weapon);
+			bullet.setLocation(shootLoc);
+			angle += (Math.random()>.5? -1 : 1)*Math.random()*Math.toRadians(weapon.getSpread()/2);
+			bullet.setVelocity(new Point2D.Double(Math.cos(angle+Math.PI/2)*weapon.getBulletSpeed(),Math.sin(angle+Math.PI/2)*weapon.getBulletSpeed()));
+			
+			bullets.add(bullet);
+		}
 		weapon.setClipSize(weapon.getClipSize()-1);
 	}
 	public boolean[][] getMap() {
