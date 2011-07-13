@@ -31,6 +31,7 @@ public class GameMap{
 		player = new Player("player1");
 		player.setWeapon(new Weapon("Default"),0);
 		player.setWeapon(new Weapon("Assault Rifle"), 1);
+		player.setWeapon(new Weapon("Barret .50Cal"),2);
 		player.setTeam(1);
 		loadDefaultMap();
 		Player p2 = new Player("player2");
