@@ -56,24 +56,37 @@ public class Player {
 	}
 	public void update(GameMap map)
 	{
+		if(health<=0 || weapon.size()<=0)
+			return;
+		getCurrentWeapon().update();
 		if(type == PlayerType.PERSON)
 			location = new Point2D.Double(location.getX()+(direction.getX()*2), location.getY()+(direction.getY()*2));
 		else
 		{
 			location = addPoints(location,getDirectionToLoc(location,map.getPlayer().getLocation()));
+			orientation = getAngleBetweenPoints(location,map.getPlayer().getLocation())+Math.PI/2;
+			if(weapon.size()>1 && currWeapon==0)
+				nextWeapon();
+			if(location.distance(map.getPlayer().getLocation())<=getCurrentWeapon().getEffRange()*1.5)
+			{
+				if(getCurrentWeapon().canShoot())
+					map.shoot(this);
+			}
 		}
 	}
 	public Point2D.Double addPoints(Point2D.Double one, Point2D.Double two)
 	{
 		return new Point2D.Double(one.x+two.x,one.y+two.y);
 	}
-	public Point2D.Double getDirectionToLoc(Point2D.Double from, Point2D.Double to)
+	public double getAngleBetweenPoints(Point2D.Double from, Point2D.Double to)
 	{
 		Point2D.Double ret = new Point2D.Double(from.x-to.x,from.y-to.y);
-		double angle = Math.atan2(ret.y,ret.x);
-		ret.x = -(Math.cos(angle));
-		ret.y = -(Math.sin(angle));
-		return ret;
+		return Math.atan2(ret.y,ret.x);
+	}
+	public Point2D.Double getDirectionToLoc(Point2D.Double from, Point2D.Double to)
+	{
+		double angle = getAngleBetweenPoints(from,to);
+		return new Point2D.Double(-(Math.cos(angle)),-(Math.sin(angle)));
 	}
 	public void setColor(Color color) {
 		this.color = color;
@@ -168,10 +181,12 @@ public class Player {
 	}
 	
 	public void die(){
-		weapon.clear();
+		health = 0;
 		location = new Point2D.Double(-1000.,-1000.);
 	}
 	public void respawn(Point2D.Double loc){
+		currWeapon = 0;
+		weapon.clear();
 		addWeapon(new Weapon("Default"));
 		location = loc;
 	}
