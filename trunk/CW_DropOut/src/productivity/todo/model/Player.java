@@ -7,6 +7,7 @@ import java.util.ArrayList;
 public class Player {
 	private Point2D.Double location;
 	private Point2D.Double direction;
+	private PlayerType type;
 	private int radius;
 	private String name;
 	private Color color;
@@ -20,6 +21,7 @@ public class Player {
 		name = "player1";
 		health = 100;
 		color = Color.black;
+		type = PlayerType.COMPUTER;
 		location=new Point2D.Double(12,12);
 		direction = new Point2D.Double(0,0);
 		radius = 8;
@@ -32,6 +34,7 @@ public class Player {
 		name = pname;
 		health = 100;
 		color = Color.black;
+		type = PlayerType.COMPUTER;
 		radius = 8;
 		location=new Point2D.Double(12,12);
 		direction = new Point2D.Double(0,0);
@@ -39,15 +42,38 @@ public class Player {
 		currWeapon=0;
 		orientation=0;
 	}
+	public PlayerType getType() {
+		return type;
+	}
+	public void setType(PlayerType type) {
+		this.type = type;
+	}
 	public int getRadius() {
 		return radius;
 	}
 	public void setRadius(int radius) {
 		this.radius = radius;
 	}
-	public void update()
+	public void update(GameMap map)
 	{
-		location = new Point2D.Double(location.getX()+(direction.getX()*2), location.getY()+(direction.getY()*2));
+		if(type == PlayerType.PERSON)
+			location = new Point2D.Double(location.getX()+(direction.getX()*2), location.getY()+(direction.getY()*2));
+		else
+		{
+			location = addPoints(location,getDirectionToLoc(location,map.getPlayer().getLocation()));
+		}
+	}
+	public Point2D.Double addPoints(Point2D.Double one, Point2D.Double two)
+	{
+		return new Point2D.Double(one.x+two.x,one.y+two.y);
+	}
+	public Point2D.Double getDirectionToLoc(Point2D.Double from, Point2D.Double to)
+	{
+		Point2D.Double ret = new Point2D.Double(from.x-to.x,from.y-to.y);
+		double angle = Math.atan2(ret.y,ret.x);
+		ret.x = -(Math.cos(angle));
+		ret.y = -(Math.sin(angle));
+		return ret;
 	}
 	public void setColor(Color color) {
 		this.color = color;
