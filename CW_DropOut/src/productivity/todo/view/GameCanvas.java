@@ -48,28 +48,28 @@ public class GameCanvas extends Canvas {
 			}
 			//backg.rotate(p.getOrientation(),(int)p.getLocation().getX()-8,(int)p.getLocation().getY()-8);
 		}
-		for(int i = 0; i < 20;i++)
+		for(int i = 0; i < gameMap.getMap().length;i++)
 		{
-			for(int j = 0; j < 20;j++)
+			for(int j = 0; j < gameMap.getMap()[i].length;j++)
 				if(gameMap.getMap()[i][j] == 'X') backg.fillRect(i*GRID_PIXELS, j*GRID_PIXELS, GRID_PIXELS, GRID_PIXELS);
 				else if( gameMap.getMap()[i][j] != '_')  { backg.drawRect(i*GRID_PIXELS, j*GRID_PIXELS, GRID_PIXELS, GRID_PIXELS); backg.drawString("" + gameMap.getMap()[i][j], i*GRID_PIXELS, (j+1)*GRID_PIXELS); }
 		}
 		backg.setColor(new Color(0f,0f,0f,0.3f));
-		backg.fillRect(375,450,125,50);
+		backg.fillRect(GameMap.WIDTH-200,GameMap.HEIGHT-50,200,50);
 		backg.setColor(new Color(0f,0f,0f,0.5f));
-		backg.drawString("Health: " + (int)gameMap.getPlayer().getHealth() + "%", 385, 475);
+		backg.drawString("Health: " + (int)gameMap.getPlayer().getHealth() + "%", GameMap.WIDTH-115, GameMap.HEIGHT-25);
 		if(gameMap.getPlayer().getHealth()>0)
 		{
 			
-			backg.drawString(gameMap.getPlayer().getCurrentWeapon().getName(), 385, 462);
+			backg.drawString(gameMap.getPlayer().getCurrentWeapon().getName(), GameMap.WIDTH-115, GameMap.HEIGHT-38);
 			if(gameMap.getPlayer().getCurrentWeapon().getClipCount()>=0)
-				backg.drawString(""+gameMap.getPlayer().getCurrentWeapon().getClipCount(), 480, 462);
+				backg.drawString(""+gameMap.getPlayer().getCurrentWeapon().getClipCount(), GameMap.WIDTH-20, GameMap.HEIGHT-38);
 			for(int i=0; i < gameMap.getPlayer().getCurrentWeapon().getClipSize();i++)
 			{	
 				if(i<20)
-					backg.fillRect(493-(i*6),477, 4, 10);
+					backg.fillRect(GameMap.WIDTH-7-(i*6),GameMap.HEIGHT-23, 4, 10);
 				else
-					backg.fillRect(493-((i-20)*6),489, 4, 10);
+					backg.fillRect(GameMap.WIDTH-7-((i-20)*6),GameMap.HEIGHT-11, 4, 10);
 			}
 		}
 		backg.setColor(Color.black);
