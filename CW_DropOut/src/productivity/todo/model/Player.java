@@ -133,6 +133,11 @@ public class Player {
 		currWeapon=0;
 		return currWeapon;
 	}
+	public void switchToWeapon(int num)
+	{
+		if(weapon.size()>num)
+			currWeapon = num;
+	}
 	public void setLocation(Point2D.Double point) {
 		this.location = point;
 	}

@@ -118,12 +118,15 @@ public class Shoot implements KeyListener, MouseListener, MouseMotionListener {
 				case KeyEvent.VK_RIGHT:
 					map.getPlayer().setDirection(new Point2D.Double(0,map.getPlayer().getDirection().getY()));
 					break;
-				case KeyEvent.VK_Q:
+				case KeyEvent.VK_SHIFT:
 					map.getPlayer().nextWeapon();
 					break;
 				default:
+					if(e.getKeyChar()>48 && e.getKeyChar()<58)
+						map.getPlayer().switchToWeapon(e.getKeyChar()-49);
 					break;
 			}
+			
 		}
 		@Override
 		public void keyTyped(KeyEvent e) {
