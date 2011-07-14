@@ -19,8 +19,8 @@ import productivity.todo.view.GameCanvas;
 public class GameMap{
 	private List<Player> players;
 	private char[][] map;
-	public static final int HEIGHT = 500;
-	public static final int WIDTH = 500;
+	public static final int HEIGHT = 750;
+	public static final int WIDTH = 750;
 	public static final int GRID_PIXELS = GameCanvas.GRID_PIXELS;
 	private ArrayList<Bullet> bullets;
 	private Map<Integer, ArrayList<Point2D.Double>> spawnLocs;
@@ -62,7 +62,7 @@ public class GameMap{
 	}
 	public void loadDefaultMap()
 	{
-		map = new char[20][20];
+		map = new char[30][30];
 		Scanner scan = null;
 		try
 		{
@@ -70,9 +70,9 @@ public class GameMap{
 		}
 		catch(IOException e)
 		{}
-		for(int i = 0; i < 20;i++)
+		for(int i = 0; i < map.length;i++)
 		{
-			for(int j = 0; j < 20; j++) {
+			for(int j = 0; j < map[i].length; j++) {
 				String next = scan.next();
 				map[j][i] = next.charAt(0);
 				if (next.matches("\\d+")) { if(next.equals("1") || next.equals("2") || next.equals("3")) { spawnLocs.get(new Integer(next)).add(new Point2D.Double((j*GRID_PIXELS)+12.5,(i*GRID_PIXELS)+12.5)); map[j][i] = '_'; } }
@@ -207,7 +207,7 @@ public class GameMap{
 	}
 	public boolean isValid(Point2D.Double loc, int radius)
 	{
-		if(loc.x>500-radius || loc.x<radius || loc.y <radius || loc.y>500-radius) return false;
+		if(loc.x>(map[0].length*GRID_PIXELS)-radius || loc.x<radius || loc.y <radius || loc.y>(map.length*GRID_PIXELS)-radius) return false;
 		for(int i = 0; i < map.length; i++)
 		{
 			for(int j = 0; j < map[0].length;j++)
