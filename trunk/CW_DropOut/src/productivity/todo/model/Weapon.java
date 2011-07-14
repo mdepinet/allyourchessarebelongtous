@@ -80,11 +80,11 @@ public class Weapon {
 			shotCounter=0;
 		}
 		else return false;
-		if(clipSize < 0) return false;
-		if (clipSize == 0){
+		if(clipSize <= 0) return false;
+		if (clipSize == 1){
 			new ReloadThread(this,reloadMillis).start();
 			clipSize--;
-			return false;
+			return true;
 		}
 		return true;
 	}
