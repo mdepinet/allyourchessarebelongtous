@@ -75,14 +75,14 @@ public class Weapon {
 		return bulletImgLoc;
 	}
 	public boolean canShoot() {
-		//if(clipCount==0) return false;
 		if(shotCounter>=30/shotsPerSec){
 			shotCounter=0;
 		}
 		else return false;
 		if(clipSize <= 0) return false;
 		if (clipSize == 1){
-			new ReloadThread(this,reloadMillis).start();
+			if(clipCount>0)
+				new ReloadThread(this,reloadMillis).start();
 			clipSize--;
 			return true;
 		}

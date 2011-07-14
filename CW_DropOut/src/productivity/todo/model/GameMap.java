@@ -1,13 +1,15 @@
 package productivity.todo.model;
 
+
 import java.awt.Rectangle;
 import java.awt.geom.Point2D;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
 import java.util.Set;
@@ -15,8 +17,7 @@ import java.util.Set;
 import productivity.todo.view.GameCanvas;
 
 public class GameMap{
-	private Set<Player> players;
-	private Player player;
+	private List<Player> players;
 	private char[][] map;
 	public static final int HEIGHT = 500;
 	public static final int WIDTH = 500;
@@ -30,13 +31,16 @@ public class GameMap{
 		spawnLocs.put(2, new ArrayList<Point2D.Double>());
 		spawnLocs.put(3, new ArrayList<Point2D.Double>());
 		bullets = new ArrayList<Bullet>();
-		players = new HashSet<Player>();
-		player = new Player("player1");
+		players = new LinkedList<Player>();
+		Player player = new Player("player1");
+		player.addWeapon(new Weapon("BFG"));
 		player.setTeam(1);
+		player.setType(PlayerType.PERSON);
+		players.add(player);
 		loadDefaultMap();
 		Player p2 = new Player("player2");
-		spawn(p2);
 		p2.setTeam(2);
+		spawn(p2);
 		players.add(p2);
 		
 		spawn(player);
@@ -80,16 +84,16 @@ public class GameMap{
 			int spreadModifier = Math.random()>.5? -1:1;
 			Bullet bullet = new Bullet(weapon);
 			bullet.setLocation(shootLoc);
-			bullet.setTeam(player.getTeam());
+			bullet.setTeam(getPlayer().getTeam());
 			tempAngle += spreadModifier*Math.toRadians(Math.random()*weapon.getSpread()/2);
 			bullet.setVelocity(new Point2D.Double(Math.cos(tempAngle+Math.PI/2)*weapon.getBulletSpeed(),Math.sin(tempAngle+Math.PI/2)*weapon.getBulletSpeed()));
 			bullets.add(bullet);
 			tempAngle=angle;
 		}
 		weapon.setClipSize(weapon.getClipSize()-1);
-		if(weapon.getClipSize()==0 && weapon.getClipCount()==0) {
-			player.removeWeapon(weapon);
-			player.nextWeapon();
+		if(weapon.getClipSize()<=0 && weapon.getClipCount()==0) {
+			getPlayer().removeWeapon(weapon);
+			getPlayer().nextWeapon();
 		}
 	}
 	public char[][] getMap() {
@@ -98,15 +102,15 @@ public class GameMap{
 	public void setMap(char[][] map) {
 		this.map = map;
 	}
-	public Set<Player> getPlayers() {
+	public List<Player> getPlayers() {
 		return players;
 	}
 
 	public Player getPlayer() {
-		return player;
+		return players.get(0);
 	}
 	public void setPlayer(Player player) {
-		this.player = player;
+		this.players.set(0, player);
 	}
 	public void gameUpdate()
 	{
@@ -137,23 +141,25 @@ public class GameMap{
 			}
 		}
 		for(Player p: players)
-			p.update();
-		Point2D.Double loc = player.getLocation();
-		player.update();
-		if(!isValid(player.getLocation(), player.getRadius()))
 		{
-			if(isValid(new Point2D.Double(player.getLocation().x,loc.y), player.getRadius()))
-				player.setLocation(new Point2D.Double(player.getLocation().x,loc.y));
-			else if(isValid(new Point2D.Double(loc.x,player.getLocation().y), player.getRadius()))
-				player.setLocation(new Point2D.Double(loc.x,player.getLocation().y));
-			else
-				player.setLocation(loc);
-		}
-		Weapon w;
-		if((w = getWeapon(player))!=null){
-			if(player.containsWeapon(w)) player.getWeapon(player.weaponIndex(w)).setClipCount(player.getWeapon(player.weaponIndex(w)).getClipCount()+3);
-			else player.addWeapon(w);
-			map[getPlayerGridX(player)][getPlayerGridY(player)] = '_';
+			Point2D.Double loc = p.getLocation();
+			p.update(this);
+			if(!isValid(p.getLocation(), p.getRadius()))
+			{
+				if(isValid(new Point2D.Double(p.getLocation().x,loc.y), p.getRadius()))
+					p.setLocation(new Point2D.Double(p.getLocation().x,loc.y));
+				else if(isValid(new Point2D.Double(loc.x,p.getLocation().y), p.getRadius()))
+					p.setLocation(new Point2D.Double(loc.x,p.getLocation().y));
+				else
+					p.setLocation(loc);
+			}
+			
+			Weapon w;
+			if((w = getWeapon(p))!=null){
+				if(p.containsWeapon(w)) p.getWeapon(p.weaponIndex(w)).setClipCount(p.getWeapon(p.weaponIndex(w)).getClipCount()+3);
+				else p.addWeapon(w);
+				map[getPlayerGridX(p)][getPlayerGridY(p)] = '_';
+			}
 		}
 	}
 	public Weapon getWeapon(Player p)
@@ -171,8 +177,6 @@ public class GameMap{
 			if(bulletColDetect(bullet,p))
 				return p;
 		}
-		if(bulletColDetect(bullet,player))
-			return player;
 		return null;
 	}
 	public boolean bulletColDetect(Bullet bullet, Player p)
@@ -208,7 +212,7 @@ public class GameMap{
 		}
 		return true;
 	}
-	public void setPlayers(Set<Player> players) {
+	public void setPlayers(List<Player> players) {
 		this.players = players;
 	}
 	public Player getPlayerByName(String name) {
@@ -221,7 +225,7 @@ public class GameMap{
 	}
 	
 	public void spawn(Player p){
-		p.respawn(spawnLocs.get(player.getTeam()).get((int)(Math.random()*spawnLocs.size())));
+		p.respawn(spawnLocs.get(p.getTeam()).get((int)(Math.random()*spawnLocs.size())));
 	}
 	public char getObjectAtPlayer(Player p){
 		int x = getPlayerGridX(p);
@@ -240,13 +244,13 @@ public class GameMap{
 	private boolean explode(Bullet b){
 		int splash = b.getWeapon().getSplash();
 		if(splash<1) return false;
-		players.add(player);
 		for(Player p : players){
 			double distance = p.getLocation().distance(b.getLocation());
-			if(distance<splash)
+			if(distance<splash) {
 				p.takeDamage(b.getWeapon().getPower()*((splash-distance)/splash));
+				if(p.getHealth()<=0) p.die();
+			}
 		}
-		players.remove(player);
 		return true;
 		//TODO
 	}

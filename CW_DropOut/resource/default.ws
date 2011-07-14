@@ -4,5 +4,5 @@ Battle Rifle,Rifle,20,300,5,3,2,12,1,3,10,resource/br,resource/brTop,resource/bu
 Barret .50Cal,Sniper,100,600,1,1,1,4,3,1,50,resource/barret,resource/barretTop,resource/bullet,S
 12 Gauge,Shotgun,15,35,40,10,1,6,3,1,10,resource/12G,resource/12GTop,resource/bullet,H
 Semtex,Thrown,100,100,1,1,0.5,1,2,50,4,null,null,resource/grenade,G
-Assault Rifle,Rifle,10,100,10,1,10,40,3,1,10,resource/ar,resource/arTop,resource/bullet,A
+Assault Rifle,Rifle,10,200,10,1,10,40,3,1,10,resource/ar,resource/arTop,resource/bullet,A
 BFG,Explosive,100,600,10,10,1,1,3,50,50,resource/BFG,resource/BFGTop,resource/rocket,F
