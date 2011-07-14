@@ -81,7 +81,7 @@ public class Weapon {
 		else return false;
 		if(clipSize <= 0) return false;
 		if (clipSize == 1){
-			if(clipCount>0)
+			if(clipCount!=0)
 				new ReloadThread(this,reloadMillis).start();
 			clipSize--;
 			return true;

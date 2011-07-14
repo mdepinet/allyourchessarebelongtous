@@ -38,10 +38,13 @@ public class GameMap{
 		player.setType(PlayerType.PERSON);
 		players.add(player);
 		loadDefaultMap();
-		Player p2 = new Player("player2");
-		p2.setTeam(2);
-		spawn(p2);
-		players.add(p2);
+		for(int i = 0; i < 4;i++)
+		{
+			Player p2 = new Player("player" + (i+2));
+			p2.setTeam(2);
+			spawn(p2);
+			players.add(p2);
+		}
 		
 		spawn(player);
 		for(Player p: players)
@@ -78,22 +81,22 @@ public class GameMap{
 				scan.nextLine();
 		}
 	}
-	public void shoot(int x, int y, double angle, Point2D.Double shootLoc, Weapon weapon) {
-		double tempAngle = angle;
-		for(int i = 1; i<=weapon.getRoundsPerShot(); i++){
+	public void shoot(Player p) {
+		double tempAngle = p.getOrientation();
+		for(int i = 1; i<=p.getCurrentWeapon().getRoundsPerShot(); i++){
 			int spreadModifier = Math.random()>.5? -1:1;
-			Bullet bullet = new Bullet(weapon);
-			bullet.setLocation(shootLoc);
-			bullet.setTeam(getPlayer().getTeam());
-			tempAngle += spreadModifier*Math.toRadians(Math.random()*weapon.getSpread()/2);
-			bullet.setVelocity(new Point2D.Double(Math.cos(tempAngle+Math.PI/2)*weapon.getBulletSpeed(),Math.sin(tempAngle+Math.PI/2)*weapon.getBulletSpeed()));
+			Bullet bullet = new Bullet(p.getCurrentWeapon());
+			bullet.setLocation(p.getGunLocation());
+			bullet.setTeam(p.getTeam());
+			tempAngle += spreadModifier*Math.toRadians(Math.random()*p.getCurrentWeapon().getSpread()/2);
+			bullet.setVelocity(new Point2D.Double(Math.cos(tempAngle+Math.PI/2)*p.getCurrentWeapon().getBulletSpeed(),Math.sin(tempAngle+Math.PI/2)*p.getCurrentWeapon().getBulletSpeed()));
 			bullets.add(bullet);
-			tempAngle=angle;
+			tempAngle=p.getOrientation();
 		}
-		weapon.setClipSize(weapon.getClipSize()-1);
-		if(weapon.getClipSize()<=0 && weapon.getClipCount()==0) {
-			getPlayer().removeWeapon(weapon);
-			getPlayer().nextWeapon();
+		p.getCurrentWeapon().setClipSize(p.getCurrentWeapon().getClipSize()-1);
+		if(p.getCurrentWeapon().getClipSize()<=0 && p.getCurrentWeapon().getClipCount()==0) {
+			p.removeWeapon(p.getCurrentWeapon());
+			p.nextWeapon();
 		}
 	}
 	public char[][] getMap() {
@@ -136,6 +139,7 @@ public class GameMap{
 					spawn(hit);
 					new RespawnThread(hit,5000).start();
 				}
+				explode(b);
 				bullets.remove(b);
 				i--;
 			}

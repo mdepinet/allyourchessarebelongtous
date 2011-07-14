@@ -43,7 +43,7 @@ public class GameCanvas extends Canvas {
 				else if(p.getWeapon().getType().equals("grenade")) gun2 = new Rectangle((int)p.getLocation().getX()-8,(int)p.getLocation().getY(), 7, 8);
 				else  gun2 = new Rectangle((int)p.getLocation().getX()-8,(int)p.getLocation().getY(), 4, 12);
 				AffineTransform transform = new AffineTransform();
-				transform.rotate(p.getOrientation(), p.getLocation().x, gameMap.getPlayer().getLocation().y);
+				transform.rotate(p.getOrientation(), p.getLocation().x, p.getLocation().y);
 				backg.draw(transform.createTransformedShape(gun2));
 			}
 			//backg.rotate(p.getOrientation(),(int)p.getLocation().getX()-8,(int)p.getLocation().getY()-8);
@@ -54,28 +54,23 @@ public class GameCanvas extends Canvas {
 				if(gameMap.getMap()[i][j] == 'X') backg.fillRect(i*GRID_PIXELS, j*GRID_PIXELS, GRID_PIXELS, GRID_PIXELS);
 				else if( gameMap.getMap()[i][j] != '_')  { backg.drawRect(i*GRID_PIXELS, j*GRID_PIXELS, GRID_PIXELS, GRID_PIXELS); backg.drawString("" + gameMap.getMap()[i][j], i*GRID_PIXELS, (j+1)*GRID_PIXELS); }
 		}
-		
-		if (gameMap.getPlayer().getHealth() > 0){
-			backg.fillOval((int)gameMap.getPlayer().getLocation().getX()-8,(int)gameMap.getPlayer().getLocation().getY()-8, 16, 16);
-	
-			Rectangle gun = new Rectangle((int)gameMap.getPlayer().getLocation().getX()-8,(int)gameMap.getPlayer().getLocation().getY(), 4, 12);
-			AffineTransform transform = new AffineTransform();
-			transform.rotate(gameMap.getPlayer().getOrientation(), gameMap.getPlayer().getLocation().x, gameMap.getPlayer().getLocation().y);
-			backg.draw(transform.createTransformedShape(gun));
-			gameMap.getPlayer().getWeapon().update();
-		}
 		backg.setColor(new Color(0f,0f,0f,0.3f));
 		backg.fillRect(375,450,125,50);
 		backg.setColor(new Color(0f,0f,0f,0.5f));
-		backg.drawString(gameMap.getPlayer().getCurrentWeapon().getName(), 385, 462);
-		if(gameMap.getPlayer().getCurrentWeapon().getClipCount()>=0)
-			backg.drawString(""+gameMap.getPlayer().getCurrentWeapon().getClipCount(), 480, 462);
-		for(int i=0; i < gameMap.getPlayer().getCurrentWeapon().getClipSize();i++)
-		{	
-			if(i<20)
-				backg.fillRect(493-(i*6),475, 4, 10);
-			else
-				backg.fillRect(493-((i-20)*6),487, 4, 10);
+		backg.drawString("Health: " + (int)gameMap.getPlayer().getHealth() + "%", 385, 475);
+		if(gameMap.getPlayer().getHealth()>0)
+		{
+			
+			backg.drawString(gameMap.getPlayer().getCurrentWeapon().getName(), 385, 462);
+			if(gameMap.getPlayer().getCurrentWeapon().getClipCount()>=0)
+				backg.drawString(""+gameMap.getPlayer().getCurrentWeapon().getClipCount(), 480, 462);
+			for(int i=0; i < gameMap.getPlayer().getCurrentWeapon().getClipSize();i++)
+			{	
+				if(i<20)
+					backg.fillRect(493-(i*6),477, 4, 10);
+				else
+					backg.fillRect(493-((i-20)*6),489, 4, 10);
+			}
 		}
 		backg.setColor(Color.black);
 		for(int i=0;i<gameMap.getBullets().size();i++) {
