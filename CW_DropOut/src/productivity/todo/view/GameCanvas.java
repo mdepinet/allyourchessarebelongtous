@@ -64,7 +64,20 @@ public class GameCanvas extends Canvas {
 			backg.draw(transform.createTransformedShape(gun));
 			gameMap.getPlayer().getWeapon().update();
 		}
-		
+		backg.setColor(new Color(0f,0f,0f,0.3f));
+		backg.fillRect(375,450,125,50);
+		backg.setColor(new Color(0f,0f,0f,0.5f));
+		backg.drawString(gameMap.getPlayer().getCurrentWeapon().getName(), 385, 462);
+		if(gameMap.getPlayer().getCurrentWeapon().getClipCount()>=0)
+			backg.drawString(""+gameMap.getPlayer().getCurrentWeapon().getClipCount(), 480, 462);
+		for(int i=0; i < gameMap.getPlayer().getCurrentWeapon().getClipSize();i++)
+		{	
+			if(i<20)
+				backg.fillRect(493-(i*6),475, 4, 10);
+			else
+				backg.fillRect(493-((i-20)*6),487, 4, 10);
+		}
+		backg.setColor(Color.black);
 		for(int i=0;i<gameMap.getBullets().size();i++) {
 			Bullet b = gameMap.getBullets().get(i);
 			Rectangle bullet = new Rectangle((int)b.getLocation().x,(int)b.getLocation().y, 1, 6);

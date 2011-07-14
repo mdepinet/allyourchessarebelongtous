@@ -82,8 +82,8 @@ public class Player {
 	public int weaponIndex(Weapon weapon) {
 		return this.weapon.indexOf(weapon);
 	}
-	public int getCurrWeapon() {
-		return currWeapon;
+	public Weapon getCurrentWeapon() {
+		return weapon.get(currWeapon);
 	}
 	public void setCurrWeapon(int nextWeapon) {
 		currWeapon = nextWeapon;

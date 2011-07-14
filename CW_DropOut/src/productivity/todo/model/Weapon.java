@@ -3,6 +3,7 @@ package productivity.todo.model;
 public class Weapon {
 	private static final int reloadMillis = 3000; //3 seconds
 	private String type;
+	private String name;
 	private int power;
 	private int effRange;
 	private double spread;
@@ -27,6 +28,12 @@ public class Weapon {
 		if(!WeaponLoader.load(this,c)) throw new IllegalArgumentException("This weapon doesn't exist");
 		shotCounter = 0;
 		reloadStartTime = 0;
+	}
+	public String getName() {
+		return name;
+	}
+	public void setName(String name) {
+		this.name = name;
 	}
 	public String getType(){
 		return type;
@@ -73,29 +80,13 @@ public class Weapon {
 			shotCounter=0;
 		}
 		else return false;
-		if (clipSize <= 0){
-			reloadStartTime = System.currentTimeMillis();
-			clipSize = maxClipSize;
-			clipCount--;
+		if(clipSize < 0) return false;
+		if (clipSize == 0){
+			new ReloadThread(this,reloadMillis).start();
+			clipSize--;
+			return false;
 		}
-		if (reloadStartTime != 0){
-			if (System.currentTimeMillis() - (reloadStartTime + reloadMillis) > 0){
-				reloadStartTime = 0;
-				return true;
-			}
-			else return false;
-		}
-		
 		return true;
-	}
-	public void reload() {
-		if(clipCount==0) return;
-		reloadStartTime = System.currentTimeMillis();
-		clipSize = maxClipSize;
-		clipCount--;
-		if (System.currentTimeMillis() - (reloadStartTime + reloadMillis) > 0){
-			reloadStartTime = 0;
-		}
 	}
 	public void update() {
 		shotCounter++;
@@ -148,6 +139,7 @@ public class Weapon {
 	
 	void setProperties(WeaponDefinition wepDef){
 		if (wepDef == null) return;
+		setName(wepDef.getName());
 		setType(wepDef.getType());
 		setPower(wepDef.getPower());
 		setEffRange(wepDef.getEffRange());
