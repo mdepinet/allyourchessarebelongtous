@@ -80,6 +80,7 @@ public class GameMap{
 			int spreadModifier = Math.random()>.5? -1:1;
 			Bullet bullet = new Bullet(weapon);
 			bullet.setLocation(shootLoc);
+			bullet.setTeam(player.getTeam());
 			tempAngle += spreadModifier*Math.toRadians(Math.random()*weapon.getSpread()/2);
 			bullet.setVelocity(new Point2D.Double(Math.cos(tempAngle+Math.PI/2)*weapon.getBulletSpeed(),Math.sin(tempAngle+Math.PI/2)*weapon.getBulletSpeed()));
 			bullets.add(bullet);
@@ -176,6 +177,7 @@ public class GameMap{
 	}
 	public boolean bulletColDetect(Bullet bullet, Player p)
 	{
+		if(bullet.getTeam()==p.getTeam()) return false;
 		double velX = bullet.getVelocity().x;
 		double velY = bullet.getVelocity().y;
 		Point2D.Double vec = new Point2D.Double(p.getLocation().x - bullet.getLocation().x,p.getLocation().y-bullet.getLocation().y);
