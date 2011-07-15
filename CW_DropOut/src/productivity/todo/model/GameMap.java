@@ -135,11 +135,8 @@ public class GameMap{
 				double damage = b.getWeapon().getPower();
 				if (b.getDistanceTraveled() > effRange) damage -= ((b.getDistanceTraveled() - effRange)/effRange)*damage;
 				hit.takeDamage(damage);
-				if (hit.getHealth()<=0){
-					spawn(hit);
-					new RespawnThread(hit,5000).start();
-				}
 				explode(b);
+				if (hit.getHealth()<=0) kill(hit);
 				bullets.remove(b);
 				i--;
 			}
@@ -248,14 +245,27 @@ public class GameMap{
 	private boolean explode(Bullet b){
 		int splash = b.getWeapon().getSplash();
 		if(splash<1) return false;
-		for(Player p : players){
+		for (int i = 0; i<players.size(); i++){
+			Player p = players.get(i);
 			double distance = p.getLocation().distance(b.getLocation());
 			if(distance<splash) {
 				p.takeDamage(b.getWeapon().getPower()*((splash-distance)/splash));
-				if(p.getHealth()<=0) p.die();
+				if (p.getHealth() <= 0){ kill(p); i--;}
 			}
 		}
 		return true;
 		//TODO
+	}
+	
+	private void kill(Player p){
+		p.die();
+		int i;
+		for (i = 0; i<players.size(); i++){
+			if (players.get(i) == p){
+				players.remove(i);
+				break;
+			}
+		}
+		new RespawnThread(this, p, i == 0, 5000).start();
 	}
 }

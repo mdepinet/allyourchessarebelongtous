@@ -11,7 +11,7 @@ public class Player {
 	private int radius;
 	private String name;
 	private Color color;
-	private ArrayList<Weapon> weapon;
+	private ArrayList<Weapon> weapons;
 	private double health;
 	private double orientation;
 	private int team;
@@ -25,7 +25,7 @@ public class Player {
 		location=new Point2D.Double(12,12);
 		direction = new Point2D.Double(0,0);
 		radius = 8;
-		weapon=new ArrayList<Weapon>();
+		weapons=new ArrayList<Weapon>();
 		currWeapon=0;
 		orientation=0;
 	}
@@ -38,7 +38,7 @@ public class Player {
 		radius = 8;
 		location=new Point2D.Double(12,12);
 		direction = new Point2D.Double(0,0);
-		weapon=new ArrayList<Weapon>();
+		weapons=new ArrayList<Weapon>();
 		currWeapon=0;
 		orientation=0;
 	}
@@ -56,7 +56,7 @@ public class Player {
 	}
 	public void update(GameMap map)
 	{
-		if(health<=0 || weapon.size()<=0)
+		if(health<=0 || weapons.size()<=0)
 			return;
 		getCurrentWeapon().update();
 		if(type == PlayerType.PERSON)
@@ -65,7 +65,7 @@ public class Player {
 		{
 			location = addPoints(location,getDirectionToLoc(location,map.getPlayer().getLocation()));
 			orientation = getAngleBetweenPoints(location,map.getPlayer().getLocation())+Math.PI/2;
-			if(weapon.size()>1 && currWeapon==0)
+			if(weapons.size()>1 && currWeapon==0)
 				nextWeapon();
 			if(location.distance(map.getPlayer().getLocation())<=getCurrentWeapon().getEffRange()*1.5)
 			{
@@ -95,47 +95,47 @@ public class Player {
 		return color;
 	}
 	public void removeWeapon(Weapon weapon) {
-		this.weapon.remove(weapon);
+		weapons.remove(weapon);
 	}
 	public int getNumWeapons() {
-		return weapon.size();
+		return weapons.size();
 	}
 	public void addWeapon(Weapon weapon) {
-		this.weapon.add(weapon);
+		weapons.add(weapon);
 	}
 	public void setWeapon(ArrayList<Weapon> weapon) {
-		this.weapon = weapon;
+		weapons = weapon;
 	}
 	public void setWeapon(Weapon weapon, int index) {
-		this.weapon.set(index, weapon);
+		weapons.set(index, weapon);
 	}
 	public Weapon getWeapon(int index) {
-		return weapon.get(index);
+		return weapons.get(index);
 	}
 	public Weapon getWeapon() {
-		return weapon.get(currWeapon);
+		return weapons.get(currWeapon);
 	}
 	public boolean containsWeapon(Weapon weapon) {
-		return this.weapon.contains(weapon);
+		return weapons.contains(weapon);
 	}
 	public int weaponIndex(Weapon weapon) {
-		return this.weapon.indexOf(weapon);
+		return weapons.indexOf(weapon);
 	}
 	public Weapon getCurrentWeapon() {
-		return weapon.get(currWeapon);
+		return weapons.get(currWeapon);
 	}
 	public void setCurrWeapon(int nextWeapon) {
 		currWeapon = nextWeapon;
 	}
 	public int nextWeapon() {
-		if(weapon.size()>currWeapon+1)
+		if(weapons.size()>currWeapon+1)
 			return ++currWeapon;
 		currWeapon=0;
 		return currWeapon;
 	}
 	public void switchToWeapon(int num)
 	{
-		if(weapon.size()>num)
+		if(weapons.size()>num)
 			currWeapon = num;
 	}
 	public void setLocation(Point2D.Double point) {
@@ -152,10 +152,9 @@ public class Player {
 	}
 	public void takeDamage (double damage) {
 		health -= damage;
-		if (health <= 0) die();
 	}
 	public String toString(){
-		return "Health: "+health + " Color: "+color+ " Weapon: "+weapon+ " Point: "+location;
+		return "Health: "+health + " Color: "+color+ " Weapon: "+weapons+ " Point: "+location;
 	}
 	public void setName(String name) {
 		this.name = name;
@@ -187,11 +186,11 @@ public class Player {
 	
 	public void die(){
 		health = 0;
-		location = new Point2D.Double(-1000.,-1000.);
+		weapons.clear();
 	}
 	public void respawn(Point2D.Double loc){
 		currWeapon = 0;
-		weapon.clear();
+		health = 100;
 		addWeapon(new Weapon("Default"));
 		location = loc;
 	}
