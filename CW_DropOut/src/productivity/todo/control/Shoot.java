@@ -24,6 +24,7 @@ public class Shoot implements KeyListener, MouseListener, MouseMotionListener {
 		frame.getCanvas().setFocusable(true);
 		frame.getCanvas().addMouseListener(this);
 		frame.getCanvas().addMouseMotionListener(this);
+		frame.getCanvas().requestFocusInWindow();
 		gameStart();
 	}
 	 public void gameStart() { 
@@ -118,6 +119,18 @@ public class Shoot implements KeyListener, MouseListener, MouseMotionListener {
 				case KeyEvent.VK_RIGHT:
 					map.getPlayer().setDirection(new Point2D.Double(0,map.getPlayer().getDirection().getY()));
 					break;
+				case KeyEvent.VK_S:
+					map.getPlayer().setDirection(new Point2D.Double(map.getPlayer().getDirection().getX(),0));
+					break;
+				case KeyEvent.VK_W:
+					map.getPlayer().setDirection(new Point2D.Double(map.getPlayer().getDirection().getX(),0));
+					break;
+				case KeyEvent.VK_A:
+					map.getPlayer().setDirection(new Point2D.Double(0,map.getPlayer().getDirection().getY()));
+					break;
+				case KeyEvent.VK_D:
+					map.getPlayer().setDirection(new Point2D.Double(0,map.getPlayer().getDirection().getY()));
+					break;
 				case KeyEvent.VK_SHIFT:
 					map.getPlayer().nextWeapon();
 					break;
@@ -144,8 +157,6 @@ public class Shoot implements KeyListener, MouseListener, MouseMotionListener {
 	@Override
 	public void mouseEntered(MouseEvent e) {
 		// TODO Auto-generated method stub
-		//System.out.println(e.getX());
-		//map.getPlayer().setOrientation((e.getY()-map.getPlayer().getLocation().y)/(e.getX()-map.getPlayer().getLocation().x));
 	}
 	@Override
 	public void mouseExited(MouseEvent e) {

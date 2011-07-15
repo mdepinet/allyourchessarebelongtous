@@ -27,6 +27,7 @@ public class GameMap{
 	public static final int GRID_PIXELS = GameCanvas.GRID_PIXELS;
 	private ArrayList<Bullet> bullets;
 	private Map<Integer, ArrayList<Point2D.Double>> spawnLocs;
+	private int numTeams = 2;
 	public GameMap()
 	{
 		spawnLocs = new HashMap<Integer, ArrayList<Point2D.Double>>();
@@ -35,24 +36,25 @@ public class GameMap{
 		spawnLocs.put(3, new ArrayList<Point2D.Double>());
 		bullets = new ArrayList<Bullet>();
 		players = Collections.synchronizedList(new LinkedList<Player>());
+		loadDefaultMap();
 		Player player = new Player("player1");
-		player.addWeapon(new Weapon("BFG"));
 		player.setTeam(1);
 		player.setType(PlayerType.PERSON);
 		players.add(player);
-		loadDefaultMap();
-		for(int i = 0; i < 4;i++)
+		player = new Player ("player2");
+		player.setTeam(1);
+		players.add(player);
+		for(int i = 0; i < 2;i++)
 		{
-			Player p2 = new Player("player" + (i+2));
+			Player p2 = new Player("player" + (i+3));
 			p2.setTeam(2);
-			spawn(p2);
 			players.add(p2);
 		}
-		
-		spawn(player);
 		for(Player p: players)
+		{
+			spawn(p);
 			if(!spawnLocs.get(new Integer(p.getTeam())).isEmpty()) p.setLocation(spawnLocs.get(p.getTeam()).get((int)(Math.random()*spawnLocs.size())));
-		
+		}
 		long seed = System.currentTimeMillis();
 		System.out.println("Started game with seed "+seed);
 		new WeaponAdderThread(map, seed).start();
@@ -126,7 +128,23 @@ public class GameMap{
 	public List<Player> getPlayers() {
 		return players;
 	}
-
+	public int getOppositeTeam(int num)
+	{
+		return (num+1<=numTeams) ? num+1 : num-1;
+	}
+	public Player getClosestTeamPlayer(int team,Point2D.Double loc)
+	{
+		double dist = Double.MAX_VALUE;
+		Player ret = null;
+		for(Player p:players)
+		{
+			if(p.getTeam()==team)
+			{
+				if(loc.distance(p.getLocation())<dist) { dist = loc.distance(p.getLocation()); ret = p; }
+			}
+		}
+		return ret;
+	}
 	public Player getPlayer() {
 		return players.get(0);
 	}
@@ -138,6 +156,11 @@ public class GameMap{
 		for(int i=0;i<bullets.size();i++) {
 			Bullet b = bullets.get(i);
 			if(!isValid(b.getLocation(),1)) { explode(b); bullets.remove(i--); continue; }
+			for(int j = 0; j < map.length; j++)
+			{
+				for(int k = 0; k < map[j].length;k++)
+					if(map[j][k] == 'X') bulletColDetect(b,new Rectangle(j*GRID_PIXELS,k*GRID_PIXELS,GRID_PIXELS,GRID_PIXELS));
+			}
 			Player hit = getHitPlayer(b);
 			b.update();
 			double effRange = b.getWeapon().getEffRange();
@@ -194,6 +217,27 @@ public class GameMap{
 				return p;
 		}
 		return null;
+	}
+	public boolean bulletColDetect(Bullet bullet, Rectangle r)
+	{
+		double velX = bullet.getVelocity().x;
+		double velY = bullet.getVelocity().y;
+		Point2D.Double vec = new Point2D.Double(r.getLocation().x - bullet.getLocation().x,r.getLocation().y-bullet.getLocation().y);
+		
+		double a = velX*velX + velY*velY;
+		double b = 2*(velX*vec.x + velY*vec.y);
+		double c = (vec.x*vec.x+vec.y*vec.y) - (r.getWidth()/2)*(r.getWidth()/2);
+
+		double discriminant = b*b-4*a*c;
+		if( discriminant >= 0 )
+		{
+		  // ray didn't totally miss sphere, so there is a solution to the equation.
+		  discriminant = Math.sqrt( discriminant );
+		  double t1 = (-b + discriminant)/(2*a);
+		  //double t2 = (-b - discriminant)/(2*a);
+		  if( (t1 >= 0 && t1 <= 1) /*||  (t2 >= 0 && t2 <= 1)*/) return true;
+		}
+		return false;
 	}
 	public boolean bulletColDetect(Bullet bullet, Player p)
 	{

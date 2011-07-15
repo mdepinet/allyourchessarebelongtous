@@ -65,7 +65,7 @@ public class GameCanvas extends Canvas {
 			backg.drawString(gameMap.getPlayer().getCurrentWeapon().getName(), GameMap.WIDTH-115, GameMap.HEIGHT-38);
 			if(gameMap.getPlayer().getCurrentWeapon().getClipCount()>=0)
 				backg.drawString(""+gameMap.getPlayer().getCurrentWeapon().getClipCount(), GameMap.WIDTH-20, GameMap.HEIGHT-38);
-			for(int i=0; i < gameMap.getPlayer().getCurrentWeapon().getClipSize();i++)
+			for(int i=0; i < gameMap.getPlayer().getCurrentWeapon().getClipSize()*((gameMap.getPlayer().getCurrentWeapon().getType().equalsIgnoreCase("shotgun"))? 1 : gameMap.getPlayer().getCurrentWeapon().getRoundsPerShot());i++)
 			{	
 				if(i<20)
 					backg.fillRect(GameMap.WIDTH-7-(i*6),GameMap.HEIGHT-23, 4, 10);
