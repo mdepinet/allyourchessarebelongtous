@@ -122,8 +122,8 @@ public class Shoot implements KeyListener, MouseListener, MouseMotionListener {
 					map.getPlayer().nextWeapon();
 					break;
 				default:
-					if(e.getKeyChar()>48 && e.getKeyChar()<58)
-						map.getPlayer().switchToWeapon(e.getKeyChar()-49);
+					if(e.getKeyChar()>47 && e.getKeyChar()<58)
+						map.getPlayer().switchToWeapon(e.getKeyChar()-48);
 					break;
 			}
 			

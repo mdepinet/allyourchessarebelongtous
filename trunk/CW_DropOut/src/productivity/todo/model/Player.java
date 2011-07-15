@@ -63,16 +63,30 @@ public class Player {
 			location = new Point2D.Double(location.getX()+(direction.getX()*2), location.getY()+(direction.getY()*2));
 		else
 		{
-			location = addPoints(location,getDirectionToLoc(location,map.getPlayer().getLocation()));
+			Point2D.Double newLoc;
+			newLoc = addPoints(location,getDirectionToLoc(location,map.getPlayer().getLocation()));
 			orientation = getAngleBetweenPoints(location,map.getPlayer().getLocation())+Math.PI/2;
 			if(weapons.size()>1 && currWeapon==0)
 				nextWeapon();
-			if(location.distance(map.getPlayer().getLocation())<=getCurrentWeapon().getEffRange()*1.5)
+			if(map.getPlayer().getHealth()>0)
 			{
-				if(getCurrentWeapon().canShoot())
-					map.shoot(this);
+				if(location.distance(map.getPlayer().getLocation())<=map.getPlayer().getCurrentWeapon().getEffRange())
+				{
+					if(Math.abs(Math.sin(orientation+Math.PI) - Math.sin(map.getPlayer().getOrientation()))<=Math.PI/5)
+						newLoc = addPoints(location,multiplyPointByScalar(getDirectionToLoc(location,map.getPlayer().getLocation()),-1));
+				}
+				if(location.distance(map.getPlayer().getLocation())<=getCurrentWeapon().getEffRange()*2)
+				{
+					if(getCurrentWeapon().canShoot())
+						map.shoot(this);
+				}
 			}
+			location = newLoc;
 		}
+	}
+	public Point2D.Double multiplyPointByScalar(Point2D.Double point, double scalar)
+	{
+		return new Point2D.Double(point.x*scalar,point.y*scalar);
 	}
 	public Point2D.Double addPoints(Point2D.Double one, Point2D.Double two)
 	{
@@ -100,8 +114,15 @@ public class Player {
 	public int getNumWeapons() {
 		return weapons.size();
 	}
-	public void addWeapon(Weapon weapon) {
-		weapons.add(weapon);
+	public boolean addWeapon(Weapon weapon) {
+		if(weapons.contains(weapon))
+		{
+			Weapon w = weapons.get(weapons.indexOf(weapon));
+			if(w.getClipCount()==w.getMaxClipCount()) return false;
+			w.setClipCount(w.getMaxClipCount());
+		}
+		else weapons.add(weapon);
+		return true;
 	}
 	public void setWeapon(ArrayList<Weapon> weapon) {
 		weapons = weapon;
@@ -109,17 +130,8 @@ public class Player {
 	public void setWeapon(Weapon weapon, int index) {
 		weapons.set(index, weapon);
 	}
-	public Weapon getWeapon(int index) {
-		return weapons.get(index);
-	}
 	public Weapon getWeapon() {
 		return weapons.get(currWeapon);
-	}
-	public boolean containsWeapon(Weapon weapon) {
-		return weapons.contains(weapon);
-	}
-	public int weaponIndex(Weapon weapon) {
-		return weapons.indexOf(weapon);
 	}
 	public Weapon getCurrentWeapon() {
 		return weapons.get(currWeapon);
@@ -191,6 +203,7 @@ public class Player {
 	public void respawn(Point2D.Double loc){
 		currWeapon = 0;
 		health = 100;
+		direction = new Point2D.Double();
 		addWeapon(new Weapon("Default"));
 		location = loc;
 	}

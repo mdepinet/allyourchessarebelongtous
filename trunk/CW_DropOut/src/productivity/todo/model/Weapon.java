@@ -19,6 +19,7 @@ public class Weapon {
 	private int shotCounter;
 	private long reloadStartTime;
 	private int clipCount;
+	private int maxClipCount;
 	public Weapon(String name){
 		WeaponLoader.load(this,name);
 		shotCounter = 0;
@@ -28,6 +29,16 @@ public class Weapon {
 		if(!WeaponLoader.load(this,c)) throw new IllegalArgumentException("This weapon doesn't exist");
 		shotCounter = 0;
 		reloadStartTime = 0;
+	}
+	public boolean equals(Object o)
+	{
+		return name.equals(((Weapon)o).getName());
+	}
+	public int getMaxClipCount() {
+		return maxClipCount;
+	}
+	public void setMaxClipCount(int maxClipCount) {
+		this.maxClipCount = maxClipCount;
 	}
 	public String getName() {
 		return name;
@@ -140,6 +151,7 @@ public class Weapon {
 	void setProperties(WeaponDefinition wepDef){
 		if (wepDef == null) return;
 		setName(wepDef.getName());
+		setMaxClipCount(wepDef.getMaxClipCount());
 		setType(wepDef.getType());
 		setPower(wepDef.getPower());
 		setEffRange(wepDef.getEffRange());
