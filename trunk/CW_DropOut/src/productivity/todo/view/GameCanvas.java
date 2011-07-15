@@ -10,6 +10,7 @@ import java.util.Set;
 import productivity.todo.model.Bullet;
 import productivity.todo.model.GameMap;
 import productivity.todo.model.Player;
+import productivity.todo.model.PlayerType;
 import productivity.todo.model.Weapon;
 
 public class GameCanvas extends Canvas {
@@ -57,8 +58,8 @@ public class GameCanvas extends Canvas {
 		backg.setColor(new Color(0f,0f,0f,0.3f));
 		backg.fillRect(GameMap.WIDTH-200,GameMap.HEIGHT-50,200,50);
 		backg.setColor(new Color(0f,0f,0f,0.5f));
-		backg.drawString("Health: " + (int)gameMap.getPlayer().getHealth() + "%", GameMap.WIDTH-115, GameMap.HEIGHT-25);
-		if(gameMap.getPlayer().getHealth()>0)
+		backg.drawString("Health: " + (gameMap.getPlayer().getType() == PlayerType.PERSON ? (int)gameMap.getPlayer().getHealth() : 0) + "%", GameMap.WIDTH-115, GameMap.HEIGHT-25);
+		if(gameMap.getPlayer().getHealth()>0 && gameMap.getPlayer().getType() == PlayerType.PERSON)
 		{
 			
 			backg.drawString(gameMap.getPlayer().getCurrentWeapon().getName(), GameMap.WIDTH-115, GameMap.HEIGHT-38);
