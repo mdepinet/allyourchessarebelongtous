@@ -174,9 +174,7 @@ public class GameMap{
 			
 			Weapon w;
 			if((w = getWeapon(p))!=null){
-				if(p.containsWeapon(w)) p.getWeapon(p.weaponIndex(w)).setClipCount(p.getWeapon(p.weaponIndex(w)).getClipCount()+3);
-				else p.addWeapon(w);
-				map[getPlayerGridX(p)][getPlayerGridY(p)] = '_';
+				if(p.addWeapon(w)) map[getPlayerGridX(p)][getPlayerGridY(p)] = '_';
 			}
 		}
 	}
@@ -261,7 +259,7 @@ public class GameMap{
 	}
 	private boolean explode(Bullet b){
 		int splash = b.getWeapon().getSplash();
-		if(splash<1) return false;
+		if(splash<=1) return false;
 		for (int i = 0; i<players.size(); i++){
 			Player p = players.get(i);
 			double distance = p.getLocation().distance(b.getLocation());
@@ -271,7 +269,6 @@ public class GameMap{
 			}
 		}
 		return true;
-		//TODO
 	}
 	
 	private void kill(Player p){
