@@ -64,25 +64,37 @@ public class Player {
 		else
 		{
 			Point2D.Double newLoc;
-			newLoc = addPoints(location,getDirectionToLoc(location,map.getPlayer().getLocation()));
-			orientation = getAngleBetweenPoints(location,map.getPlayer().getLocation())+Math.PI/2;
-			if(weapons.size()>1 && currWeapon==0)
-				nextWeapon();
-			if(map.getPlayer().getHealth()>0)
+			Player p = map.getClosestTeamPlayer(map.getOppositeTeam(team), location);
+			if(p!=null)
 			{
-				if(location.distance(map.getPlayer().getLocation())<=map.getPlayer().getCurrentWeapon().getEffRange())
+				newLoc = addPoints(location,getDirectionToLoc(location,p.getLocation()));
+				orientation = getAngleBetweenPoints(location,p.getLocation())+Math.PI/2;
+				if(weapons.size()>1 && currWeapon==0)
+					nextWeapon();
+				if(p.getHealth()>0)
 				{
-					if(Math.abs(Math.sin(orientation+Math.PI) - Math.sin(map.getPlayer().getOrientation()))<=Math.PI/5)
-						newLoc = addPoints(location,multiplyPointByScalar(getDirectionToLoc(location,map.getPlayer().getLocation()),-1));
+					if(location.distance(p.getLocation())<=p.getCurrentWeapon().getEffRange())
+					{
+						if(Math.abs(Math.sin(orientation+Math.PI) - Math.sin(p.getOrientation()))<=Math.PI/5)
+							newLoc = addPoints(location,multiplyPointByScalar(getDirectionToLoc(location,p.getLocation()),-1));
+					}
+					if(location.distance(p.getLocation())<=getCurrentWeapon().getEffRange()*2)
+					{
+						if(getCurrentWeapon().canShoot())
+							map.shoot(this);
+					}
 				}
-				if(location.distance(map.getPlayer().getLocation())<=getCurrentWeapon().getEffRange()*2)
-				{
-					if(getCurrentWeapon().canShoot())
-						map.shoot(this);
-				}
+				location = newLoc;
 			}
-			location = newLoc;
+			else {
+				//get weapons
+			}
 		}
+	}
+	public Point2D.Double getSmartDirectionToLoc(Point2D.Double loc, GameMap m)
+	{
+		
+		return null;
 	}
 	public Point2D.Double multiplyPointByScalar(Point2D.Double point, double scalar)
 	{
