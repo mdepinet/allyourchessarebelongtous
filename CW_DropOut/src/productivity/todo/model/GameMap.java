@@ -6,13 +6,16 @@ import java.awt.geom.Point2D;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
-import java.util.Set;
+
+import javax.swing.JFileChooser;
+import javax.swing.filechooser.FileFilter;
 
 import productivity.todo.view.GameCanvas;
 
@@ -31,7 +34,7 @@ public class GameMap{
 		spawnLocs.put(2, new ArrayList<Point2D.Double>());
 		spawnLocs.put(3, new ArrayList<Point2D.Double>());
 		bullets = new ArrayList<Bullet>();
-		players = new LinkedList<Player>();
+		players = Collections.synchronizedList(new LinkedList<Player>());
 		Player player = new Player("player1");
 		player.addWeapon(new Weapon("BFG"));
 		player.setTeam(1);
@@ -62,17 +65,32 @@ public class GameMap{
 	}
 	public void loadDefaultMap()
 	{
+		JFileChooser chooser = new JFileChooser("resource");
+		chooser.setFileFilter(new FileFilter(){
+			@Override
+			public boolean accept(File f) {
+				return f.isDirectory() || f.getName().endsWith(".map");
+			}
+			@Override
+			public String getDescription() {
+				return "Map files";
+			}
+		});
+		File mapChosen = null;
+		int returnVal = chooser.showOpenDialog(null);
+        if (returnVal == JFileChooser.APPROVE_OPTION) mapChosen = chooser.getSelectedFile();
+        else mapChosen = new File("resource/default.map");
 		map = new char[30][30];
 		Scanner scan = null;
 		try
 		{
-			scan = new Scanner(new File("resource/default.map"));
+			scan = new Scanner(mapChosen);
 		}
 		catch(IOException e)
 		{}
 		for(int i = 0; i < map.length;i++)
 		{
-			for(int j = 0; j < map[i].length; j++) {
+			for(int j = 0; j < map[i].length && scan.hasNext() ; j++) {
 				String next = scan.next();
 				map[j][i] = next.charAt(0);
 				if (next.matches("\\d+")) { if(next.equals("1") || next.equals("2") || next.equals("3")) { spawnLocs.get(new Integer(next)).add(new Point2D.Double((j*GRID_PIXELS)+12.5,(i*GRID_PIXELS)+12.5)); map[j][i] = '_'; } }
@@ -135,8 +153,7 @@ public class GameMap{
 				double damage = b.getWeapon().getPower();
 				if (b.getDistanceTraveled() > effRange) damage -= ((b.getDistanceTraveled() - effRange)/effRange)*damage;
 				hit.takeDamage(damage);
-				explode(b);
-				if (hit.getHealth()<=0) kill(hit);
+				if (!explode(b) && hit.getHealth()<=0) kill(hit);
 				bullets.remove(b);
 				i--;
 			}
