@@ -36,7 +36,8 @@ public class GameCanvas extends Canvas {
 	{
 		backg.setColor(Color.BLACK);
 		backg.clearRect(0, 0, GameMap.WIDTH, GameMap.HEIGHT);
-		for(Player p: gameMap.getPlayers()) {
+		for(int i = 0; i < gameMap.getPlayers().size();i++) {
+			Player p = gameMap.getPlayers().get(i);
 			if (p.getHealth() > 0){
 				backg.fillOval((int)p.getLocation().getX()-8,(int)p.getLocation().getY()-8, 16, 16);
 				Rectangle gun2;
