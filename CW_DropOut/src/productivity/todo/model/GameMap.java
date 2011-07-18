@@ -155,7 +155,13 @@ public class GameMap{
 	{
 		for(int i=0;i<bullets.size();i++) {
 			Bullet b = bullets.get(i);
-			if(!isValid(b.getLocation(),1)) { explode(b); bullets.remove(i--); continue; }
+			if(!isValid(b.getLocation(),1)) 
+				if(!b.getWeapon().getType().equalsIgnoreCase("thrown")){
+					explode(b); 
+					bullets.remove(i--); 
+					continue;
+				}
+			
 			for(int j = 0; j < map.length; j++)
 			{
 				for(int k = 0; k < map[j].length;k++)
