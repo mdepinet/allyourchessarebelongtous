@@ -132,6 +132,20 @@ public class GameMap{
 	{
 		return (num+1<=numTeams) ? num+1 : num-1;
 	}
+	public Point2D.Double getClosestWeapon(Point2D.Double loc)
+	{
+		double dist = Double.MAX_VALUE;
+		Point2D.Double ret = null;
+		for(int i =0;i<map.length;i++)
+		{
+			for(int j = 0;j < map[i].length; j++)
+				if(map[i][j] != '_' && map[i][j]!='X')
+				{
+					if(loc.distance(new Point2D.Double(12.5+(i*25),12.5+(j*25)))<dist) { dist = loc.distance(new Point2D.Double(12.5+(i*25),12.5+(j*25))); ret = new Point2D.Double(12.5+(i*25),12.5+(j*25)); }
+				}
+		}
+		return ret;
+	}
 	public Player getClosestTeamPlayer(int team,Point2D.Double loc)
 	{
 		double dist = Double.MAX_VALUE;
