@@ -59,10 +59,14 @@ public class GameCanvas extends Canvas {
 		backg.setColor(new Color(0f,0f,0f,0.3f));
 		backg.fillRect(GameMap.WIDTH-200,GameMap.HEIGHT-50,200,50);
 		backg.setColor(new Color(0f,0f,0f,0.5f));
-		backg.drawString("Health: " + (gameMap.getPlayer().getType() == PlayerType.PERSON ? (int)gameMap.getPlayer().getHealth() : 0) + "%", GameMap.WIDTH-115, GameMap.HEIGHT-25);
-		if(gameMap.getPlayer().getHealth()>0 && gameMap.getPlayer().getType() == PlayerType.PERSON)
+		if(gameMap.getPlayer()!=null)
 		{
-			
+			if(gameMap.getPlayer().getHealth()<0)
+				gameMap.getPlayer().setHealth(0);
+			backg.setColor(new Color((gameMap.getPlayer().getHealth()>50) ? (float)(1-gameMap.getPlayer().getHealth()/100) : 1.0f,(gameMap.getPlayer().getHealth()<=50) ? (float)(gameMap.getPlayer().getHealth()/50):1.0f,0f,0.5f));
+			backg.fillRect(GameMap.WIDTH-105, GameMap.HEIGHT-35, (int)gameMap.getPlayer().getHealth(), 10);
+			backg.setColor(new Color(0f,0f,0f,0.5f));
+			backg.drawString("Health:", GameMap.WIDTH-145, GameMap.HEIGHT-26);
 			backg.drawString(gameMap.getPlayer().getCurrentWeapon().getName(), GameMap.WIDTH-115, GameMap.HEIGHT-38);
 			if(gameMap.getPlayer().getCurrentWeapon().getClipCount()>=0)
 				backg.drawString(""+gameMap.getPlayer().getCurrentWeapon().getClipCount(), GameMap.WIDTH-20, GameMap.HEIGHT-38);
