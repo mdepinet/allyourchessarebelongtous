@@ -48,7 +48,7 @@ public class Shoot implements KeyListener, MouseListener, MouseMotionListener {
 	      long beginTime, timeTaken, timeLeft;
 	      while (true) {
 	         beginTime = System.nanoTime();
-	         if(map.getPlayer().getHealth()>0){
+	         if(map.getPlayer()!=null){
 		         map.getPlayer().setOrientation(Math.atan2((mouseLoc.getY()-map.getPlayer().getLocation().y), (mouseLoc.getX()-map.getPlayer().getLocation().x))-Math.PI/2);
 		         if(holdCounter>=0)
 		         {
@@ -73,6 +73,7 @@ public class Shoot implements KeyListener, MouseListener, MouseMotionListener {
 	   }
 	   @Override
 		public void keyPressed(KeyEvent e) {
+		   if(map.getPlayer()==null) return;
 			switch(e.getKeyCode())
 			{
 				case KeyEvent.VK_DOWN:
@@ -105,6 +106,7 @@ public class Shoot implements KeyListener, MouseListener, MouseMotionListener {
 		}
 		@Override
 		public void keyReleased(KeyEvent e) {
+			if(map.getPlayer()==null) return;
 			switch(e.getKeyCode())
 			{
 				case KeyEvent.VK_DOWN:
@@ -170,6 +172,7 @@ public class Shoot implements KeyListener, MouseListener, MouseMotionListener {
 	}
 	@Override
 	public void mouseReleased(MouseEvent e) {
+		if(map.getPlayer()==null) return;
 		if(map.getPlayer().getHealth()>0)
 			if(map.getPlayer().getWeapon().canShoot())
 				map.shoot(map.getPlayer());
@@ -178,12 +181,14 @@ public class Shoot implements KeyListener, MouseListener, MouseMotionListener {
 	@Override
 	public void mouseDragged(MouseEvent e) {
 		// TODO Auto-generated method stub
+		if(map.getPlayer()==null) return;
 		map.getPlayer().setOrientation(Math.atan2((e.getY()-map.getPlayer().getLocation().y), (e.getX()-map.getPlayer().getLocation().x))-Math.PI/2);
 		mouseLoc=new Point(e.getX(),e.getY());
 	}
 	@Override
 	public void mouseMoved(MouseEvent e) {
 		// TODO Auto-generated method stub
+		if(map.getPlayer()==null) return;
 		mouseLoc=new Point(e.getX(),e.getY());
 		map.getPlayer().setOrientation(Math.atan2((e.getY()-map.getPlayer().getLocation().y), (e.getX()-map.getPlayer().getLocation().x))-Math.PI/2);
 	}
