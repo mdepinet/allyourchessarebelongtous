@@ -2,6 +2,7 @@ package productivity.todo.model;
 
 
 import java.awt.Rectangle;
+import java.awt.geom.Line2D;
 import java.awt.geom.Point2D;
 import java.io.File;
 import java.io.IOException;
@@ -160,26 +161,34 @@ public class GameMap{
 		return ret;
 	}
 	public Player getPlayer() {
-		return players.get(0);
+		if(players.get(0).getType()==PlayerType.PERSON)
+			return players.get(0);
+		return null;
 	}
 	public void setPlayer(Player player) {
 		this.players.set(0, player);
 	}
 	public void gameUpdate()
 	{
-		for(int i=0;i<bullets.size();i++) {
+		OUTTER: for(int i=0;i<bullets.size();i++) {
 			Bullet b = bullets.get(i);
 			if(!isValid(b.getLocation(),1)) 
 				if(!b.getWeapon().getType().equalsIgnoreCase("thrown")){
 					explode(b); 
 					bullets.remove(i--); 
-					continue;
+					continue OUTTER;
 				}
 			
 			for(int j = 0; j < map.length; j++)
 			{
 				for(int k = 0; k < map[j].length;k++)
-					if(map[j][k] == 'X') bulletColDetect(b,new Rectangle(j*GRID_PIXELS,k*GRID_PIXELS,GRID_PIXELS,GRID_PIXELS));
+					if(map[j][k] == 'X' && bulletColDetect(b,new Rectangle(j*GRID_PIXELS,k*GRID_PIXELS,GRID_PIXELS,GRID_PIXELS))){
+						if(!b.getWeapon().getType().equalsIgnoreCase("thrown")){
+							explode(b); 
+							bullets.remove(i--); 
+							continue OUTTER;
+						}
+					}
 			}
 			Player hit = getHitPlayer(b);
 			b.update();
@@ -189,9 +198,9 @@ public class GameMap{
 				if(explode(b)){
 					bullets.remove(b);
 					i--;
-					continue;
+					continue OUTTER;
 				}
-			if(b.getDistanceTraveled() > effRange*2) { bullets.remove(b); i--; continue; }
+			if(b.getDistanceTraveled() > effRange*2) { bullets.remove(b); i--; continue OUTTER; }
 			if (hit != null){
 				double damage = b.getWeapon().getPower();
 				if (b.getDistanceTraveled() > effRange) damage -= ((b.getDistanceTraveled() - effRange)/effRange)*damage;
@@ -240,24 +249,10 @@ public class GameMap{
 	}
 	public boolean bulletColDetect(Bullet bullet, Rectangle r)
 	{
-		double velX = bullet.getVelocity().x;
-		double velY = bullet.getVelocity().y;
-		Point2D.Double vec = new Point2D.Double(r.getLocation().x - bullet.getLocation().x,r.getLocation().y-bullet.getLocation().y);
-		
-		double a = velX*velX + velY*velY;
-		double b = 2*(velX*vec.x + velY*vec.y);
-		double c = (vec.x*vec.x+vec.y*vec.y) - (r.getWidth()/2)*(r.getWidth()/2);
-
-		double discriminant = b*b-4*a*c;
-		if( discriminant >= 0 )
-		{
-		  // ray didn't totally miss sphere, so there is a solution to the equation.
-		  discriminant = Math.sqrt( discriminant );
-		  double t1 = (-b + discriminant)/(2*a);
-		  //double t2 = (-b - discriminant)/(2*a);
-		  if( (t1 >= 0 && t1 <= 1) /*||  (t2 >= 0 && t2 <= 1)*/) return true;
-		}
-		return false;
+		Line2D.Double bulletSegment = new Line2D.Double(
+				bullet.getLocation(),
+				new Point2D.Double(bullet.getVelocity().x+bullet.getLocation().x,bullet.getVelocity().y+bullet.getLocation().y));
+		return bulletSegment.intersects(r);
 	}
 	public boolean bulletColDetect(Bullet bullet, Player p)
 	{
@@ -276,8 +271,8 @@ public class GameMap{
 		  // ray didn't totally miss sphere, so there is a solution to the equation.
 		  discriminant = Math.sqrt( discriminant );
 		  double t1 = (-b + discriminant)/(2*a);
-		  //double t2 = (-b - discriminant)/(2*a);
-		  if( (t1 >= 0 && t1 <= 1) /*||  (t2 >= 0 && t2 <= 1)*/) return true;
+		  double t2 = (-b - discriminant)/(2*a);
+		  if( (t1 >= 0 && t1 <= 1) ||  (t2 >= 0 && t2 <= 1)) return true;
 		}
 		return false;
 	}
