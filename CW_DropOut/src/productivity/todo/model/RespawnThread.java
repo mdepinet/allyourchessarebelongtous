@@ -19,16 +19,8 @@ public class RespawnThread extends Thread {
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
-		if (indexZero) {
-			Player player = new Player("player1");
-			player.setTeam(1);
-			player.setType(PlayerType.PERSON);
-			gm.getPlayers().add(0, player);
-			gm.spawn(player);
-		}
-		else {
-			gm.getPlayers().add(p);
-			gm.spawn(p);
-		}
+		if (indexZero) gm.getPlayers().add(0, p);
+		else gm.getPlayers().add(p);
+		gm.spawn(p);
 	}
 }
