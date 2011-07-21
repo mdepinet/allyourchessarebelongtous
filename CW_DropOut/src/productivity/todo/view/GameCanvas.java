@@ -61,8 +61,6 @@ public class GameCanvas extends Canvas {
 		backg.setColor(new Color(0f,0f,0f,0.5f));
 		if(gameMap.getPlayer()!=null)
 		{
-			if(gameMap.getPlayer().getHealth()<0)
-				gameMap.getPlayer().setHealth(0);
 			backg.setColor(new Color((gameMap.getPlayer().getHealth()>50) ? (float)(1-gameMap.getPlayer().getHealth()/100) : 1.0f,(gameMap.getPlayer().getHealth()<=50) ? (float)(gameMap.getPlayer().getHealth()/50):1.0f,0f,0.5f));
 			backg.fillRect(GameMap.WIDTH-105, GameMap.HEIGHT-35, (int)gameMap.getPlayer().getHealth(), 10);
 			backg.setColor(new Color(0f,0f,0f,0.5f));
