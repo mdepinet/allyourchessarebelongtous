@@ -51,7 +51,7 @@ public class GameMap{
 		player.setTeam(1);
 		players.add(player);*/
 		double team = 1.5;
-		for(int i = 0; i < 7;i++)
+		for(int i = 0; i < 3 + (spawnLocs.get(3).size()>0 ? 2 : 0) + (spawnLocs.get(4).size()>0 ? 2 : 0);i++)
 		{
 			Player p2 = new Player("player" + (i+2));
 			p2.setTeam((int)team);
@@ -66,7 +66,7 @@ public class GameMap{
 				spawn(p);
 				p.setLocation(spawnLocs.get(p.getTeam()).get((int)(Math.random()*spawnLocs.size())));
 			}
-			else players.remove(p);
+			else players.remove(i);
 		}
 	}
 	public ArrayList<Bullet> getBullets() {
