@@ -73,11 +73,6 @@ public class MapGraph {
 					
 			}
 		}
-		for (Vertex v : vertices){
-			System.out.print(""+v+":\t");
-			for (Vertex u : v.getAdjacents().keySet()) System.out.print(""+u);
-			System.out.print("\n");
-		}
 	}
 	
 	private Vertex getVertexByLocation(int r, int c){
@@ -140,6 +135,23 @@ public class MapGraph {
 		return getShortestPath(getVertexByLocation(start.x,start.y), getVertexByLocation(end.x,end.y));
 		
 	}
+	public void printPath(List<Vertex> path, char[][] map)
+	{
+		for(int i = 0; i < 30;i++)
+		{
+			OUTTER: for(int j = 0; j < 30; j++)
+			{
+				if(map[i][j] == 'X') {
+					System.out.print("X "); continue;
+				}
+				for (Vertex v : path){
+					if (v.row == i && v.col == j) { System.out.print("O "); continue OUTTER; }
+				}
+				System.out.print("_ ");
+			}
+			System.out.println();
+		}
+	}
 	
 	
 	public static void main(String[] args){
@@ -147,11 +159,7 @@ public class MapGraph {
 		MapGraph test = new MapGraph();
 		char[][] map = new GameMap().getMap();
 		test.createGraph(map);
-		List<Vertex> path = test.getPath(new Point(7,14),new Point(9,14));
-		for (Vertex v : path){
-			System.out.print(v+" --> ");
-		}
-		System.out.print("GOAL");
+		test.printPath(test.getPath(new Point(0,0),new Point(29,29)), map);
 	}
 	
 }
