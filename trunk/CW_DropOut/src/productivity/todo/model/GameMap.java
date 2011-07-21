@@ -385,6 +385,13 @@ public class GameMap{
 	private int getPlayerGridY(Player p){
 		return (int) (Math.floor(p.getLocation().y/GRID_PIXELS));
 	}
+	public Point getGridPoint(Point2D.Double p){
+		return new Point((int) Math.floor(p.x/GRID_PIXELS), (int) Math.floor(p.y/GRID_PIXELS));
+	}
+	public Point2D.Double fromGridPoint(Point p){
+		return new Point2D.Double(p.x*GRID_PIXELS+(GRID_PIXELS/2),p.y*GRID_PIXELS+(GRID_PIXELS/2));
+	}
+	
 	private boolean explode(Bullet b){
 		int splash = b.getWeapon().getSplash();
 		if(splash<=1) return false;
