@@ -53,7 +53,7 @@ public class Shoot implements KeyListener, MouseListener, MouseMotionListener {
 		         if(holdCounter>=0)
 		         {
 		        	 holdCounter++;
-		        	 if(holdCounter > 15 && map.getPlayer().getWeapon().canShoot())
+		        	 if(holdCounter > 15 && map.getPlayer().getCurrentWeapon().canShoot())
 		     			map.shoot(map.getPlayer());
 		         }
 	         }
@@ -180,7 +180,7 @@ public class Shoot implements KeyListener, MouseListener, MouseMotionListener {
 	@Override
 	public void mouseReleased(MouseEvent e) {
 		if(map.getPlayer()==null) return;
-		if(map.getPlayer().getWeapon().canShoot())
+		if(map.getPlayer().getCurrentWeapon().canShoot())
 			map.shoot(map.getPlayer());
 		holdCounter=-1;
 	}

@@ -59,8 +59,8 @@ public class GameCanvas extends Canvas {
 			Player p = gameMap.getPlayers().get(i);
 			if (p.getHealth() > 0){
 				Rectangle gun2;
-				if(p.getWeapon().getType().equals("rifle")) gun2 = new Rectangle((int)p.getLocation().getX()-8,(int)p.getLocation().getY(), 4, 12);
-				else if(p.getWeapon().getType().equals("grenade")) gun2 = new Rectangle((int)p.getLocation().getX()-8,(int)p.getLocation().getY(), 7, 8);
+				if(p.getCurrentWeapon().getType().equals("rifle")) gun2 = new Rectangle((int)p.getLocation().getX()-8,(int)p.getLocation().getY(), 4, 12);
+				else if(p.getCurrentWeapon().getType().equals("grenade")) gun2 = new Rectangle((int)p.getLocation().getX()-8,(int)p.getLocation().getY(), 7, 8);
 				else  gun2 = new Rectangle((int)p.getLocation().getX()-8,(int)p.getLocation().getY(), 4, 12);
 				AffineTransform transform = new AffineTransform();
 				transform.rotate(p.getOrientation(), p.getLocation().x, p.getLocation().y);
