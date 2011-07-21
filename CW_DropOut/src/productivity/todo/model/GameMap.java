@@ -1,6 +1,7 @@
 package productivity.todo.model;
 
 
+import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.geom.Area;
 import java.awt.geom.Line2D;
@@ -59,9 +60,6 @@ public class GameMap{
 			spawn(p);
 			if(!spawnLocs.get(new Integer(p.getTeam())).isEmpty()) p.setLocation(spawnLocs.get(p.getTeam()).get((int)(Math.random()*spawnLocs.size())));
 		}
-		long seed = System.currentTimeMillis();
-		System.out.println("Started game with seed "+seed);
-		new WeaponAdderThread(map, seed).start();
 	}
 	public ArrayList<Bullet> getBullets() {
 		return bullets;
@@ -238,7 +236,10 @@ public class GameMap{
 			
 			Weapon w;
 			if((w = getWeapon(p))!=null){
-				if(p.addWeapon(w)) map[getPlayerGridX(p)][getPlayerGridY(p)] = '_';
+				if(p.addWeapon(w)) {
+					new WeaponAdderThread(map[getPlayerGridX(p)][getPlayerGridY(p)], new Point(getPlayerGridX(p), getPlayerGridY(p)), this).start();
+					map[getPlayerGridX(p)][getPlayerGridY(p)] = '_';
+				}
 			}
 		}
 		for(int i = 0; i < explosions.size();i++)
@@ -255,6 +256,10 @@ public class GameMap{
 		} 
 		catch(IllegalArgumentException e) { }
 		return null;
+	}
+	public void spawnWeapon(char c, Point location)
+	{
+		map[location.x][location.y] = c;
 	}
 	public Player getHitPlayer(Bullet bullet)
 	{
