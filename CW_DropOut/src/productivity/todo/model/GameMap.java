@@ -220,8 +220,9 @@ public class GameMap{
 				i--;
 			}
 		}
-		for(Player p: players)
+		for(int i =0; i<players.size(); i++)
 		{
+			Player p= players.get(i);
 			Point2D.Double loc = p.getLocation();
 			p.update(this);
 			if(!isValid(p.getLocation(), p.getRadius()))
