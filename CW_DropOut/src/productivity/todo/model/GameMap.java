@@ -137,10 +137,6 @@ public class GameMap{
 	public List<Player> getPlayers() {
 		return players;
 	}
-	public int getOppositeTeam(int num)
-	{
-		return (num+1<=numTeams) ? num+1 : num-1;
-	}
 	public Point2D.Double getClosestWeapon(Point2D.Double loc)
 	{
 		double dist = Double.MAX_VALUE;
@@ -161,7 +157,7 @@ public class GameMap{
 		Player ret = null;
 		for(Player p:players)
 		{
-			if(p.getTeam()==team)
+			if(p.getTeam()!=team)
 			{
 				if(loc.distance(p.getLocation())<dist) { dist = loc.distance(p.getLocation()); ret = p; }
 			}

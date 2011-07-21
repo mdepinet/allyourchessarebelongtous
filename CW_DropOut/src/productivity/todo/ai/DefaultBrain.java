@@ -10,7 +10,7 @@ public class DefaultBrain extends AbstractBrain {
 		int team = p.getTeam();
 		Point2D.Double location = p.getLocation();
 		Point2D.Double newLoc;
-		Player enemy = map.getClosestTeamPlayer(map.getOppositeTeam(team), location);
+		Player enemy = map.getClosestTeamPlayer(team, location);
 		Point2D.Double destLoc;
 		Point2D.Double wLoc;
 		Point2D.Double pLoc;
