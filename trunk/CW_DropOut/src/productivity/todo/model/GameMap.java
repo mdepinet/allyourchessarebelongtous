@@ -38,6 +38,7 @@ public class GameMap{
 		spawnLocs.put(1, new ArrayList<Point2D.Double>());
 		spawnLocs.put(2, new ArrayList<Point2D.Double>());
 		spawnLocs.put(3, new ArrayList<Point2D.Double>());
+		spawnLocs.put(4, new ArrayList<Point2D.Double>());
 		bullets = new ArrayList<Bullet>();
 		explosions = new ArrayList<Explosion>();
 		players = Collections.synchronizedList(new LinkedList<Player>());
@@ -46,19 +47,25 @@ public class GameMap{
 		player.setTeam(1);
 		player.setType(PlayerType.PERSON);
 		players.add(player);
-		player = new Player ("player2");
+		/*player = new Player ("player2");
 		player.setTeam(1);
-		players.add(player);
-		for(int i = 0; i < 2;i++)
+		players.add(player);*/
+		double team = 1.5;
+		for(int i = 0; i < 7;i++)
 		{
-			Player p2 = new Player("player" + (i+3));
-			p2.setTeam(2);
+			Player p2 = new Player("player" + (i+2));
+			p2.setTeam((int)team);
+			team+=0.5;
 			players.add(p2);
 		}
 		for(Player p: players)
 		{
-			spawn(p);
-			if(!spawnLocs.get(new Integer(p.getTeam())).isEmpty()) p.setLocation(spawnLocs.get(p.getTeam()).get((int)(Math.random()*spawnLocs.size())));
+			if(spawnLocs.get(new Integer(p.getTeam()))==null) System.out.println("null");
+			if(!spawnLocs.get(new Integer(p.getTeam())).isEmpty()) {
+				spawn(p);
+				p.setLocation(spawnLocs.get(p.getTeam()).get((int)(Math.random()*spawnLocs.size())));
+			}
+			else players.remove(p);
 		}
 	}
 	public ArrayList<Bullet> getBullets() {
@@ -97,7 +104,7 @@ public class GameMap{
 			for(int j = 0; j < map[i].length && scan.hasNext() ; j++) {
 				String next = scan.next();
 				map[j][i] = next.charAt(0);
-				if (next.matches("\\d+")) { if(next.equals("1") || next.equals("2") || next.equals("3")) { spawnLocs.get(new Integer(next)).add(new Point2D.Double((j*GRID_PIXELS)+12.5,(i*GRID_PIXELS)+12.5)); map[j][i] = '_'; } }
+				if (next.matches("\\d+")) { if(next.equals("1") || next.equals("2") || next.equals("3") || next.equals("4")) { spawnLocs.get(new Integer(next)).add(new Point2D.Double((j*GRID_PIXELS)+12.5,(i*GRID_PIXELS)+12.5)); map[j][i] = '_'; } }
 			}
 			if(scan.hasNextLine())
 				scan.nextLine();
@@ -363,7 +370,7 @@ public class GameMap{
 	}
 	
 	public void spawn(Player p){
-		p.respawn(spawnLocs.get(p.getTeam()).get((int)(Math.random()*spawnLocs.size())));
+		p.respawn(spawnLocs.get(p.getTeam()).get((int)(Math.random()*spawnLocs.get(p.getTeam()).size())));
 	}
 	public char getObjectAtPlayer(Player p){
 		int x = getPlayerGridX(p);
