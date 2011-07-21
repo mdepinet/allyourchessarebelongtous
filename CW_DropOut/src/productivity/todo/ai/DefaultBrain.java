@@ -37,7 +37,7 @@ public class DefaultBrain extends AbstractBrain {
 						if(Math.abs(Math.sin(p.getOrientation()+Math.PI) - Math.sin(enemy.getOrientation()))<=Math.PI/5)
 							newLoc = addPoints(location,multiplyPointByScalar(getDirectionToLoc(location,enemy.getLocation()),-1));
 					}
-					if(location.distance(enemy.getLocation())<=p.getCurrentWeapon().getEffRange())
+					if(location.distance(enemy.getLocation())<=p.getCurrentWeapon().getEffRange()*1.5)
 					{
 						if(p.getCurrentWeapon().canShoot())
 							map.shoot(p);
