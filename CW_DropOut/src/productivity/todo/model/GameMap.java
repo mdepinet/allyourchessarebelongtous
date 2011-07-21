@@ -2,6 +2,7 @@ package productivity.todo.model;
 
 
 import java.awt.Rectangle;
+import java.awt.geom.Area;
 import java.awt.geom.Line2D;
 import java.awt.geom.Point2D;
 import java.io.File;
@@ -27,6 +28,7 @@ public class GameMap{
 	public static final int WIDTH = 750;
 	public static final int GRID_PIXELS = GameCanvas.GRID_PIXELS;
 	private ArrayList<Bullet> bullets;
+	private ArrayList<Explosion> explosions;
 	private Map<Integer, ArrayList<Point2D.Double>> spawnLocs;
 	private int numTeams = 2;
 	public GameMap()
@@ -36,6 +38,7 @@ public class GameMap{
 		spawnLocs.put(2, new ArrayList<Point2D.Double>());
 		spawnLocs.put(3, new ArrayList<Point2D.Double>());
 		bullets = new ArrayList<Bullet>();
+		explosions = new ArrayList<Explosion>();
 		players = Collections.synchronizedList(new LinkedList<Player>());
 		loadDefaultMap();
 		Player player = new Player("player1");
@@ -168,6 +171,12 @@ public class GameMap{
 	public void setPlayer(Player player) {
 		this.players.set(0, player);
 	}
+	public ArrayList<Explosion> getExplosions() {
+		return explosions;
+	}
+	public void setExplosions(ArrayList<Explosion> explosions) {
+		this.explosions = explosions;
+	}
 	public void gameUpdate()
 	{
 		OUTTER: for(int i=0;i<bullets.size();i++) {
@@ -182,8 +191,10 @@ public class GameMap{
 			for(int j = 0; j < map.length; j++)
 			{
 				for(int k = 0; k < map[j].length;k++)
-					if(map[j][k] == 'X' && bulletColDetect(b,new Rectangle(j*GRID_PIXELS,k*GRID_PIXELS,GRID_PIXELS,GRID_PIXELS))){
-						if(!b.getWeapon().getType().equalsIgnoreCase("thrown")){
+					if(map[j][k] == 'X'){
+						Point2D.Double intersection = bulletColDetect(b,new Rectangle(j*GRID_PIXELS,k*GRID_PIXELS,GRID_PIXELS,GRID_PIXELS));
+						if(intersection!=null && !b.getWeapon().getType().equalsIgnoreCase("thrown")){
+							b.setLocation(intersection);
 							explode(b); 
 							bullets.remove(i--); 
 							continue OUTTER;
@@ -230,6 +241,12 @@ public class GameMap{
 				if(p.addWeapon(w)) map[getPlayerGridX(p)][getPlayerGridY(p)] = '_';
 			}
 		}
+		for(int i = 0; i < explosions.size();i++)
+		{	
+			explosions.get(i).update();
+			if(!explosions.get(i).isActive())
+				explosions.remove(i);
+		}
 	}
 	public Weapon getWeapon(Player p)
 	{
@@ -248,12 +265,51 @@ public class GameMap{
 		}
 		return null;
 	}
-	public boolean bulletColDetect(Bullet bullet, Rectangle r)
+	public Point2D.Double bulletColDetect(Bullet bullet, Rectangle r)
 	{
 		Line2D.Double bulletSegment = new Line2D.Double(
 				bullet.getLocation(),
 				new Point2D.Double(bullet.getVelocity().x+bullet.getLocation().x,bullet.getVelocity().y+bullet.getLocation().y));
-		return bulletSegment.intersects(r);
+		
+		if(bulletSegment.intersects(r))
+		{
+			double angle = Math.toDegrees(Math.atan2(bulletSegment.y2-bulletSegment.y1, bulletSegment.x2-bulletSegment.x1));
+			Line2D.Double top = new Line2D.Double(r.x,r.y,r.x+r.width,r.y);
+			Line2D.Double bottom = new Line2D.Double(r.x,r.y+r.height,r.x+r.width,r.y+r.height);
+			Line2D.Double left = new Line2D.Double(r.x,r.y,r.x,r.y+r.height);
+			Line2D.Double right = new Line2D.Double(r.x+r.width,r.y,r.x+r.width,r.y+r.height);
+			Point2D.Double intersection = null;
+			if(angle <=90 && angle >=0) {
+				if((intersection = getIntersectionPoint(bulletSegment, top))==null)
+					intersection = getIntersectionPoint(bulletSegment, left);
+			}
+			else if(angle >=90 && angle <=180) {
+				if((intersection = getIntersectionPoint(bulletSegment, top))==null)
+					intersection = getIntersectionPoint(bulletSegment, right);
+			}
+			else if(angle >=180 && angle <=270) {
+				if((intersection = getIntersectionPoint(bulletSegment, bottom))==null)
+					intersection = getIntersectionPoint(bulletSegment, right);
+			}
+			else {
+				if((intersection = getIntersectionPoint(bulletSegment, bottom))==null)
+					intersection = getIntersectionPoint(bulletSegment, left);
+			}
+			return intersection;
+		}
+		return null;
+	}
+	public Point2D.Double getIntersectionPoint(Line2D.Double line1, Line2D.Double line2) {
+		if (! line1.intersectsLine(line2) ) return null;
+		double 	px = line1.getX1(), py = line1.getY1(), rx = line1.getX2()-px, ry = line1.getY2()-py;
+		double 	qx = line2.getX1(), qy = line2.getY1(), sx = line2.getX2()-qx, sy = line2.getY2()-qy;
+		double det = sx*ry - sy*rx;
+		if (det != 0) {
+			double z = (sx*(qy-py)+sy*(px-qx))/det;
+			if (z==0 || z==1) return null;
+			return new Point2D.Double((px+z*rx), (py+z*ry));
+		}
+		return null;
 	}
 	public boolean bulletColDetect(Bullet bullet, Player p)
 	{
@@ -320,6 +376,7 @@ public class GameMap{
 	private boolean explode(Bullet b){
 		int splash = b.getWeapon().getSplash();
 		if(splash<=1) return false;
+		explosions.add(new Explosion(b.getLocation(), b.getWeapon().getSplash()*2));
 		for (int i = 0; i<players.size(); i++){
 			Player p = players.get(i);
 			double distance = p.getLocation().distance(b.getLocation()) - p.getRadius();
