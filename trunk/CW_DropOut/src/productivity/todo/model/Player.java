@@ -190,6 +190,8 @@ public class Player {
 	}
 	public void takeDamage (double damage) {
 		health -= damage;
+		if(health<0)
+			health = 0;
 	}
 	public String toString(){
 		return "Health: "+health + " Color: "+color+ " Weapon: "+weapons+ " Point: "+location;

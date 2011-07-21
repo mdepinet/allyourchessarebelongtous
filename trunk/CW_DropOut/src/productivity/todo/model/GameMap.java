@@ -205,7 +205,8 @@ public class GameMap{
 				double damage = b.getWeapon().getPower();
 				if (b.getDistanceTraveled() > effRange) damage -= ((b.getDistanceTraveled() - effRange)/effRange)*damage;
 				hit.takeDamage(damage);
-				if (!explode(b) && hit.getHealth()<=0) kill(hit);
+				if (hit.getHealth()<=0) kill(hit);
+				explode(b);
 				bullets.remove(b);
 				i--;
 			}
@@ -321,7 +322,7 @@ public class GameMap{
 		if(splash<=1) return false;
 		for (int i = 0; i<players.size(); i++){
 			Player p = players.get(i);
-			double distance = p.getLocation().distance(b.getLocation());
+			double distance = p.getLocation().distance(b.getLocation()) - p.getRadius();
 			if(distance<splash) {
 				p.takeDamage(b.getWeapon().getPower()*((splash-distance)/splash));
 				if (p.getHealth() <= 0){ kill(p); i--;}
