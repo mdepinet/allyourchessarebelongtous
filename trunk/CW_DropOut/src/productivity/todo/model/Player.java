@@ -1,8 +1,10 @@
 package productivity.todo.model;
 
-import java.awt.Color;
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
+
+import productivity.todo.ai.Controller;
+import productivity.todo.ai.DefaultBrain;
 
 public class Player {
 	private Point2D.Double location;
@@ -15,11 +17,13 @@ public class Player {
 	private double orientation;
 	private int team;
 	private int currWeapon;
+	private Controller brain;
 	public Player(){
 		setTeam(0);
 		name = "player1";
 		health = 100;
 		type = PlayerType.COMPUTER;
+		brain = new DefaultBrain();
 		location=new Point2D.Double(12,12);
 		direction = new Point2D.Double(0,0);
 		radius = 8;
@@ -32,6 +36,7 @@ public class Player {
 		name = pname;
 		health = 100;
 		type = PlayerType.COMPUTER;
+		brain = new DefaultBrain();
 		radius = 8;
 		location=new Point2D.Double(12,12);
 		direction = new Point2D.Double(0,0);
@@ -60,71 +65,10 @@ public class Player {
 			location = new Point2D.Double(location.getX()+(direction.getX()*2), location.getY()+(direction.getY()*2));
 		else
 		{
-			Point2D.Double newLoc;
-			Player p = map.getClosestTeamPlayer(map.getOppositeTeam(team), location);
-			Point2D.Double destLoc;
-			Point2D.Double wLoc;
-			Point2D.Double pLoc;
-			if(p==null)
-				destLoc = map.getClosestWeapon(location);
-			else
-			{
-				pLoc = p.getLocation();
-				wLoc = map.getClosestWeapon(location);
-				destLoc = (wLoc==null || location.distance(pLoc) < location.distance(wLoc)) ? pLoc : wLoc;
-			}
-			if(destLoc!=null)
-			{
-				newLoc = addPoints(location,getDirectionToLoc(location,destLoc));
-				if(p!=null)
-				{
-					orientation = getAngleBetweenPoints(location,p.getLocation())+Math.PI/2;
-					if(weapons.size()>1 && currWeapon==0)
-						nextWeapon();
-					if(p.getHealth()>0)
-					{
-						if(location.distance(p.getLocation())<=p.getCurrentWeapon().getEffRange())
-						{
-							if(Math.abs(Math.sin(orientation+Math.PI) - Math.sin(p.getOrientation()))<=Math.PI/5)
-								newLoc = addPoints(location,multiplyPointByScalar(getDirectionToLoc(location,p.getLocation()),-1));
-						}
-						if(location.distance(p.getLocation())<=getCurrentWeapon().getEffRange())
-						{
-							if(getCurrentWeapon().canShoot())
-								map.shoot(this);
-						}
-					}
-				}
-				location = newLoc;
-			}
-			else {
-				//get weapons
-			}
+			brain.makeMove(map, this);
 		}
 	}
-	public Point2D.Double getSmartDirectionToLoc(Point2D.Double loc, GameMap m)
-	{
-		
-		return null;
-	}
-	public Point2D.Double multiplyPointByScalar(Point2D.Double point, double scalar)
-	{
-		return new Point2D.Double(point.x*scalar,point.y*scalar);
-	}
-	public Point2D.Double addPoints(Point2D.Double one, Point2D.Double two)
-	{
-		return new Point2D.Double(one.x+two.x,one.y+two.y);
-	}
-	public double getAngleBetweenPoints(Point2D.Double from, Point2D.Double to)
-	{
-		Point2D.Double ret = new Point2D.Double(from.x-to.x,from.y-to.y);
-		return Math.atan2(ret.y,ret.x);
-	}
-	public Point2D.Double getDirectionToLoc(Point2D.Double from, Point2D.Double to)
-	{
-		double angle = getAngleBetweenPoints(from,to);
-		return new Point2D.Double(-(Math.cos(angle)),-(Math.sin(angle)));
-	}
+	
 	public void removeWeapon(Weapon weapon) {
 		weapons.remove(weapon);
 	}
@@ -146,9 +90,6 @@ public class Player {
 	}
 	public void setWeapon(Weapon weapon, int index) {
 		weapons.set(index, weapon);
-	}
-	public Weapon getWeapon() {
-		return weapons.get(currWeapon);
 	}
 	public Weapon getCurrentWeapon() {
 		return weapons.get(currWeapon);
