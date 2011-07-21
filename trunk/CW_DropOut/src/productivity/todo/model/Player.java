@@ -10,7 +10,6 @@ public class Player {
 	private PlayerType type;
 	private int radius;
 	private String name;
-	private Color color;
 	private ArrayList<Weapon> weapons;
 	private double health;
 	private double orientation;
@@ -20,7 +19,6 @@ public class Player {
 		setTeam(0);
 		name = "player1";
 		health = 100;
-		color = Color.black;
 		type = PlayerType.COMPUTER;
 		location=new Point2D.Double(12,12);
 		direction = new Point2D.Double(0,0);
@@ -33,7 +31,6 @@ public class Player {
 		setTeam(0);
 		name = pname;
 		health = 100;
-		color = Color.black;
 		type = PlayerType.COMPUTER;
 		radius = 8;
 		location=new Point2D.Double(12,12);
@@ -74,7 +71,7 @@ public class Player {
 			{
 				pLoc = p.getLocation();
 				wLoc = map.getClosestWeapon(location);
-				destLoc = (wLoc!=null && location.distance(pLoc) < location.distance(wLoc)) ? pLoc : wLoc;
+				destLoc = (wLoc==null || location.distance(pLoc) < location.distance(wLoc)) ? pLoc : wLoc;
 			}
 			if(destLoc!=null)
 			{
@@ -127,12 +124,6 @@ public class Player {
 	{
 		double angle = getAngleBetweenPoints(from,to);
 		return new Point2D.Double(-(Math.cos(angle)),-(Math.sin(angle)));
-	}
-	public void setColor(Color color) {
-		this.color = color;
-	}
-	public Color getColor() {
-		return color;
 	}
 	public void removeWeapon(Weapon weapon) {
 		weapons.remove(weapon);
@@ -194,7 +185,7 @@ public class Player {
 			health = 0;
 	}
 	public String toString(){
-		return "Health: "+health + " Color: "+color+ " Weapon: "+weapons+ " Point: "+location;
+		return "Health: "+health + " Weapon: "+weapons+ " Point: "+location;
 	}
 	public void setName(String name) {
 		this.name = name;

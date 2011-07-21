@@ -58,7 +58,6 @@ public class GameCanvas extends Canvas {
 		for(int i = 0; i < gameMap.getPlayers().size();i++) {
 			Player p = gameMap.getPlayers().get(i);
 			if (p.getHealth() > 0){
-				backg.fillOval((int)p.getLocation().getX()-8,(int)p.getLocation().getY()-8, 16, 16);
 				Rectangle gun2;
 				if(p.getWeapon().getType().equals("rifle")) gun2 = new Rectangle((int)p.getLocation().getX()-8,(int)p.getLocation().getY(), 4, 12);
 				else if(p.getWeapon().getType().equals("grenade")) gun2 = new Rectangle((int)p.getLocation().getX()-8,(int)p.getLocation().getY(), 7, 8);
@@ -66,6 +65,16 @@ public class GameCanvas extends Canvas {
 				AffineTransform transform = new AffineTransform();
 				transform.rotate(p.getOrientation(), p.getLocation().x, p.getLocation().y);
 				backg.draw(transform.createTransformedShape(gun2));
+				switch(p.getTeam())
+				{
+					case 1: backg.setColor(new Color(0f,0f,0.5f)); break;
+					case 2: backg.setColor(new Color(0.5f,0f,0f)); break;
+					case 3: backg.setColor(new Color(0f,0.5f,0f)); break;
+					case 4: backg.setColor(new Color(.8f,0.4f,0f)); break;
+					default: break;
+				}
+				backg.fillOval((int)p.getLocation().getX()-8,(int)p.getLocation().getY()-8, 16, 16);
+				backg.setColor(Color.BLACK);
 			}
 			//backg.rotate(p.getOrientation(),(int)p.getLocation().getX()-8,(int)p.getLocation().getY()-8);
 		}
