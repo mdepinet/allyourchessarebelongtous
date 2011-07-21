@@ -4,10 +4,16 @@ import java.awt.*;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
 import java.awt.geom.Point2D.Double;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Set;
 
+import javax.imageio.ImageIO;
+
 import productivity.todo.model.Bullet;
+import productivity.todo.model.Explosion;
 import productivity.todo.model.GameMap;
 import productivity.todo.model.Player;
 import productivity.todo.model.PlayerType;
@@ -17,13 +23,26 @@ public class GameCanvas extends Canvas {
 	private GameMap gameMap;
 	private Image backbuffer;
 	private Graphics2D backg;
+	private BufferedImage explosionImage;
 	public static final int GRID_PIXELS = 25;
 	public static final int FRAMES_PER_SECOND = 30;
 
 	public GameCanvas()
 	{
 		setBackground (Color.WHITE);
+		explosionImage = null;
+        try {
+        	explosionImage = ImageIO.read(new File("resource/images/explosion.gif"));  
+        } catch(IOException e) {}
 	}
+    public BufferedImage createTranslucentImage(BufferedImage image, double transperancy) {  
+        BufferedImage aimg = new BufferedImage(image.getWidth(), image.getHeight(), BufferedImage.TRANSLUCENT);
+        Graphics2D g = aimg.createGraphics(); 
+        g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, (float)transperancy));
+        g.drawImage(image, null, 0, 0);  
+        g.dispose();
+        return aimg;  
+    }  
 	public void init()
 	{
 		backbuffer = createImage( GameMap.WIDTH, GameMap.HEIGHT );
@@ -55,6 +74,10 @@ public class GameCanvas extends Canvas {
 			for(int j = 0; j < gameMap.getMap()[i].length;j++)
 				if(gameMap.getMap()[i][j] == 'X') backg.fillRect(i*GRID_PIXELS, j*GRID_PIXELS, GRID_PIXELS, GRID_PIXELS);
 				else if( gameMap.getMap()[i][j] != '_')  { backg.drawRect(i*GRID_PIXELS, j*GRID_PIXELS, GRID_PIXELS, GRID_PIXELS); backg.drawString("" + gameMap.getMap()[i][j], i*GRID_PIXELS, (j+1)*GRID_PIXELS); }
+		}
+		for(Explosion e: gameMap.getExplosions())
+		{
+			backg.drawImage(createTranslucentImage(explosionImage,e.getAlpha()), e.getRect().x, e.getRect().y, e.getRect().width, e.getRect().height, null);
 		}
 		backg.setColor(new Color(0f,0f,0f,0.3f));
 		backg.fillRect(GameMap.WIDTH-200,GameMap.HEIGHT-50,200,50);
