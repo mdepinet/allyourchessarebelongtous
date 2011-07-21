@@ -24,7 +24,7 @@ public class DefaultBrain extends AbstractBrain {
 		}
 		if(destLoc!=null)
 		{
-			newLoc = addPoints(location,getDirectionToLoc(location,destLoc));
+			newLoc = addPoints(location,getSmartDirectionToLoc(location,destLoc,map));
 			if(enemy!=null)
 			{
 				p.setOrientation(getAngleBetweenPoints(location,enemy.getLocation())+Math.PI/2);
@@ -35,7 +35,7 @@ public class DefaultBrain extends AbstractBrain {
 					if(location.distance(enemy.getLocation())<=enemy.getCurrentWeapon().getEffRange())
 					{
 						if(Math.abs(Math.sin(p.getOrientation()+Math.PI) - Math.sin(enemy.getOrientation()))<=Math.PI/5)
-							newLoc = addPoints(location,multiplyPointByScalar(getDirectionToLoc(location,enemy.getLocation()),-1));
+							newLoc = addPoints(location,multiplyPointByScalar(getSmartDirectionToLoc(location,enemy.getLocation(),map),-1));
 					}
 					if(location.distance(enemy.getLocation())<=p.getCurrentWeapon().getEffRange()*1.5)
 					{
