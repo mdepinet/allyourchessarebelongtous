@@ -58,8 +58,9 @@ public class GameMap{
 			team+=0.5;
 			players.add(p2);
 		}
-		for(Player p: players)
+		for(int i = 0; i < players.size();i++)
 		{
+			Player p = players.get(i);
 			if(spawnLocs.get(new Integer(p.getTeam()))==null) System.out.println("null");
 			if(!spawnLocs.get(new Integer(p.getTeam())).isEmpty()) {
 				spawn(p);
@@ -155,8 +156,9 @@ public class GameMap{
 	{
 		double dist = Double.MAX_VALUE;
 		Player ret = null;
-		for(Player p:players)
+		for(int i = 0; i < players.size();i++)
 		{
+			Player p = players.get(i);
 			if(p.getTeam()!=team)
 			{
 				if(loc.distance(p.getLocation())<dist) { dist = loc.distance(p.getLocation()); ret = p; }
@@ -267,8 +269,9 @@ public class GameMap{
 	}
 	public Player getHitPlayer(Bullet bullet)
 	{
-		for(Player p:players)
+		for(int i = 0; i < players.size();i++)
 		{
+			Player p = players.get(i);
 			if(bulletColDetect(bullet,p))
 				return p;
 		}
