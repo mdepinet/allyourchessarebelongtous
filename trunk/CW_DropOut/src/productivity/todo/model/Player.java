@@ -63,7 +63,6 @@ public class Player {
 	{
 		if(health<=0 || weapons.size()<=0)
 			return;
-		if(getCurrentWeapon()==null) return;
 		getCurrentWeapon().update();
 		if(type == PlayerType.PERSON)
 			location = new Point2D.Double(location.getX()+(direction.getX()*2), location.getY()+(direction.getY()*2));
@@ -107,20 +106,17 @@ public class Player {
 		weapons.set(index, weapon);
 	}
 	public Weapon getCurrentWeapon() {
-		if(!weapons.isEmpty() && currWeapon<weapons.size()) return weapons.get(currWeapon);
-		else return new Weapon("dud");
+		if(weapons.size()>currWeapon) return weapons.get(currWeapon);
+		else return null;
 	}
 	public void setCurrWeapon(int nextWeapon) {
 		currWeapon = nextWeapon;
 	}
-	public int nextWeapon() {
-		if(getCurrentWeapon()==null) return -1;
-		if(getCurrentWeapon().getName().indexOf("Flag")!=-1)
-			return currWeapon;
-		if(weapons.size()>currWeapon+1)
-			return ++currWeapon;
+	public void nextWeapon() {
+		if(getCurrentWeapon()!=null && getCurrentWeapon().getName().indexOf("Flag")!=-1)
+			return;
+		if(weapons.size()>currWeapon+1) { currWeapon++; return; }
 		currWeapon=0;
-		return currWeapon;
 	}
 	public void switchToWeapon(int num)
 	{
