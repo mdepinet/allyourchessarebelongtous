@@ -19,8 +19,7 @@ import java.util.Scanner;
 import javax.swing.JFileChooser;
 import javax.swing.filechooser.FileFilter;
 
-import productivity.todo.config.GameMode;
-import productivity.todo.config.TeamDeathmatchMode;
+import productivity.todo.config.*;
 import productivity.todo.view.GameCanvas;
 
 public class GameMap{
@@ -43,7 +42,7 @@ public class GameMap{
 		spawnLocs.put(3, new ArrayList<Point2D.Double>());
 		spawnLocs.put(4, new ArrayList<Point2D.Double>());
 		bullets = new ArrayList<Bullet>();
-		gameMode = new TeamDeathmatchMode(this);
+		gameMode = new CaptureTheFlagMode(this);
 		explosions = new ArrayList<Explosion>();
 		threads = new ArrayList<RespawnThread>();
 		players = Collections.synchronizedList(new LinkedList<Player>());

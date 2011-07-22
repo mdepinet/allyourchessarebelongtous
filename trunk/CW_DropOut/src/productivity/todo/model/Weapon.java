@@ -1,9 +1,16 @@
 package productivity.todo.model;
 
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
+
+import javax.imageio.ImageIO;
+
 public class Weapon {
 	private static final int reloadMillis = 3000; //3 seconds
 	private String type;
 	private String name;
+	private BufferedImage image;
 	private int power;
 	private int effRange;
 	private double spread;
@@ -12,8 +19,6 @@ public class Weapon {
 	private int clipSize;
 	private int maxClipSize;
 	private int splash;
-	private String imgLoc;
-	private String imgTopLoc;
 	private int bulletSpeed;
 	private String bulletImgLoc;
 	private int shotCounter;
@@ -22,7 +27,6 @@ public class Weapon {
 	private int clipCount;
 	private int maxClipCount;
 	public Weapon(String name){
-		if(name.equals("dud")) this.name = name;
 		WeaponLoader.load(this,name);
 		shotCounter = 0;
 		reloadStartTime = 0;
@@ -41,6 +45,12 @@ public class Weapon {
 	}
 	public void setMaxClipCount(int maxClipCount) {
 		this.maxClipCount = maxClipCount;
+	}
+	public BufferedImage getImage() {
+		return image;
+	}
+	public void setImage(BufferedImage image) {
+		this.image = image;
 	}
 	public String getName() {
 		return name;
@@ -80,12 +90,6 @@ public class Weapon {
 	}
 	public int getSplash() {
 		return splash;
-	}
-	public String getImgLoc() {
-		return imgLoc;
-	}
-	public String getImgTopLoc() {
-		return imgTopLoc;
 	}
 	public int getBulletSpeed() {
 		return bulletSpeed;
@@ -144,12 +148,6 @@ public class Weapon {
 	public void setSplash(int splash) {
 		this.splash = splash;
 	}
-	public void setImgLoc(String imgLoc) {
-		this.imgLoc = imgLoc;
-	}
-	public void setImgTopLoc(String imgTopLoc) {
-		this.imgTopLoc = imgTopLoc;
-	}
 	public void setBulletSpeed(int bulletSpeed) {
 		this.bulletSpeed = bulletSpeed;
 	}
@@ -171,8 +169,10 @@ public class Weapon {
 		setMaxClipSize(wepDef.getMaxClipSize());
 		setSplash(wepDef.getSplash());
 		setBulletSpeed(wepDef.getBulletSpeed());
-		setImgLoc(wepDef.getImgLoc());
-		setImgTopLoc(wepDef.getImgTopLoc());
+		image = null;
+		try {
+			image = ImageIO.read(new File(wepDef.getImgLoc()));
+		} catch (IOException e) {}
 		setBulletImgLoc(wepDef.getBulletImgLoc());
 		setClipCount(wepDef.getMaxClipCount());
 	}
