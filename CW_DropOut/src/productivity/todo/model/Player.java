@@ -85,7 +85,10 @@ public class Player {
 			if(w.getClipCount()==w.getMaxClipCount()) return false;
 			w.setClipCount(w.getMaxClipCount());
 		}
-		else weapons.add(weapon);
+		else { 
+			weapons.add(weapon);
+			if(weapon.getName().indexOf("Flag")!=-1) currWeapon = weapons.size()-1;
+		}
 		return true;
 	}
 	public boolean canGetWeapon(Weapon w)
@@ -103,12 +106,15 @@ public class Player {
 		weapons.set(index, weapon);
 	}
 	public Weapon getCurrentWeapon() {
-		return weapons.get(currWeapon);
+		if(!weapons.isEmpty()) return weapons.get(currWeapon);
+		else return null;
 	}
 	public void setCurrWeapon(int nextWeapon) {
 		currWeapon = nextWeapon;
 	}
 	public int nextWeapon() {
+		if(getCurrentWeapon().getName().indexOf("Flag")!=-1)
+			return currWeapon;
 		if(weapons.size()>currWeapon+1)
 			return ++currWeapon;
 		currWeapon=0;

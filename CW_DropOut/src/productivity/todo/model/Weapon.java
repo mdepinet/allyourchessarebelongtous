@@ -18,6 +18,7 @@ public class Weapon {
 	private String bulletImgLoc;
 	private int shotCounter;
 	private long reloadStartTime;
+	private boolean swung;
 	private int clipCount;
 	private int maxClipCount;
 	public Weapon(String name){
@@ -70,6 +71,12 @@ public class Weapon {
 	public int getMaxClipSize() {
 		return maxClipSize;
 	}
+	public boolean isSwung() {
+		return swung;
+	}
+	public void setSwung(boolean swung) {
+		this.swung = swung;
+	}
 	public int getSplash() {
 		return splash;
 	}
@@ -90,6 +97,7 @@ public class Weapon {
 			shotCounter=0;
 		}
 		else return false;
+		if(type.equals("Melee")) return true;
 		if(clipSize <= 0) return false;
 		if (clipSize == 1){
 			if(clipCount!=0)

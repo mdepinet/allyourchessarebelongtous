@@ -33,6 +33,7 @@ public class GameMap{
 	public ArrayList<RespawnThread> threads;
 	private ArrayList<Bullet> bullets;
 	private ArrayList<Explosion> explosions;
+	private File mapChosen;
 	private Map<Integer, ArrayList<Point2D.Double>> spawnLocs;
 	public GameMap()
 	{
@@ -99,7 +100,7 @@ public class GameMap{
 				return "Map files";
 			}
 		});
-		File mapChosen = null;
+		mapChosen = null;
 		int returnVal = chooser.showOpenDialog(null);
         if (returnVal == JFileChooser.APPROVE_OPTION) mapChosen = chooser.getSelectedFile();
         else mapChosen = new File("resource/default.map");
@@ -115,7 +116,10 @@ public class GameMap{
 		{
 			for(int j = 0; j < map[i].length && scan.hasNext() ; j++) {
 				String next = scan.next();
-				map[j][i] = next.charAt(0);
+				if(!next.matches("[L-O]"))
+					map[j][i] = next.charAt(0);
+				else
+					map[j][i] = '_';
 				if (next.matches("\\d+")) { if(next.equals("1") || next.equals("2") || next.equals("3") || next.equals("4")) { spawnLocs.get(new Integer(next)).add(new Point2D.Double((j*GRID_PIXELS)+12.5,(i*GRID_PIXELS)+12.5)); map[j][i] = '_'; } }
 			}
 			if(scan.hasNextLine())
@@ -123,8 +127,21 @@ public class GameMap{
 		}
 		gameMode.loadGameObjects();
 	}
+	public Player melee(Player p) {
+		for(int i = 0; i < players.size(); i++) {
+			if(players.get(i).getTeam()==p.getTeam()) continue;
+			if(p.getLocation().distance(players.get(i).getLocation())<p.getRadius()*3) {
+				return players.get(i);
+			}
+		}
+		return null;
+	}
 	public void shoot(Player p) {
 		double tempAngle = p.getOrientation();
+		if(p.getCurrentWeapon().getType().equals("Melee")) {
+			p.getCurrentWeapon().setSwung(true);
+			return;
+		}
 		p.getStats().incShotsFired();
 		for(int i = 1; i<=p.getCurrentWeapon().getRoundsPerShot(); i++){
 			int spreadModifier = Math.random()>.5? -1:1;
@@ -206,6 +223,12 @@ public class GameMap{
 	public void setExplosions(ArrayList<Explosion> explosions) {
 		this.explosions = explosions;
 	}
+	public File getMapChosen() {
+		return mapChosen;
+	}
+	public void setMapChosen(File mapChosen) {
+		this.mapChosen = mapChosen;
+	}
 	public void gameUpdate()
 	{
 		gameMode.update();
@@ -266,6 +289,16 @@ public class GameMap{
 			Player p= players.get(i);
 			Point2D.Double loc = p.getLocation();
 			p.update(this);
+			if(p.getCurrentWeapon().isSwung()) {
+				Player hit = melee(p);
+				if(hit!=null) {
+					hit.setHealth(0);
+					p.getStats().incNumKills();
+					kill(hit);
+					players.remove(hit);
+				}
+				p.getCurrentWeapon().setSwung(false);
+			}
 			if(!isValid(p.getLocation(), p.getRadius()))
 			{
 				if(isValid(new Point2D.Double(p.getLocation().x,loc.y), p.getRadius()))
@@ -359,16 +392,15 @@ public class GameMap{
 		}
 		return null;
 	}
-	public boolean bulletColDetect(Bullet bullet, Player p)
+	public boolean lineIntersectsCircle(Line2D.Double line, Point2D.Double circLoc, int radius)
 	{
-		if(bullet.getTeam()==p.getTeam()) return false;
-		double velX = bullet.getVelocity().x;
-		double velY = bullet.getVelocity().y;
-		Point2D.Double vec = new Point2D.Double(p.getLocation().x - bullet.getLocation().x,p.getLocation().y-bullet.getLocation().y);
+		double velX = line.x2-line.x1;
+		double velY = line.y2-line.y1;
+		Point2D.Double vec = new Point2D.Double(circLoc.x - line.x1,circLoc.y-line.y1);
 		
 		double a = velX*velX + velY*velY;
 		double b = 2*(velX*vec.x + velY*vec.y);
-		double c = (vec.x*vec.x+vec.y*vec.y) - p.getRadius()*p.getRadius();
+		double c = (vec.x*vec.x+vec.y*vec.y) - radius*radius;
 
 		double discriminant = b*b-4*a*c;
 		if( discriminant >= 0 )
@@ -380,6 +412,13 @@ public class GameMap{
 		  if( (t1 >= 0 && t1 <= 1) ||  (t2 >= 0 && t2 <= 1)) return true;
 		}
 		return false;
+	}
+	public boolean bulletColDetect(Bullet bullet, Player p)
+	{
+		if(bullet.getTeam()==p.getTeam()) return false;
+		double velX = bullet.getVelocity().x;
+		double velY = bullet.getVelocity().y;
+		return lineIntersectsCircle(new Line2D.Double(bullet.getLocation(), new Point2D.Double(bullet.getLocation().x+velX, bullet.getLocation().y+velY)), p.getLocation(), p.getRadius());
 	}
 	public boolean isValid(Point2D.Double loc, int radius)
 	{
