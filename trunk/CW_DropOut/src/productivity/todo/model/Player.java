@@ -12,6 +12,7 @@ public class Player {
 	private PlayerType type;
 	private int radius;
 	private String name;
+	private PlayerStats stats;
 	private ArrayList<Weapon> weapons;
 	private double health;
 	private double orientation;
@@ -23,6 +24,7 @@ public class Player {
 		name = "player1";
 		health = 100;
 		type = PlayerType.COMPUTER;
+		stats = new PlayerStats();
 		brain = new DefaultBrain();
 		location=new Point2D.Double(12,12);
 		direction = new Point2D.Double(0,0);
@@ -36,6 +38,7 @@ public class Player {
 		name = pname;
 		health = 100;
 		type = PlayerType.COMPUTER;
+		stats = new PlayerStats();
 		brain = new DefaultBrain();
 		radius = 8;
 		location=new Point2D.Double(12,12);
@@ -128,6 +131,12 @@ public class Player {
 	public double getHealth() {
 		return health;
 	}
+	public PlayerStats getStats() {
+		return stats;
+	}
+	public void setStats(PlayerStats stats) {
+		this.stats = stats;
+	}
 	public void takeDamage (double damage) {
 		health -= damage;
 		if(health<0)
@@ -165,6 +174,7 @@ public class Player {
 	}
 	
 	public void die(){
+		stats.incNumDeaths();
 		health = 0;
 		weapons.clear();
 	}

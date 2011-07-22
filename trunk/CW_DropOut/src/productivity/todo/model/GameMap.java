@@ -28,10 +28,10 @@ public class GameMap{
 	public static final int HEIGHT = 750;
 	public static final int WIDTH = 750;
 	public static final int GRID_PIXELS = GameCanvas.GRID_PIXELS;
+	public ArrayList<RespawnThread> threads;
 	private ArrayList<Bullet> bullets;
 	private ArrayList<Explosion> explosions;
 	private Map<Integer, ArrayList<Point2D.Double>> spawnLocs;
-	private int numTeams = 2;
 	public GameMap()
 	{
 		spawnLocs = new HashMap<Integer, ArrayList<Point2D.Double>>();
@@ -41,15 +41,22 @@ public class GameMap{
 		spawnLocs.put(4, new ArrayList<Point2D.Double>());
 		bullets = new ArrayList<Bullet>();
 		explosions = new ArrayList<Explosion>();
+		threads = new ArrayList<RespawnThread>();
 		players = Collections.synchronizedList(new LinkedList<Player>());
 		loadDefaultMap();
+		resetGame();
+	}
+	public void resetGame()
+	{
+		players.clear();
+		bullets.clear();
+		for(RespawnThread t: threads) t.kill();
+		threads.clear();
+		
 		Player player = new Player("player1");
 		player.setTeam(1);
 		player.setType(PlayerType.PERSON);
 		players.add(player);
-		/*player = new Player ("player2");
-		player.setTeam(1);
-		players.add(player);*/
 		double team = 1.5;
 		for(int i = 0; i < 3 + (spawnLocs.get(3).size()>0 ? 2 : 0) + (spawnLocs.get(4).size()>0 ? 2 : 0);i++)
 		{
@@ -111,13 +118,23 @@ public class GameMap{
 				scan.nextLine();
 		}
 	}
+	public int checkForWinningTeam()
+	{
+		int[] teamKills = new int[4];
+		for(int i = 0; i < players.size();i++)
+		{
+			teamKills[players.get(i).getTeam()-1] += players.get(i).getStats().getNumKills();
+			if(teamKills[players.get(i).getTeam()-1]>=10)
+				return players.get(i).getTeam();
+		}
+		return -1;
+	}
 	public void shoot(Player p) {
 		double tempAngle = p.getOrientation();
+		p.getStats().incShotsFired();
 		for(int i = 1; i<=p.getCurrentWeapon().getRoundsPerShot(); i++){
 			int spreadModifier = Math.random()>.5? -1:1;
-			Bullet bullet = new Bullet(p.getCurrentWeapon());
-			bullet.setLocation(p.getGunLocation());
-			bullet.setTeam(p.getTeam());
+			Bullet bullet = new Bullet(p.getCurrentWeapon(), p);
 			tempAngle += spreadModifier*Math.toRadians(Math.random()*p.getCurrentWeapon().getSpread()/2);
 			bullet.setVelocity(new Point2D.Double(Math.cos(tempAngle+Math.PI/2)*p.getCurrentWeapon().getBulletSpeed(),Math.sin(tempAngle+Math.PI/2)*p.getCurrentWeapon().getBulletSpeed()));
 			bullets.add(bullet);
@@ -183,6 +200,11 @@ public class GameMap{
 	}
 	public void gameUpdate()
 	{
+		int winner;
+		if((winner = checkForWinningTeam()) != -1) {
+			System.out.println("Team " + winner + " Wins!");
+			resetGame();
+		}
 		OUTTER: for(int i=0;i<bullets.size();i++) {
 			Bullet b = bullets.get(i);
 			if(!isValid(b.getLocation(),1)) 
@@ -220,7 +242,11 @@ public class GameMap{
 				double damage = b.getWeapon().getPower();
 				if (b.getDistanceTraveled() > effRange) damage -= ((b.getDistanceTraveled() - effRange)/effRange)*damage;
 				hit.takeDamage(damage);
-				if (hit.getHealth()<=0) kill(hit);
+				if (hit.getHealth()<=0) {
+					b.getPlayer().getStats().incNumKills();
+					System.out.println(b.getPlayer().getName() + " kills: " + b.getPlayer().getStats().getNumKills());
+					kill(hit);
+				}
 				explode(b);
 				bullets.remove(b);
 				i--;
@@ -402,7 +428,7 @@ public class GameMap{
 			double distance = p.getLocation().distance(b.getLocation()) - p.getRadius();
 			if(distance<splash) {
 				p.takeDamage(b.getWeapon().getPower()*((splash-distance)/splash));
-				if (p.getHealth() <= 0){ kill(p); i--;}
+				if (p.getHealth() <= 0){ b.getPlayer().getStats().incNumKills(); System.out.println(b.getPlayer().getName() + " kills: " + b.getPlayer().getStats().getNumKills()); kill(p); i--;}
 			}
 		}
 		return true;
@@ -417,6 +443,7 @@ public class GameMap{
 				break;
 			}
 		}
-		new RespawnThread(this, p, i == 0, 5000).start();
+		threads.add(new RespawnThread(this, p, i == 0, 5000));
+		threads.get(threads.size()-1).start();
 	}
 }

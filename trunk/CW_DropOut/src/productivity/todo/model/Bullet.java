@@ -7,11 +7,13 @@ public class Bullet {
 	private Point2D.Double location;
 	private Point2D.Double velocity;
 	private Weapon weapon;
-	private int team;
+	private Player player;
 	private double distanceTraveled;
 	
-	public Bullet(Weapon weapon) {
+	public Bullet(Weapon weapon, Player p) {
 		this.weapon=weapon;
+		this.player = p;
+		setLocation(player.getGunLocation());
 		distanceTraveled = 0;
 	}
 	public void update() {
@@ -20,10 +22,13 @@ public class Bullet {
 		setLocation(newLoc);
 	}
 	public int getTeam() {
-		return team;
+		return player.getTeam();
 	}
-	public void setTeam(int team) {
-		this.team = team;
+	public Player getPlayer() {
+		return player;
+	}
+	public void setPlayer(Player player) {
+		this.player = player;
 	}
 	public void setLocation(Point2D.Double location) {
 		this.location = location;
