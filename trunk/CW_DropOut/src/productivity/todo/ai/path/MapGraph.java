@@ -20,9 +20,9 @@ public class MapGraph {
 	
 	public void createGraph(char[][] map){
 		if (!vertices.isEmpty()) return;
-		for(int c = 0; c < map.length; c++)
+		for(int r = 0; r < map.length; r++)
 		{
-			for(int r = 0; r < map[c].length; r++)
+			for(int c = 0; c < map[r].length; c++)
 			{
 				if(map[r][c] != 'X'){
 					Vertex v = new Vertex(r,c);
@@ -88,7 +88,6 @@ public class MapGraph {
 		computePaths(getVertexByLocation(curr.x,curr.y));
 		List<Vertex> path = getShortestPath(getVertexByLocation(curr.x,curr.y), getVertexByLocation(goal.x,goal.y));
 		Point p = path.size() > 1 ? new Point(path.get(1).row,path.get(1).col) : new Point(path.get(0).row,path.get(0).col);
-		System.out.println("Path from "+curr+" to "+goal+".  Next loc is "+p);
 		return p;
 	}
 	
@@ -111,8 +110,10 @@ public class MapGraph {
 				int weight = entry.getValue();
 				int distanceThroughU = u.distance + weight;
 				if (distanceThroughU < v.distance) {
+					vertexQueue.remove(v); //v is a variable in the adjacents, you must remove it from the queue
 					v.distance = distanceThroughU;
 					v.prev = u;
+					vertexQueue.add(v); // then add it back here to update it
 				}
 			}
 		}
