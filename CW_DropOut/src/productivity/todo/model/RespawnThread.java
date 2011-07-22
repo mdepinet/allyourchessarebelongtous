@@ -5,6 +5,7 @@ public class RespawnThread extends Thread {
 	private Player p;
 	private GameMap gm;
 	private boolean indexZero;
+	private boolean dead;
 	
 	public RespawnThread(GameMap gm, Player p, boolean indexZero, long millis){
 		this.millis = millis;
@@ -12,13 +13,17 @@ public class RespawnThread extends Thread {
 		this.gm = gm;
 		this.indexZero = indexZero;
 	}
-	
+	public void kill()
+	{
+		dead = true;
+	}
 	public void run(){
 		try {
 			Thread.sleep(millis);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
+		if(dead) return;
 		if (indexZero) gm.getPlayers().add(0, p);
 		else gm.getPlayers().add(p);
 		gm.spawn(p);
