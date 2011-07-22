@@ -15,11 +15,11 @@ public class DefaultBrain extends AbstractBrain {
 		Point2D.Double wLoc;
 		Point2D.Double pLoc;
 		if(enemy==null)
-			destLoc = map.getClosestWeapon(location);
+			destLoc = map.getClosestWeapon(p);
 		else
 		{
 			pLoc = enemy.getLocation();
-			wLoc = map.getClosestWeapon(location);
+			wLoc = map.getClosestWeapon(p);
 			destLoc = (wLoc==null || location.distance(pLoc) < location.distance(wLoc)) ? pLoc : wLoc;
 		}
 		if(destLoc!=null)

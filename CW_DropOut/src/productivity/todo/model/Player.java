@@ -85,6 +85,14 @@ public class Player {
 		else weapons.add(weapon);
 		return true;
 	}
+	public boolean canGetWeapon(Weapon w)
+	{
+		if(weapons.contains(w)) {	
+			Weapon wep = weapons.get(weapons.indexOf(w));
+			return wep.getClipCount() < wep.getMaxClipCount();
+		}
+		return true;
+	}
 	public void setWeapon(ArrayList<Weapon> weapon) {
 		weapons = weapon;
 	}

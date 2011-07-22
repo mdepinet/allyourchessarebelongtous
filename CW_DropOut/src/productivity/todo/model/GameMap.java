@@ -138,7 +138,7 @@ public class GameMap{
 	public List<Player> getPlayers() {
 		return players;
 	}
-	public Point2D.Double getClosestWeapon(Point2D.Double loc)
+	public Point2D.Double getClosestWeapon(Player p)
 	{
 		double dist = Double.MAX_VALUE;
 		Point2D.Double ret = null;
@@ -147,7 +147,8 @@ public class GameMap{
 			for(int j = 0;j < map[i].length; j++)
 				if(map[i][j] != '_' && map[i][j]!='X')
 				{
-					if(loc.distance(new Point2D.Double(12.5+(i*25),12.5+(j*25)))<dist) { dist = loc.distance(new Point2D.Double(12.5+(i*25),12.5+(j*25))); ret = new Point2D.Double(12.5+(i*25),12.5+(j*25)); }
+					if(!p.canGetWeapon(new Weapon(map[i][j]))) continue;
+					if(p.getLocation().distance(new Point2D.Double(12.5+(i*25),12.5+(j*25)))<dist) { dist = p.getLocation().distance(new Point2D.Double(12.5+(i*25),12.5+(j*25))); ret = new Point2D.Double(12.5+(i*25),12.5+(j*25)); }
 				}
 		}
 		return ret;
