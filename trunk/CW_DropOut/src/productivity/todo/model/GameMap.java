@@ -497,7 +497,7 @@ public class GameMap{
 				break;
 			}
 		}
-		threads.add(new RespawnThread(this, p, i == 0, 5000));
+		threads.add(new RespawnThread(this, p, i == 0 && p.getType()==PlayerType.PERSON, 5000));
 		threads.get(threads.size()-1).start();
 	}
 }
