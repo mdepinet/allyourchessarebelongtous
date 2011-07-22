@@ -2,7 +2,9 @@ package productivity.todo.ai.path;
 
 import java.awt.Point;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -11,7 +13,8 @@ import java.util.PriorityQueue;
 import productivity.todo.model.GameMap;
 
 public class MapGraph {
-	private List<Vertex> vertices;
+	private Collection<Vertex> vertices;
+	private HashMap<Pair<Vertex,Vertex>,List<Vertex>> answers;
 	public MapGraph()
 	{
 		vertices = new LinkedList<Vertex>();
@@ -132,9 +135,21 @@ public class MapGraph {
 	private List<Vertex> getPath(Point start, Point end){
 		if (vertices.isEmpty()) return null;
 		
+		Vertex startV = getVertexByLocation(start.x,start.y), endV = getVertexByLocation(end.x,end.y);
+		Pair<Vertex, Vertex> ends = new Pair<Vertex, Vertex>(startV,endV);
+		if (answers.containsKey(ends)) return answers.get(ends);
 		computePaths(getVertexByLocation(start.x,start.y));
-		return getShortestPath(getVertexByLocation(start.x,start.y), getVertexByLocation(end.x,end.y));
+		List<Vertex> path = getShortestPath(startV, endV);
+		List<Vertex> pathCopy = new LinkedList<Vertex>();
+		Collections.copy(pathCopy, path);
+		answers.put(ends,path);
+		while (!pathCopy.isEmpty()){
+			Vertex v = pathCopy.remove(0);
+			ends = new Pair<Vertex, Vertex>(v,endV);
+			answers.put(ends,pathCopy);
+		}
 		
+		return path;
 	}
 	public void printPath(List<Vertex> path, char[][] map)
 	{
