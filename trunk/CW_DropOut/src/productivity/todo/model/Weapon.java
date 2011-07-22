@@ -22,6 +22,7 @@ public class Weapon {
 	private int clipCount;
 	private int maxClipCount;
 	public Weapon(String name){
+		if(name.equals("dud")) this.name = name;
 		WeaponLoader.load(this,name);
 		shotCounter = 0;
 		reloadStartTime = 0;
