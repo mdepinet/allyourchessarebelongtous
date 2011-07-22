@@ -87,7 +87,13 @@ public class GameCanvas extends Canvas {
 		{
 			for(int j = 0; j < gameMap.getMap()[i].length;j++)
 				if(gameMap.getMap()[i][j] == 'X') backg.fillRect(i*GRID_PIXELS, j*GRID_PIXELS, GRID_PIXELS, GRID_PIXELS);
-				else if( gameMap.getMap()[i][j] != '_')  { backg.drawRect(i*GRID_PIXELS, j*GRID_PIXELS, GRID_PIXELS, GRID_PIXELS); backg.drawString("" + gameMap.getMap()[i][j], i*GRID_PIXELS, (j+1)*GRID_PIXELS); }
+				else if(("" + gameMap.getMap()[i][j]).matches("[L-O]")) { 
+						backg.drawOval(i*GRID_PIXELS-GRID_PIXELS/2, j*GRID_PIXELS-GRID_PIXELS/2, GRID_PIXELS*2, GRID_PIXELS*2);
+						Image img;
+						if((img = new Weapon(gameMap.getMap()[i][j]).getImage())!=null)
+							backg.drawImage(img,i*GRID_PIXELS, j*GRID_PIXELS+GRID_PIXELS/4, 30, 15, this);
+					}
+				else if( gameMap.getMap()[i][j] != '_')  { backg.drawRect(i*GRID_PIXELS, j*GRID_PIXELS, GRID_PIXELS, GRID_PIXELS); backg.drawString("" + gameMap.getMap()[i][j], i*GRID_PIXELS+GRID_PIXELS/3, (j+1)*GRID_PIXELS-GRID_PIXELS/4); }
 		}
 		for(Explosion e: gameMap.getExplosions())
 		{

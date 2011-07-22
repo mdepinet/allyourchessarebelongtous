@@ -88,7 +88,7 @@ public class GameMap{
 	}
 	public void loadDefaultMap()
 	{
-		JFileChooser chooser = new JFileChooser("resource");
+		JFileChooser chooser = new JFileChooser("resource/maps");
 		chooser.setFileFilter(new FileFilter(){
 			@Override
 			public boolean accept(File f) {
@@ -102,7 +102,7 @@ public class GameMap{
 		mapChosen = null;
 		int returnVal = chooser.showOpenDialog(null);
         if (returnVal == JFileChooser.APPROVE_OPTION) mapChosen = chooser.getSelectedFile();
-        else mapChosen = new File("resource/default.map");
+        else mapChosen = new File("resource/maps/default.map");
 		map = new char[30][30];
 		Scanner scan = null;
 		try
