@@ -18,9 +18,8 @@ public class MapGraph {
 	public MapGraph()
 	{
 		vertices = new LinkedList<Vertex>();
+		answers = new HashMap<Pair<Vertex,Vertex>,List<Vertex>>();
 	}
-	
-	
 	public void createGraph(char[][] map){
 		if (!vertices.isEmpty()) return;
 		for(int r = 0; r < map.length; r++)
@@ -89,7 +88,7 @@ public class MapGraph {
 		if (vertices.isEmpty()) return null;
 		
 		computePaths(getVertexByLocation(curr.x,curr.y));
-		List<Vertex> path = getShortestPath(getVertexByLocation(curr.x,curr.y), getVertexByLocation(goal.x,goal.y));
+		List<Vertex> path = getPath(curr, goal);
 		Point p = path.size() > 1 ? new Point(path.get(1).row,path.get(1).col) : new Point(path.get(0).row,path.get(0).col);
 		return p;
 	}
@@ -141,7 +140,7 @@ public class MapGraph {
 		computePaths(getVertexByLocation(start.x,start.y));
 		List<Vertex> path = getShortestPath(startV, endV);
 		List<Vertex> pathCopy = new LinkedList<Vertex>();
-		Collections.copy(pathCopy, path);
+		pathCopy.addAll(path);
 		answers.put(ends,path);
 		while (!pathCopy.isEmpty()){
 			Vertex v = pathCopy.remove(0);
