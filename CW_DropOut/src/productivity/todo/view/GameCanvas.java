@@ -65,6 +65,7 @@ public class GameCanvas extends Canvas {
 				AffineTransform transform = new AffineTransform();
 				transform.rotate(p.getOrientation(), p.getLocation().x, p.getLocation().y);
 				backg.draw(transform.createTransformedShape(gun2));
+
 				switch(p.getTeam())
 				{
 					case 1: backg.setColor(new Color(0f,0f,0.5f)); break;
@@ -75,6 +76,10 @@ public class GameCanvas extends Canvas {
 				}
 				backg.fillOval((int)p.getLocation().getX()-8,(int)p.getLocation().getY()-8, 16, 16);
 				backg.setColor(Color.BLACK);
+				if(p.getCurrentWeapon().getImage()!=null)
+				{
+					backg.drawImage(p.getCurrentWeapon().getImage(), (int)p.getLocation().x+6, (int)p.getLocation().y-15, 30, 15, this);
+				}
 			}
 			//backg.rotate(p.getOrientation(),(int)p.getLocation().getX()-8,(int)p.getLocation().getY()-8);
 		}

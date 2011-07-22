@@ -79,6 +79,7 @@ public class Player {
 		return weapons.size();
 	}
 	public boolean addWeapon(Weapon weapon) {
+		if(weapon.getName().indexOf(""+team)!=-1) return false;
 		if(weapons.contains(weapon))
 		{
 			Weapon w = weapons.get(weapons.indexOf(weapon));
@@ -93,6 +94,7 @@ public class Player {
 	}
 	public boolean canGetWeapon(Weapon w)
 	{
+		if(w.getName().indexOf(""+team)!=-1) return false;
 		if(weapons.contains(w)) {	
 			Weapon wep = weapons.get(weapons.indexOf(w));
 			return wep.getClipCount() < wep.getMaxClipCount();

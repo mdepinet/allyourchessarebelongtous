@@ -6,7 +6,7 @@ Barret .50Cal,Sniper,100,600,1,1,1,4,3,1,50,resource/barret,resource/barretTop,r
 Semtex,Thrown,100,100,1,1,0.5,2,0,75,4,null,null,resource/grenade,G
 Assault Rifle,Rifle,10,100,10,1,10,40,3,1,10,resource/ar,resource/arTop,resource/bullet,A
 BFG,Explosive,100,600,10,10,1,1,3,50,50,resource/BFG,resource/BFGTop,resource/rocket,F
-Team 1 Flag,Melee,0,0,0,0,1,0,0,0,0,resource/Flag,resource/FlagTop,resource/flag,L
-Team 2 Flag,Melee,0,0,0,0,1,0,0,0,0,resource/Flag,resource/FlagTop,resource/flag,M
+Team 1 Flag,Melee,0,0,0,0,1,0,0,0,0,resource/images/USFlag.gif,resource/FlagTop,resource/flag,L
+Team 2 Flag,Melee,0,0,0,0,1,0,0,0,0,resource/images/UKFlag.png,resource/FlagTop,resource/flag,M
 Team 3 Flag,Melee,0,0,0,0,1,0,0,0,0,resource/Flag,resource/FlagTop,resource/flag,N
 Team 4 Flag,Melee,0,0,0,0,1,0,0,0,0,resource/Flag,resource/FlagTop,resource/flag,O
