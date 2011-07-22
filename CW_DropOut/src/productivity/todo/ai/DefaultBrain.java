@@ -7,19 +7,18 @@ import productivity.todo.model.Player;
 
 public class DefaultBrain extends AbstractBrain {
 	public void makeMove(GameMap map, Player p){
-		int team = p.getTeam();
 		Point2D.Double location = p.getLocation();
 		Point2D.Double newLoc;
-		Player enemy = map.getClosestTeamPlayer(team, location);
+		Player enemy = getClosestEnemy(map,p);
 		Point2D.Double destLoc;
 		Point2D.Double wLoc;
 		Point2D.Double pLoc;
 		if(enemy==null)
-			destLoc = map.getClosestWeapon(p);
+			destLoc = getClosestWeaponLoc(map, p);
 		else
 		{
 			pLoc = enemy.getLocation();
-			wLoc = map.getClosestWeapon(p);
+			wLoc = getClosestWeaponLoc(map, p);
 			destLoc = (wLoc==null || location.distance(pLoc) < location.distance(wLoc)) ? pLoc : wLoc;
 		}
 		if(destLoc!=null)
@@ -27,7 +26,7 @@ public class DefaultBrain extends AbstractBrain {
 			newLoc = addPoints(location,getSmartDirectionToLoc(location,destLoc,map));
 			if(enemy!=null)
 			{
-				p.setOrientation(getAngleBetweenPoints(location,enemy.getLocation())+Math.PI/2);
+				turn(getAngleBetweenPoints(location,enemy.getLocation())+Math.PI/2,p);
 				if(p.getNumWeapons()>1 && p.getCurrentWeapon().getType().equals("Pistol"))
 					p.nextWeapon();
 				if(enemy.getHealth()>0)
@@ -40,11 +39,11 @@ public class DefaultBrain extends AbstractBrain {
 					if(location.distance(enemy.getLocation())<=p.getCurrentWeapon().getEffRange()*1.5)
 					{
 						if(p.getCurrentWeapon().canShoot())
-							map.shoot(p);
+							shoot(map,p);
 					}
 				}
 			}
-			p.setLocation(newLoc);
+			move(newLoc,p);
 		}
 		else {
 			//get weapons
