@@ -3,7 +3,6 @@ package productivity.todo.model;
 
 import java.awt.Point;
 import java.awt.Rectangle;
-import java.awt.geom.Area;
 import java.awt.geom.Line2D;
 import java.awt.geom.Point2D;
 import java.io.File;
@@ -20,6 +19,8 @@ import java.util.Scanner;
 import javax.swing.JFileChooser;
 import javax.swing.filechooser.FileFilter;
 
+import productivity.todo.config.GameMode;
+import productivity.todo.config.TeamDeathmatchMode;
 import productivity.todo.view.GameCanvas;
 
 public class GameMap{
@@ -28,6 +29,7 @@ public class GameMap{
 	public static final int HEIGHT = 750;
 	public static final int WIDTH = 750;
 	public static final int GRID_PIXELS = GameCanvas.GRID_PIXELS;
+	private GameMode gameMode;
 	public ArrayList<RespawnThread> threads;
 	private ArrayList<Bullet> bullets;
 	private ArrayList<Explosion> explosions;
@@ -40,6 +42,7 @@ public class GameMap{
 		spawnLocs.put(3, new ArrayList<Point2D.Double>());
 		spawnLocs.put(4, new ArrayList<Point2D.Double>());
 		bullets = new ArrayList<Bullet>();
+		gameMode = new TeamDeathmatchMode(this);
 		explosions = new ArrayList<Explosion>();
 		threads = new ArrayList<RespawnThread>();
 		players = Collections.synchronizedList(new LinkedList<Player>());
@@ -52,6 +55,7 @@ public class GameMap{
 		bullets.clear();
 		for(RespawnThread t: threads) t.kill();
 		threads.clear();
+		gameMode.loadGameObjects();
 		
 		Player player = new Player("player1");
 		player.setTeam(1);
@@ -117,17 +121,7 @@ public class GameMap{
 			if(scan.hasNextLine())
 				scan.nextLine();
 		}
-	}
-	public int checkForWinningTeam()
-	{
-		int[] teamKills = new int[4];
-		for(int i = 0; i < players.size();i++)
-		{
-			teamKills[players.get(i).getTeam()-1] += players.get(i).getStats().getNumKills();
-			if(teamKills[players.get(i).getTeam()-1]>=10)
-				return players.get(i).getTeam();
-		}
-		return -1;
+		gameMode.loadGameObjects();
 	}
 	public void shoot(Player p) {
 		double tempAngle = p.getOrientation();
@@ -200,8 +194,9 @@ public class GameMap{
 	}
 	public void gameUpdate()
 	{
+		gameMode.update();
 		int winner;
-		if((winner = checkForWinningTeam()) != -1) {
+		if((winner = gameMode.getWinningTeam()) != -1) {
 			System.out.println("Team " + winner + " Wins!");
 			resetGame();
 		}
@@ -243,8 +238,8 @@ public class GameMap{
 				if (b.getDistanceTraveled() > effRange) damage -= ((b.getDistanceTraveled() - effRange)/effRange)*damage;
 				hit.takeDamage(damage);
 				if (hit.getHealth()<=0) {
-					b.getPlayer().getStats().incNumKills();
-					System.out.println(b.getPlayer().getName() + " kills: " + b.getPlayer().getStats().getNumKills());
+					if(hit!=b.getPlayer()) b.getPlayer().getStats().incNumKills();
+					else b.getPlayer().getStats().incNumSuicides();
 					kill(hit);
 				}
 				explode(b);
@@ -425,10 +420,16 @@ public class GameMap{
 		explosions.add(new Explosion(b.getLocation(), b.getWeapon().getSplash()*2));
 		for (int i = 0; i<players.size(); i++){
 			Player p = players.get(i);
+			if(p.getTeam()==b.getPlayer().getTeam() && p != b.getPlayer()) continue;
 			double distance = p.getLocation().distance(b.getLocation()) - p.getRadius();
 			if(distance<splash) {
 				p.takeDamage(b.getWeapon().getPower()*((splash-distance)/splash));
-				if (p.getHealth() <= 0){ b.getPlayer().getStats().incNumKills(); System.out.println(b.getPlayer().getName() + " kills: " + b.getPlayer().getStats().getNumKills()); kill(p); i--;}
+				if (p.getHealth() <= 0){ 
+					if(p!=b.getPlayer()) b.getPlayer().getStats().incNumKills();
+					else b.getPlayer().getStats().incNumSuicides();
+					kill(p);
+					i--;
+				}
 			}
 		}
 		return true;
