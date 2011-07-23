@@ -59,6 +59,20 @@ public class Player {
 	public void setRadius(int radius) {
 		this.radius = radius;
 	}
+	public boolean hasFlag()
+	{
+		for(Weapon w: weapons)
+			if(w.getName().indexOf("Flag")!=-1)
+				return true;
+		return false;
+	}
+	public Weapon getFlag()
+	{
+		for(Weapon w: weapons)
+			if(w.getName().indexOf("Flag")!=-1)
+				return w;
+		return null;
+	}
 	public void update(GameMap map)
 	{
 		if(health<=0 || weapons.size()<=0)
@@ -79,7 +93,7 @@ public class Player {
 		return weapons.size();
 	}
 	public boolean addWeapon(Weapon weapon) {
-		if(weapon.getName().indexOf(""+team)!=-1) return false;
+		if(weapon.getName().indexOf(""+team + " ")!=-1) return false;
 		if(weapons.contains(weapon))
 		{
 			Weapon w = weapons.get(weapons.indexOf(weapon));

@@ -1,5 +1,6 @@
 package productivity.todo.model;
 
+import java.awt.Point;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -10,6 +11,7 @@ public class Weapon {
 	private static final int reloadMillis = 3000; //3 seconds
 	private String type;
 	private String name;
+	private char character;
 	private BufferedImage image;
 	private int power;
 	private int effRange;
@@ -23,6 +25,7 @@ public class Weapon {
 	private String bulletImgLoc;
 	private int shotCounter;
 	private long reloadStartTime;
+	private Point spawnLoc;
 	private boolean swung;
 	private int clipCount;
 	private int maxClipCount;
@@ -31,8 +34,10 @@ public class Weapon {
 		shotCounter = 0;
 		reloadStartTime = 0;
 	}
-	public Weapon(char c) {
+	public Weapon(char c, Point spawnLoc) {
 		if(!WeaponLoader.load(this,c)) throw new IllegalArgumentException("This weapon doesn't exist");
+		character = c;
+		this.spawnLoc = spawnLoc;
 		shotCounter = 0;
 		reloadStartTime = 0;
 	}
@@ -46,6 +51,12 @@ public class Weapon {
 	public void setMaxClipCount(int maxClipCount) {
 		this.maxClipCount = maxClipCount;
 	}
+	public Point getSpawnLoc() {
+		return spawnLoc;
+	}
+	public void setSpawnLoc(Point spawnLoc) {
+		this.spawnLoc = spawnLoc;
+	}
 	public BufferedImage getImage() {
 		return image;
 	}
@@ -54,6 +65,12 @@ public class Weapon {
 	}
 	public String getName() {
 		return name;
+	}
+	public char getCharacter() {
+		return character;
+	}
+	public void setCharacter(char character) {
+		this.character = character;
 	}
 	public void setName(String name) {
 		this.name = name;

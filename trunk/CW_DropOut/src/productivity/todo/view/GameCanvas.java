@@ -55,6 +55,18 @@ public class GameCanvas extends Canvas {
 	{
 		backg.setColor(Color.BLACK);
 		backg.clearRect(0, 0, GameMap.WIDTH, GameMap.HEIGHT);
+		for(int i = 0; i < gameMap.getMap().length;i++)
+		{
+			for(int j = 0; j < gameMap.getMap()[i].length;j++)
+				if(gameMap.getMap()[i][j] == 'X') backg.fillRect(i*GRID_PIXELS, j*GRID_PIXELS, GRID_PIXELS, GRID_PIXELS);
+				else if(("" + gameMap.getMap()[i][j]).matches("[L-O]")) { 
+						backg.drawOval(i*GRID_PIXELS-GRID_PIXELS/2, j*GRID_PIXELS-GRID_PIXELS/2, GRID_PIXELS*2, GRID_PIXELS*2);
+						Image img;
+						if((img = new Weapon(gameMap.getMap()[i][j], new Point(i,j)).getImage())!=null)
+							backg.drawImage(img,i*GRID_PIXELS, j*GRID_PIXELS+GRID_PIXELS/4, 30, 15, this);
+					}
+				else if( gameMap.getMap()[i][j] != '_')  { backg.drawRect(i*GRID_PIXELS, j*GRID_PIXELS, GRID_PIXELS, GRID_PIXELS); backg.drawString("" + gameMap.getMap()[i][j], i*GRID_PIXELS+GRID_PIXELS/3, (j+1)*GRID_PIXELS-GRID_PIXELS/4); }
+		}
 		for(int i = 0; i < gameMap.getPlayers().size();i++) {
 			Player p = gameMap.getPlayers().get(i);
 			if (p.getHealth() > 0){
@@ -82,18 +94,6 @@ public class GameCanvas extends Canvas {
 				}
 			}
 			//backg.rotate(p.getOrientation(),(int)p.getLocation().getX()-8,(int)p.getLocation().getY()-8);
-		}
-		for(int i = 0; i < gameMap.getMap().length;i++)
-		{
-			for(int j = 0; j < gameMap.getMap()[i].length;j++)
-				if(gameMap.getMap()[i][j] == 'X') backg.fillRect(i*GRID_PIXELS, j*GRID_PIXELS, GRID_PIXELS, GRID_PIXELS);
-				else if(("" + gameMap.getMap()[i][j]).matches("[L-O]")) { 
-						backg.drawOval(i*GRID_PIXELS-GRID_PIXELS/2, j*GRID_PIXELS-GRID_PIXELS/2, GRID_PIXELS*2, GRID_PIXELS*2);
-						Image img;
-						if((img = new Weapon(gameMap.getMap()[i][j]).getImage())!=null)
-							backg.drawImage(img,i*GRID_PIXELS, j*GRID_PIXELS+GRID_PIXELS/4, 30, 15, this);
-					}
-				else if( gameMap.getMap()[i][j] != '_')  { backg.drawRect(i*GRID_PIXELS, j*GRID_PIXELS, GRID_PIXELS, GRID_PIXELS); backg.drawString("" + gameMap.getMap()[i][j], i*GRID_PIXELS+GRID_PIXELS/3, (j+1)*GRID_PIXELS-GRID_PIXELS/4); }
 		}
 		for(Explosion e: gameMap.getExplosions())
 		{
