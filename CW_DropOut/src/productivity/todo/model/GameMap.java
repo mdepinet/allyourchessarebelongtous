@@ -34,19 +34,20 @@ public class GameMap{
 	private ArrayList<Explosion> explosions;
 	private File mapChosen;
 	private Map<Integer, ArrayList<Point2D.Double>> spawnLocs;
-	public GameMap()
+	public GameMap(File mapFile)
 	{
 		spawnLocs = new HashMap<Integer, ArrayList<Point2D.Double>>();
 		spawnLocs.put(1, new ArrayList<Point2D.Double>());
 		spawnLocs.put(2, new ArrayList<Point2D.Double>());
 		spawnLocs.put(3, new ArrayList<Point2D.Double>());
 		spawnLocs.put(4, new ArrayList<Point2D.Double>());
+		mapChosen = mapFile;
 		bullets = new ArrayList<Bullet>();
 		gameMode = new CaptureTheFlagMode(this);
 		explosions = new ArrayList<Explosion>();
 		threads = new ArrayList<RespawnThread>();
 		players = Collections.synchronizedList(new LinkedList<Player>());
-		loadDefaultMap();
+		loadMap();
 		resetGame();
 	}
 	public void resetGame()
@@ -86,23 +87,8 @@ public class GameMap{
 	public void setBullets(ArrayList<Bullet> bullets) {
 		this.bullets = bullets;
 	}
-	public void loadDefaultMap()
+	public void loadMap()
 	{
-		JFileChooser chooser = new JFileChooser("resource/maps");
-		chooser.setFileFilter(new FileFilter(){
-			@Override
-			public boolean accept(File f) {
-				return f.isDirectory() || f.getName().endsWith(".map");
-			}
-			@Override
-			public String getDescription() {
-				return "Map files";
-			}
-		});
-		mapChosen = null;
-		int returnVal = chooser.showOpenDialog(null);
-        if (returnVal == JFileChooser.APPROVE_OPTION) mapChosen = chooser.getSelectedFile();
-        else mapChosen = new File("resource/maps/default.map");
 		map = new char[30][30];
 		Scanner scan = null;
 		try

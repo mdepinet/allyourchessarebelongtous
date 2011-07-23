@@ -167,14 +167,4 @@ public class MapGraph {
 			System.out.println();
 		}
 	}
-	
-	
-	public static void main(String[] args){
-		//TEST
-		MapGraph test = new MapGraph();
-		char[][] map = new GameMap().getMap();
-		test.createGraph(map);
-		test.printPath(test.getPath(new Point(0,0),new Point(29,29)), map);
-	}
-	
 }
