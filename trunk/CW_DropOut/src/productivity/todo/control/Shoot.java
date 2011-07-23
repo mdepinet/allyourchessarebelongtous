@@ -1,9 +1,15 @@
 package productivity.todo.control;
 
-import java.awt.*;
-import java.awt.event.*;
-import java.awt.geom.*;
+import java.awt.Point;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionListener;
+import java.awt.geom.Point2D;
+import java.io.File;
 
+import productivity.todo.menu.MainMenuFrame;
 import productivity.todo.model.GameMap;
 import productivity.todo.view.GameFrame;
 
@@ -16,8 +22,12 @@ public class Shoot implements KeyListener, MouseListener, MouseMotionListener {
 	private Point mouseLoc;
 	public Shoot()
 	{
+		new MainMenuFrame(this);
+	}
+	public void startGameWithMap(File mapFile)
+	{
 		holdCounter = -1;
-		map = new GameMap();
+		map = new GameMap(mapFile);
 		mouseLoc = new Point();
 		frame = new GameFrame("Shoot", map);
 		frame.getCanvas().addKeyListener(this);

@@ -8,5 +8,5 @@ Assault Rifle,Rifle,10,100,10,1,10,40,3,1,10,resource/ar,resource/arTop,resource
 BFG,Explosive,100,600,10,10,1,1,3,50,50,resource/BFG,resource/BFGTop,resource/rocket,F
 Team 1 Flag,Melee,0,0,0,0,1,0,0,0,0,resource/images/USFlag.gif,resource/FlagTop,resource/flag,L
 Team 2 Flag,Melee,0,0,0,0,1,0,0,0,0,resource/images/UKFlag.png,resource/FlagTop,resource/flag,M
-Team 3 Flag,Melee,0,0,0,0,1,0,0,0,0,resource/Flag,resource/FlagTop,resource/flag,N
+Team 3 Flag,Melee,0,0,0,0,1,0,0,0,0,resource/images/MexicoFlag.jpg,resource/FlagTop,resource/flag,N
 Team 4 Flag,Melee,0,0,0,0,1,0,0,0,0,resource/Flag,resource/FlagTop,resource/flag,O
