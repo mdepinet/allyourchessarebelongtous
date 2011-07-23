@@ -160,7 +160,7 @@ public class GameMap{
 			for(int j = 0;j < map[i].length; j++)
 				if(map[i][j] != '_' && map[i][j]!='X')
 				{
-					if(!p.canGetWeapon(new Weapon(map[i][j]))) continue;
+					if(!p.canGetWeapon(new Weapon(map[i][j], new Point(i,j)))) continue;
 					if(p.getLocation().distance(new Point2D.Double(12.5+(i*25),12.5+(j*25)))<dist) { dist = p.getLocation().distance(new Point2D.Double(12.5+(i*25),12.5+(j*25))); ret = new Point2D.Double(12.5+(i*25),12.5+(j*25)); }
 				}
 		}
@@ -174,8 +174,8 @@ public class GameMap{
 			for(int j = 0;j < map[i].length; j++)
 				if(map[i][j] != '_' && map[i][j]!='X')
 				{
-					if(!p.canGetWeapon(new Weapon(map[i][j]))) continue;
-					if(p.getLocation().distance(new Point2D.Double(12.5+(i*25),12.5+(j*25)))<dist) { dist = p.getLocation().distance(new Point2D.Double(12.5+(i*25),12.5+(j*25))); ret = new Weapon(map[i][j]); }
+					if(!p.canGetWeapon(new Weapon(map[i][j], new Point(i,j)))) continue;
+					if(p.getLocation().distance(new Point2D.Double(12.5+(i*25),12.5+(j*25)))<dist) { dist = p.getLocation().distance(new Point2D.Double(12.5+(i*25),12.5+(j*25))); ret = new Weapon(map[i][j], new Point(i,j)); }
 				}
 		}
 		return ret;
@@ -274,7 +274,7 @@ public class GameMap{
 			Player p= players.get(i);
 			Point2D.Double loc = p.getLocation();
 			p.update(this);
-			if(p.getCurrentWeapon().isSwung()) {
+			if(p.getCurrentWeapon()!=null && p.getCurrentWeapon().isSwung()) {
 				Player hit = melee(p);
 				if(hit!=null) {
 					hit.setHealth(0);
@@ -297,7 +297,8 @@ public class GameMap{
 			Weapon w;
 			if((w = getWeapon(p))!=null){
 				if(p.addWeapon(w)) {
-					new WeaponAdderThread(map[getPlayerGridX(p)][getPlayerGridY(p)], new Point(getPlayerGridX(p), getPlayerGridY(p)), this).start();
+					if(w.getName().indexOf("Flag")==-1)
+						new WeaponAdderThread(map[getPlayerGridX(p)][getPlayerGridY(p)], new Point(getPlayerGridX(p), getPlayerGridY(p)), this).start();
 					map[getPlayerGridX(p)][getPlayerGridY(p)] = '_';
 				}
 			}
@@ -312,7 +313,7 @@ public class GameMap{
 	public Weapon getWeapon(Player p)
 	{
 		try {
-			return new Weapon(getObjectAtPlayer(p));
+			return getObjectAtPlayer(p);
 		} 
 		catch(IllegalArgumentException e) { }
 		return null;
@@ -431,13 +432,13 @@ public class GameMap{
 	public void spawn(Player p){
 		p.respawn(spawnLocs.get(p.getTeam()).get((int)(Math.random()*spawnLocs.get(p.getTeam()).size())));
 	}
-	public char getObjectAtPlayer(Player p){
+	public Weapon getObjectAtPlayer(Player p){
 		int x = getPlayerGridX(p);
 		int y = getPlayerGridY(p);
 		if (x >= 0 && x<map.length && y >= 0){
-			if (y<map[x].length) return map[x][y];
+			if (y<map[x].length) return new Weapon(map[x][y], new Point(x,y));
 		}
-		return '_';
+		return null;
 	}
 	private int getPlayerGridX(Player p){
 		return (int) (Math.floor(p.getLocation().x/GRID_PIXELS));
@@ -474,6 +475,7 @@ public class GameMap{
 	}
 	
 	private void kill(Player p){
+		if(p.hasFlag()) spawnWeapon(p.getFlag().getCharacter(), p.getFlag().getSpawnLoc()); 
 		p.die();
 		int i;
 		for (i = 0; i<players.size(); i++){
