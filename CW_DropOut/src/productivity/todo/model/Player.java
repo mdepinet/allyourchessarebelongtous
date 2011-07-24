@@ -1,5 +1,6 @@
 package productivity.todo.model;
 
+import java.awt.Point;
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
 
@@ -93,7 +94,7 @@ public class Player {
 		return weapons.size();
 	}
 	public boolean addWeapon(Weapon weapon) {
-		if(weapon.getName().indexOf(""+team + " ")!=-1) return false;
+		if(weapon.getName().indexOf(" " + team + " ")!=-1) return false;
 		if(weapons.contains(weapon))
 		{
 			Weapon w = weapons.get(weapons.indexOf(weapon));
@@ -122,8 +123,9 @@ public class Player {
 		weapons.set(index, weapon);
 	}
 	public Weapon getCurrentWeapon() {
-		if(weapons.size()>currWeapon) return weapons.get(currWeapon);
-		else return null;
+		if(weapons.size()<=currWeapon) currWeapon=0;
+		return weapons.get(currWeapon);
+		
 	}
 	public void setCurrWeapon(int nextWeapon) {
 		currWeapon = nextWeapon;
@@ -200,9 +202,9 @@ public class Player {
 	}
 	public void respawn(Point2D.Double loc){
 		currWeapon = 0;
+		addWeapon(new Weapon("Default"));
 		health = 100;
 		direction = new Point2D.Double();
-		addWeapon(new Weapon("Default"));
 		location = loc;
 	}
 }
