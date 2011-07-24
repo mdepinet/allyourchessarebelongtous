@@ -94,7 +94,7 @@ public class Player {
 		return weapons.size();
 	}
 	public boolean addWeapon(Weapon weapon) {
-		if(weapon.getName().indexOf(" " + team + " ")!=-1) return false;
+		if(weapon.getName().equals("Team " + team + " Flag")) return false;
 		if(weapons.contains(weapon))
 		{
 			Weapon w = weapons.get(weapons.indexOf(weapon));
