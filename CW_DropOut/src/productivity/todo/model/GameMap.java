@@ -43,10 +43,13 @@ public class GameMap{
 		spawnLocs.put(4, new ArrayList<Point2D.Double>());
 		mapChosen = mapFile;
 		bullets = new ArrayList<Bullet>();
-		gameMode = new CaptureTheFlagMode(this);
+		gameMode = new TeamDeathmatchMode(this);
 		explosions = new ArrayList<Explosion>();
 		threads = new ArrayList<RespawnThread>();
 		players = Collections.synchronizedList(new LinkedList<Player>());
+	}
+	public void init()
+	{
 		loadMap();
 		resetGame();
 	}
@@ -147,6 +150,12 @@ public class GameMap{
 	}
 	public void setMap(char[][] map) {
 		this.map = map;
+	}
+	public GameMode getGameMode() {
+		return gameMode;
+	}
+	public void setGameMode(GameMode gameMode) {
+		this.gameMode = gameMode;
 	}
 	public List<Player> getPlayers() {
 		return players;

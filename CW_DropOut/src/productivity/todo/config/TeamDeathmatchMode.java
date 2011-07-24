@@ -4,6 +4,8 @@ import productivity.todo.model.GameMap;
 
 public class TeamDeathmatchMode extends GameMode {
 
+	public TeamDeathmatchMode() {}
+	
 	public TeamDeathmatchMode(GameMap map) {
 		super(map);
 	}
@@ -31,5 +33,8 @@ public class TeamDeathmatchMode extends GameMode {
 		}
 		return -1;
 	}
+
+	@Override
+	public String getModeName() { return "Team Deathmatch"; }
 
 }
