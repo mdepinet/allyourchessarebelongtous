@@ -9,6 +9,7 @@ import java.awt.event.MouseMotionListener;
 import java.awt.geom.Point2D;
 import java.io.File;
 
+import productivity.todo.config.GameMode;
 import productivity.todo.menu.MainMenuFrame;
 import productivity.todo.model.GameMap;
 import productivity.todo.view.GameFrame;
@@ -24,10 +25,13 @@ public class Shoot implements KeyListener, MouseListener, MouseMotionListener {
 	{
 		new MainMenuFrame(this);
 	}
-	public void startGameWithMap(File mapFile)
+	public void startGame(File mapFile, GameMode mode)
 	{
 		holdCounter = -1;
 		map = new GameMap(mapFile);
+		mode.setGameMap(map);
+		map.setGameMode(mode);
+		map.init();
 		mouseLoc = new Point();
 		frame = new GameFrame("Shoot", map);
 		frame.getCanvas().addKeyListener(this);

@@ -11,11 +11,14 @@ import productivity.todo.model.Weapon;
 
 public class CaptureTheFlagMode extends GameMode {
 
+	
+	public CaptureTheFlagMode() {}
+	
 	public CaptureTheFlagMode(GameMap map) {
 		super(map);
 		
 	}
-
+	
 	@Override
 	public void loadGameObjects() {
 		Scanner scan = null;
@@ -66,5 +69,8 @@ public class CaptureTheFlagMode extends GameMode {
 		}
 		return null;
 	}
+
+	@Override
+	public String getModeName() { return "Capture The Flag"; }
 
 }
