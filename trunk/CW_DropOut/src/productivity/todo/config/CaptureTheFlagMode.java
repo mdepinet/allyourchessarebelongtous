@@ -3,6 +3,7 @@ package productivity.todo.config;
 import java.awt.Point;
 import java.awt.geom.Point2D;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Scanner;
 
 import productivity.todo.model.GameMap;
@@ -11,6 +12,7 @@ import productivity.todo.model.Weapon;
 
 public class CaptureTheFlagMode extends GameMode {
 
+	int[] teamScores = new int[4];
 	
 	public CaptureTheFlagMode() {}
 	
@@ -52,8 +54,16 @@ public class CaptureTheFlagMode extends GameMode {
 			Player p = gameMap.getPlayers().get(i);
 			if(p.getCurrentWeapon()!=null && p.getCurrentWeapon().getName().indexOf("Flag")!=-1)
 			{
-				if(p.getLocation().distance(getTeamFlagLocation(p.getTeam()))<GameMap.GRID_PIXELS-p.getRadius())
-					return p.getTeam();
+				if(p.getLocation().distance(getTeamFlagLocation(p.getTeam()))<GameMap.GRID_PIXELS-p.getRadius()) {
+					if(++teamScores[p.getTeam()]==3) {
+						teamScores = new int[4];
+						return p.getTeam();
+					}
+					else {
+						gameMap.resetGame();
+						return -1;
+					}
+				}
 			}
 		}
 		return -1;
@@ -72,5 +82,16 @@ public class CaptureTheFlagMode extends GameMode {
 
 	@Override
 	public String getModeName() { return "Capture The Flag"; }
+
+	@Override
+	public String getScoreForPlayer(Player player) {
+		
+		return player.getName() + ": " + player.getStats().getNumKills();
+	}
+
+	@Override
+	public String getScoreForTeam(int team) {
+		return "" + teamScores[team];
+	}
 
 }

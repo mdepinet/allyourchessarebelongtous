@@ -1,6 +1,7 @@
 package productivity.todo.config;
 
 import productivity.todo.model.GameMap;
+import productivity.todo.model.Player;
 
 public class TeamDeathmatchMode extends GameMode {
 
@@ -36,5 +37,20 @@ public class TeamDeathmatchMode extends GameMode {
 
 	@Override
 	public String getModeName() { return "Team Deathmatch"; }
+
+	@Override
+	public String getScoreForPlayer(Player player) {
+		return player.getName() + ": " + player.getStats().getNumKills();
+	}
+
+	@Override
+	public String getScoreForTeam(int team) {
+		int kills = 0;
+		for(Player p : gameMap.getPlayers()) {
+			if(p.getTeam()==team)
+				kills += p.getStats().getNumKills();
+		}
+		return ""+kills;
+	}
 
 }

@@ -10,25 +10,27 @@ import java.util.Collections;
 import java.util.List;
 
 import javax.swing.ImageIcon;
-import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 
+import productivity.todo.config.GameMode;
 import productivity.todo.model.Player;
 import productivity.todo.model.Weapon;
 
 public class StatsFrame extends JFrame {
 	public static final int WIDTH = 200;
 	public static final int HEIGHT = 500;
+	private GameMode gameMode;
 	private List<Player> players;
 	private List<JLabel> labels;
 	private char[] teams;
-	public StatsFrame(List<Player> p, char[] t) {
+	public StatsFrame(GameMode mode, List<Player> p, char[] t) {
 		this.setBounds(new Rectangle(300,300,WIDTH,HEIGHT));
 		this.setUndecorated(true);
 		this.setBackground(Color.WHITE);
 		this.setVisible(true);
 		getContentPane().setLayout(new FlowLayout());
+		gameMode = mode;
 		labels = new ArrayList<JLabel>();
 		players = new ArrayList<Player>();
 		players.addAll(p);
@@ -61,19 +63,10 @@ public class StatsFrame extends JFrame {
 			updatePlayer(x);
 		Collections.sort(players);
 		for(int i = 0; i < teams.length;i++) {
-			labels.get(i).setText(""+getTeamKills(teams[i]-75));
+			labels.get(i).setText(gameMode.getScoreForTeam((teams[i]-75)));
 		}
 		for(int i = 0; i < players.size();i++)
-			labels.get(i+teams.length).setText(players.get(i).getName() + ": " + players.get(i).getStats().getNumKills());
+			labels.get(i+teams.length).setText(gameMode.getScoreForPlayer(players.get(i)));
 			
-	}
-	
-	public int getTeamKills(int team) {
-		int kills = 0;
-		for(Player p : players) {
-			if(p.getTeam()==team)
-				kills += p.getStats().getNumKills();
-		}
-		return kills;
 	}
 }
