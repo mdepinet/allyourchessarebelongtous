@@ -8,7 +8,7 @@ import java.util.List;
 import productivity.todo.ai.Controller;
 import productivity.todo.ai.DefaultBrain;
 
-public class Player {
+public class Player implements Comparable<Player> {
 	private Point2D.Double location;
 	private Point2D.Double direction;
 	private PlayerType type;
@@ -202,7 +202,10 @@ public class Player {
 	public int getTeam() {
 		return team;
 	}
-	
+	public int compareTo(Player p)
+	{
+		return stats.compareTo(p.getStats());
+	}
 	public void die(){
 		stats.incNumDeaths();
 		health = 0;

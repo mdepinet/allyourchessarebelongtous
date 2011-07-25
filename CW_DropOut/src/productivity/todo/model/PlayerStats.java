@@ -1,12 +1,21 @@
 package productivity.todo.model;
 
-public class PlayerStats {
+public class PlayerStats implements Comparable<PlayerStats> {
 	private int numKills, numDeaths, numSuicides, shotsFired;
 	public PlayerStats() {
 		resetStats();
 	}
 	public void resetStats() {
 		numKills = numDeaths = shotsFired = 0;
+	}
+	public int compareTo(PlayerStats stats)
+	{
+		if(numKills-stats.getNumKills()!=0)
+			return stats.getNumKills()-numKills;
+		else if(numDeaths-stats.getNumDeaths()!=0)
+			return numDeaths-stats.getNumDeaths();
+		else
+			return numSuicides-stats.getNumSuicides();
 	}
 	public int getNumKills() {
 		return numKills;
