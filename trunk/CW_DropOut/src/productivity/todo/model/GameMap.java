@@ -77,7 +77,7 @@ public class GameMap{
 	public void resetGame()
 	{
 		bullets.clear();
-		for(RespawnThread t: threads) t.kill();
+		for(RespawnThread t: threads) { t.respawn(); t.kill(); }
 		threads.clear();
 		gameMode.loadGameObjects();
 		
@@ -264,7 +264,7 @@ public class GameMap{
 						Point2D.Double intersection = bulletColDetect(b,new Rectangle(j*GRID_PIXELS,k*GRID_PIXELS,GRID_PIXELS,GRID_PIXELS));
 						if(intersection!=null && !b.getWeapon().getType().equalsIgnoreCase("thrown")){
 							b.setLocation(intersection);
-							explode(b); 
+							explode(b);
 							bullets.remove(i--); 
 							continue OUTTER;
 						}
