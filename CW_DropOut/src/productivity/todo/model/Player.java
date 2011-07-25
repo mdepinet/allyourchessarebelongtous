@@ -45,7 +45,7 @@ public class Player {
 		radius = 8;
 		location=new Point2D.Double(12,12);
 		direction = new Point2D.Double(0,0);
-		weapons=new ArrayList<Weapon>();
+		weapons=Collections.synchronizedList(new ArrayList<Weapon>());
 		currWeapon=0;
 		orientation=0;
 	}
