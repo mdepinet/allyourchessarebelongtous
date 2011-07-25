@@ -5,7 +5,7 @@ import productivity.todo.model.Player;
 
 public class TeamDeathmatchMode extends GameMode {
 
-	public static final int KILLS_TO_WIN = 1;
+	public static final int KILLS_TO_WIN = 10;
 	
 	public TeamDeathmatchMode() {}
 	
