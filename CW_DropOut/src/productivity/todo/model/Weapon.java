@@ -130,7 +130,7 @@ public class Weapon {
 		return true;
 	}
 	public void reload(){
-		if(clipCount!=0)
+		if(clipCount!=0 && clipSize!=maxClipSize)
 			new ReloadThread(this,reloadMillis).start();
 	}
 	public void update() {
