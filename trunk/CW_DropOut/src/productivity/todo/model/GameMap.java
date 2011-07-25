@@ -16,10 +16,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
 
-import javax.swing.JFileChooser;
-import javax.swing.filechooser.FileFilter;
-
-import productivity.todo.config.*;
+import productivity.todo.config.GameMode;
+import productivity.todo.config.TeamDeathmatchMode;
 import productivity.todo.view.GameCanvas;
 
 public class GameMap{
@@ -135,6 +133,13 @@ public class GameMap{
 			}
 		}
 		return null;
+	}
+	public List<PlayerStats> getPlayerStats()
+	{
+		List<PlayerStats> ret = new ArrayList<PlayerStats>();
+		for(Player p: players)
+			ret.add(p.getStats());
+		return ret;
 	}
 	public void shoot(Player p) {
 		double tempAngle = p.getOrientation();

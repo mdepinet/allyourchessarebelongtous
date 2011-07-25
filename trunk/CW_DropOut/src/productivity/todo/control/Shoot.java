@@ -1,11 +1,16 @@
 package productivity.todo.control;
 
 import java.awt.Point;
+import java.awt.Rectangle;
+import java.awt.event.ComponentEvent;
+import java.awt.event.ComponentListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.awt.geom.Point2D;
 import java.io.File;
 
@@ -13,11 +18,13 @@ import productivity.todo.config.GameMode;
 import productivity.todo.menu.MainMenuFrame;
 import productivity.todo.model.GameMap;
 import productivity.todo.view.GameFrame;
+import productivity.todo.view.StatsFrame;
 
-public class Shoot implements KeyListener, MouseListener, MouseMotionListener {
+public class Shoot implements KeyListener, MouseListener, MouseMotionListener, ComponentListener {
 	static final int UPDATE_RATE = 30;  // number of game update per second
 	static final long UPDATE_PERIOD = 1000000000L / UPDATE_RATE;  // nanoseconds
 	GameFrame frame;
+	private StatsFrame statsFrame;
 	GameMap map;
 	private int holdCounter;
 	private Point mouseLoc;
@@ -25,7 +32,7 @@ public class Shoot implements KeyListener, MouseListener, MouseMotionListener {
 	{
 		new MainMenuFrame(this);
 	}
-	public void startGame(File mapFile, GameMode mode, int team)
+	public void startGame(File mapFile, GameMode mode, char[] teams, int team)
 	{
 		holdCounter = -1;
 		map = new GameMap(mapFile);
@@ -39,6 +46,17 @@ public class Shoot implements KeyListener, MouseListener, MouseMotionListener {
 		frame.getCanvas().addMouseListener(this);
 		frame.getCanvas().addMouseMotionListener(this);
 		frame.getCanvas().requestFocusInWindow();
+		statsFrame = new StatsFrame(map.getPlayers(), teams);
+		frame.addComponentListener(this);
+		frame.addWindowListener(new WindowAdapter(){
+	          public void windowIconified(WindowEvent e){
+	                statsFrame.setVisible(false);
+	          }
+	          public void windowDeiconified(WindowEvent e){
+	                statsFrame.setVisible(true);
+	          }
+	    });
+
 		gameStart();
 	}
 	 public void gameStart() { 
@@ -74,7 +92,7 @@ public class Shoot implements KeyListener, MouseListener, MouseMotionListener {
 	         else
 	        	 holdCounter = -1;
 	         map.gameUpdate();
-	         
+	         statsFrame.updateStats(map.getPlayers());
 	         // Refresh the display
 	         frame.getCanvas().updateGraphics();
 	         // Delay timer to provide the necessary delay to meet the target rate
@@ -217,6 +235,26 @@ public class Shoot implements KeyListener, MouseListener, MouseMotionListener {
 		if(map.getPlayer()==null) return;
 		mouseLoc=new Point(e.getX(),e.getY());
 		map.getPlayer().setOrientation(Math.atan2((e.getY()-map.getPlayer().getLocation().y), (e.getX()-map.getPlayer().getLocation().x))-Math.PI/2);
+	}
+	@Override
+	public void componentHidden(ComponentEvent arg0) {
+		statsFrame.setVisible(false);
+	}
+	@Override
+	public void componentMoved(ComponentEvent arg0) {
+		Rectangle frameRect = frame.getBounds();
+		statsFrame.setBounds(new Rectangle(frameRect.x-StatsFrame.WIDTH, frameRect.y+25, StatsFrame.WIDTH, StatsFrame.HEIGHT));
+	}
+	@Override
+	public void componentResized(ComponentEvent arg0) {
+		Rectangle frameRect = frame.getBounds();
+		statsFrame.setBounds(new Rectangle(frameRect.x-StatsFrame.WIDTH, frameRect.y+25, StatsFrame.WIDTH, StatsFrame.HEIGHT));
+	}
+	@Override
+	public void componentShown(ComponentEvent arg0) {
+		Rectangle frameRect = frame.getBounds();
+		statsFrame.setBounds(new Rectangle(frameRect.x-StatsFrame.WIDTH, frameRect.y+25, StatsFrame.WIDTH, StatsFrame.HEIGHT));
+		statsFrame.setVisible(true);
 	}
 	
 }

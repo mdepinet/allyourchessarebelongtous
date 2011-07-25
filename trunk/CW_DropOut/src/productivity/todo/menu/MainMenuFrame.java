@@ -185,7 +185,20 @@ public class MainMenuFrame extends JFrame implements ActionListener, ListSelecti
 	        	if(buttonGroup.get(i).isVisible()) { buttonGroup.get(i).setBackground(Color.GREEN); team = i+1; break; }
 		}
 		else if(e.getActionCommand().equals("startgame")) {
-			control.startGame(mapChosen, gameMode, team);
+			ArrayList<Character> list = new ArrayList<Character>();
+			 String mapString = "";
+		        try {
+		        	 mapString = readFile(mapChosen);
+		        } catch(IOException ioe) {}
+		        for(int i = 1; i < 5;i++)
+		        {
+		        	if(mapString.indexOf(""+i)!=-1)
+		        		list.add(new Character((char)('L'+(i-1))));
+		        }
+		        char[] teams = new char[list.size()];
+		        for(int i =0; i < teams.length;i++)
+		        	teams[i]=list.get(i);
+			control.startGame(mapChosen, gameMode, teams, team);
 			this.dispose();
 		}
 		else
