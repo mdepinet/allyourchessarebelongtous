@@ -10,8 +10,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.PriorityQueue;
 
-import productivity.todo.model.GameMap;
-
 public class MapGraph {
 	private Collection<Vertex> vertices;
 	private HashMap<Pair<Vertex,Vertex>,Vertex> answers;
@@ -95,16 +93,16 @@ public class MapGraph {
 			return answers.get(key).getPoint();
 		computePaths(startV);
 		List<Vertex> path = getShortestPath(startV, endV);
-		Point p = path.size() > 1 ? new Point(path.get(1).row,path.get(1).col) : new Point(path.get(0).row,path.get(0).col);
+		Vertex last = path.size() > 1 ? path.get(1) : path.get(0);
 		List<Vertex> pathCopy = new LinkedList<Vertex>();
 		pathCopy.addAll(path);
-		answers.put(key,path.get(1));
+		answers.put(key,last);
 		while (pathCopy.size()>1){
 			Vertex v = pathCopy.remove(0);
 			key = new Pair<Vertex, Vertex>(v,endV);
 			answers.put(key,pathCopy.get(0));
 		}
-		return p;
+		return new Point(last.row,last.col);
 	}
 	
 	public void computePaths(Vertex source) {
