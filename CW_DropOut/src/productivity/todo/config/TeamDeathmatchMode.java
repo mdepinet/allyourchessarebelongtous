@@ -5,6 +5,8 @@ import productivity.todo.model.Player;
 
 public class TeamDeathmatchMode extends GameMode {
 
+	public static final int KILLS_TO_WIN = 1;
+	
 	public TeamDeathmatchMode() {}
 	
 	public TeamDeathmatchMode(GameMap map) {
@@ -29,7 +31,7 @@ public class TeamDeathmatchMode extends GameMode {
 		for(int i = 0; i < gameMap.getPlayers().size();i++)
 		{
 			teamKills[gameMap.getPlayers().get(i).getTeam()-1] += gameMap.getPlayers().get(i).getStats().getNumKills() - gameMap.getPlayers().get(i).getStats().getNumSuicides();
-			if(teamKills[gameMap.getPlayers().get(i).getTeam()-1]>=10)
+			if(teamKills[gameMap.getPlayers().get(i).getTeam()-1]>=KILLS_TO_WIN)
 				return gameMap.getPlayers().get(i).getTeam();
 		}
 		return -1;

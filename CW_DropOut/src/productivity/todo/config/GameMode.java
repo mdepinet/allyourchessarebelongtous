@@ -16,7 +16,7 @@ public abstract class GameMode {
 	public GameMode(GameMap map) {
 		gameMap = map;
 	}
-	public static final Class<?>[] modes = { TeamDeathmatchMode.class, CaptureTheFlagMode.class };
+	public static final Class<?>[] modes = { TeamDeathmatchMode.class, CaptureTheFlagMode.class, Survivor.class };
 	public abstract String getModeName();
 	public abstract String getScoreForPlayer(Player player);
 	public abstract String getScoreForTeam(int team);

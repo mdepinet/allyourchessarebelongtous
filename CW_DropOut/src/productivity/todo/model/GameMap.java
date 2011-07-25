@@ -16,6 +16,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
 
+import javax.swing.ImageIcon;
+import javax.swing.JOptionPane;
+
 import productivity.todo.config.GameMode;
 import productivity.todo.config.TeamDeathmatchMode;
 import productivity.todo.view.GameCanvas;
@@ -23,12 +26,13 @@ import productivity.todo.view.GameCanvas;
 public class GameMap{
 	private List<Player> players;
 	private char[][] map;
+	public static final String[] teamNames = { "America", "England", "Mexico", "Canada" };
 	public static final int HEIGHT = 750;
 	public static final int WIDTH = 750;
 	public static final int GRID_PIXELS = GameCanvas.GRID_PIXELS;
 	public static final int NUM_TEAMMATES = 2;
 	private GameMode gameMode;
-	public ArrayList<RespawnThread> threads;
+	private List<RespawnThread> threads;
 	private ArrayList<Bullet> bullets;
 	private ArrayList<Explosion> explosions;
 	private File mapChosen;
@@ -44,7 +48,7 @@ public class GameMap{
 		bullets = new ArrayList<Bullet>();
 		gameMode = new TeamDeathmatchMode(this);
 		explosions = new ArrayList<Explosion>();
-		threads = new ArrayList<RespawnThread>();
+		threads = Collections.synchronizedList(new ArrayList<RespawnThread>());
 		players = Collections.synchronizedList(new LinkedList<Player>());
 	}
 	public void init(int playerTeam)
@@ -77,8 +81,9 @@ public class GameMap{
 	public void resetGame()
 	{
 		bullets.clear();
-		for(RespawnThread t: threads) { t.respawn(); t.kill(); }
+		for(RespawnThread t: threads) { t.kill(); t.respawn(); }
 		threads.clear();
+		
 		gameMode.loadGameObjects();
 		
 		for(int i = 0; i < players.size();i++)
@@ -177,6 +182,12 @@ public class GameMap{
 	public List<Player> getPlayers() {
 		return players;
 	}
+	public List<RespawnThread> getThreads() {
+		return threads;
+	}
+	public void setThreads(ArrayList<RespawnThread> threads) {
+		this.threads = threads;
+	}
 	public Point2D.Double getClosestWeaponLoc(Player p)
 	{
 		double dist = Double.MAX_VALUE;
@@ -245,7 +256,7 @@ public class GameMap{
 		gameMode.update();
 		int winner;
 		if((winner = gameMode.getWinningTeam()) != -1) {
-			System.out.println("Team " + winner + " Wins!");
+			JOptionPane.showMessageDialog(null, teamNames[winner-1] + " Wins!", "Winner!", 0, new ImageIcon(new Weapon((char)(winner+75), new Point()).getImage()));
 			resetGame();
 		}
 		OUTTER: for(int i=0;i<bullets.size();i++) {
