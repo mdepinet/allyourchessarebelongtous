@@ -9,6 +9,7 @@ import productivity.todo.ai.Controller;
 import productivity.todo.ai.DefaultBrain;
 
 public class Player implements Comparable<Player> {
+	public static final double REGEN_SPEED = 1/15.;
 	private Point2D.Double location;
 	private Point2D.Double direction;
 	private PlayerType type;
@@ -79,6 +80,8 @@ public class Player implements Comparable<Player> {
 	{
 		if(health<=0 || weapons.size()<=0)
 			return;
+		health+=REGEN_SPEED;
+		if(health>100) health = 100;
 		getCurrentWeapon().update();
 		if(type == PlayerType.PERSON)
 			location = new Point2D.Double(location.getX()+(direction.getX()*2), location.getY()+(direction.getY()*2));

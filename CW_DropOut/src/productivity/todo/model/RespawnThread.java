@@ -24,6 +24,9 @@ public class RespawnThread extends Thread {
 			e.printStackTrace();
 		}
 		if(dead) return;
+		respawn();
+	}
+	public void respawn() {
 		if (indexZero) gm.getPlayers().add(0, p);
 		else gm.getPlayers().add(p);
 		gm.spawn(p);
