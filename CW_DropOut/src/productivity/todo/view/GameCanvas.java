@@ -86,7 +86,9 @@ public class GameCanvas extends Canvas {
 					case 4: backg.setColor(new Color(.8f,0.4f,0f)); break;
 					default: break;
 				}
+				 FontMetrics metrics = backg.getFontMetrics(backg.getFont());
 				backg.fillOval((int)p.getLocation().getX()-8,(int)p.getLocation().getY()-8, 16, 16);
+				backg.drawString(p.getName(), (int)(p.getLocation().getX()-metrics.stringWidth(p.getName())/2), (int)(p.getLocation().getY()-p.getRadius()-2));
 				backg.setColor(Color.BLACK);
 				if(p.getCurrentWeapon().getImage()!=null)
 				{
