@@ -20,7 +20,10 @@ public class Pair<T1, T2> {
 	public T2 getSecond() {
 		return second;
 	}
-
+	public Pair<T2, T1> flip()
+	{
+		return new Pair<T2,T1>(second, first);
+	}
 	public void setSecond(T2 second) {
 		this.second = second;
 	}
