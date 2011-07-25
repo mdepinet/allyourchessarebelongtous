@@ -14,12 +14,14 @@ import productivity.todo.model.GameMap;
 
 public class MapGraph {
 	private Collection<Vertex> vertices;
-	private HashMap<Pair<Vertex,Vertex>,List<Vertex>> answers;
+	private HashMap<Pair<Vertex,Vertex>,Vertex> answers;
 	public MapGraph()
 	{
 		vertices = new LinkedList<Vertex>();
-		answers = new HashMap<Pair<Vertex,Vertex>,List<Vertex>>();
+		answers = new HashMap<Pair<Vertex,Vertex>,Vertex>();
 	}
+	
+	
 	public void createGraph(char[][] map){
 		if (!vertices.isEmpty()) return;
 		for(int r = 0; r < map.length; r++)
@@ -86,10 +88,22 @@ public class MapGraph {
 	
 	public Point getNextLocation(Point curr, Point goal){
 		if (vertices.isEmpty()) return null;
-		
-		computePaths(getVertexByLocation(curr.x,curr.y));
-		List<Vertex> path = getPath(curr, goal);
+		Vertex startV = getVertexByLocation(curr.x,curr.y);
+		Vertex endV = getVertexByLocation(goal.x,goal.y);
+		Pair<Vertex,Vertex> key = new Pair<Vertex, Vertex>(startV,endV);
+		if(answers.containsKey(key)) 
+			return answers.get(key).getPoint();
+		computePaths(startV);
+		List<Vertex> path = getShortestPath(startV, endV);
 		Point p = path.size() > 1 ? new Point(path.get(1).row,path.get(1).col) : new Point(path.get(0).row,path.get(0).col);
+		List<Vertex> pathCopy = new LinkedList<Vertex>();
+		pathCopy.addAll(path);
+		answers.put(key,path.get(1));
+		while (pathCopy.size()>1){
+			Vertex v = pathCopy.remove(0);
+			key = new Pair<Vertex, Vertex>(v,endV);
+			answers.put(key,pathCopy.get(0));
+		}
 		return p;
 	}
 	
@@ -131,25 +145,25 @@ public class MapGraph {
 		return path;
 	}
 	
-	private List<Vertex> getPath(Point start, Point end){
-		if (vertices.isEmpty()) return null;
-		
-		Vertex startV = getVertexByLocation(start.x,start.y), endV = getVertexByLocation(end.x,end.y);
-		Pair<Vertex, Vertex> ends = new Pair<Vertex, Vertex>(startV,endV);
-		if (answers.containsKey(ends)) return answers.get(ends);
-		computePaths(getVertexByLocation(start.x,start.y));
-		List<Vertex> path = getShortestPath(startV, endV);
-		List<Vertex> pathCopy = new LinkedList<Vertex>();
-		pathCopy.addAll(path);
-		answers.put(ends,path);
-		while (!pathCopy.isEmpty()){
-			Vertex v = pathCopy.remove(0);
-			ends = new Pair<Vertex, Vertex>(v,endV);
-			answers.put(ends,pathCopy);
-		}
-		
-		return path;
-	}
+//	private List<Vertex> getPath(Point start, Point end){
+//		if (vertices.isEmpty()) return null;
+//		
+//		Vertex startV = getVertexByLocation(start.x,start.y), endV = getVertexByLocation(end.x,end.y);
+//		Pair<Vertex, Vertex> ends = new Pair<Vertex, Vertex>(startV,endV);
+//		if (answers.containsKey(ends)) return answers.get(ends);
+//		computePaths(getVertexByLocation(start.x,start.y));
+//		List<Vertex> path = getShortestPath(startV, endV);
+//		List<Vertex> pathCopy = new LinkedList<Vertex>();
+//		Collections.copy(pathCopy, path);
+//		answers.put(ends,path);
+//		while (!pathCopy.isEmpty()){
+//			Vertex v = pathCopy.remove(0);
+//			ends = new Pair<Vertex, Vertex>(v,endV);
+//			answers.put(ends,pathCopy);
+//		}
+//		
+//		return path;
+//	}
 	public void printPath(List<Vertex> path, char[][] map)
 	{
 		for(int i = 0; i < 30;i++)
@@ -166,5 +180,5 @@ public class MapGraph {
 			}
 			System.out.println();
 		}
-	}
+	}	
 }

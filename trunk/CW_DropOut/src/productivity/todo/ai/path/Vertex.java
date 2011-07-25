@@ -1,5 +1,6 @@
 package productivity.todo.ai.path;
 
+import java.awt.Point;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -30,8 +31,12 @@ public class Vertex implements Comparable<Vertex>{
 	}
 	
 	public boolean equals(Object obj){
-		if (!(obj instanceof Vertex)) return false;
-		Vertex other = (Vertex)obj;
-		return row == other.row && col == other.col;
+		return hashCode() == obj.hashCode();
+	}
+	public Point getPoint(){
+		return new Point(row,col);
+	}
+	public int hashCode(){
+		return row*31+col;
 	}
 }

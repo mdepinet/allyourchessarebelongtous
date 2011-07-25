@@ -24,6 +24,15 @@ public class Pair<T1, T2> {
 	public void setSecond(T2 second) {
 		this.second = second;
 	}
+	public boolean equals(Object p){
+		return hashCode() == p.hashCode();
+	}
+	public int hashCode(){
+		return first.hashCode()*31+second.hashCode();
+	}
 	
+	public String toString(){
+		return getFirst()+" "+getSecond();
+	}
 	
 }
