@@ -28,6 +28,7 @@ public class GameMap{
 	public static final int HEIGHT = 750;
 	public static final int WIDTH = 750;
 	public static final int GRID_PIXELS = GameCanvas.GRID_PIXELS;
+	public static final int NUM_TEAMMATES = 2;
 	private GameMode gameMode;
 	public ArrayList<RespawnThread> threads;
 	private ArrayList<Bullet> bullets;
@@ -48,34 +49,45 @@ public class GameMap{
 		threads = new ArrayList<RespawnThread>();
 		players = Collections.synchronizedList(new LinkedList<Player>());
 	}
-	public void init()
+	public void init(int playerTeam)
 	{
 		loadMap();
-		resetGame();
+		Player player = new Player("Player 1");
+		player.setTeam(playerTeam);
+		player.setType(PlayerType.PERSON);
+		players.add(player);
+		for(int i = 1; i < spawnLocs.keySet().size()+1 && !spawnLocs.get(i).isEmpty(); i++) {
+			for(int j = 0; j < NUM_TEAMMATES; j++)
+			{
+				if(i == player.getTeam() && j == 0) continue;
+				Player p2 = new Player("Player " + (((i-1)*2)+j+(i>=player.getTeam()?1:2)));
+				p2.setTeam(i);
+				players.add(p2);
+			}
+		}
+		for(int i = 0; i < players.size();i++)
+		{
+			Player p = players.get(i);
+			if(spawnLocs.get(new Integer(p.getTeam()))==null) System.out.println("null");
+			if(!spawnLocs.get(new Integer(p.getTeam())).isEmpty()) {
+				spawn(p);
+				p.setLocation(spawnLocs.get(p.getTeam()).get((int)(Math.random()*spawnLocs.size())));
+			}
+			else players.remove(i);
+		}
 	}
 	public void resetGame()
 	{
-		players.clear();
 		bullets.clear();
 		for(RespawnThread t: threads) t.kill();
 		threads.clear();
 		gameMode.loadGameObjects();
 		
-		Player player = new Player("player1");
-		player.setTeam(1);
-		player.setType(PlayerType.PERSON);
-		players.add(player);
-		double team = 1.5;
-		for(int i = 0; i < 3 + (spawnLocs.get(3).size()>0 ? 2 : 0) + (spawnLocs.get(4).size()>0 ? 2 : 0);i++)
-		{
-			Player p2 = new Player("player" + (i+2));
-			p2.setTeam((int)team);
-			team+=0.5;
-			players.add(p2);
-		}
 		for(int i = 0; i < players.size();i++)
 		{
 			Player p = players.get(i);
+			p.getWeapons().clear();
+			p.clearStats();
 			if(spawnLocs.get(new Integer(p.getTeam()))==null) System.out.println("null");
 			if(!spawnLocs.get(new Integer(p.getTeam())).isEmpty()) {
 				spawn(p);

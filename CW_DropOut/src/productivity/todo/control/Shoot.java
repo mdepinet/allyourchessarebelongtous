@@ -25,13 +25,13 @@ public class Shoot implements KeyListener, MouseListener, MouseMotionListener {
 	{
 		new MainMenuFrame(this);
 	}
-	public void startGame(File mapFile, GameMode mode)
+	public void startGame(File mapFile, GameMode mode, int team)
 	{
 		holdCounter = -1;
 		map = new GameMap(mapFile);
 		mode.setGameMap(map);
 		map.setGameMode(mode);
-		map.init();
+		map.init(team);
 		mouseLoc = new Point();
 		frame = new GameFrame("Shoot", map);
 		frame.getCanvas().addKeyListener(this);

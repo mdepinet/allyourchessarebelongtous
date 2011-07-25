@@ -131,6 +131,13 @@ public class Player {
 	public void setCurrWeapon(int nextWeapon) {
 		currWeapon = nextWeapon;
 	}
+	public List<Weapon> getWeapons() {
+		return weapons;
+	}
+	public void clearStats()
+	{
+		stats = new PlayerStats();
+	}
 	public void nextWeapon() {
 		if(getCurrentWeapon()!=null && getCurrentWeapon().getName().indexOf("Flag")!=-1)
 			return;

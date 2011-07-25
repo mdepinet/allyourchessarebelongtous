@@ -63,7 +63,7 @@ public class CaptureTheFlagMode extends GameMode {
 		for(int i = 0; i < gameMap.getMap().length;i++) {
 			for(int j = 0; j < gameMap.getMap()[i].length;j++) {
 				if(gameMap.getMap()[i][j] == 'X' || gameMap.getMap()[i][j] == '_') continue;
-				if(new Weapon(gameMap.getMap()[i][j], new Point(i,j)).getName().indexOf(""+team)!=-1)
+				if(new Weapon(gameMap.getMap()[i][j], new Point(i,j)).getName().indexOf("Team "+team+" Flag")!=-1)
 					return new Point2D.Double(i*25+GameMap.GRID_PIXELS/2, j*25 + GameMap.GRID_PIXELS/2);
 			}
 		}
