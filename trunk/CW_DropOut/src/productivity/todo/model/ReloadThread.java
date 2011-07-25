@@ -10,6 +10,7 @@ public class ReloadThread extends Thread {
 	}
 	
 	public void run(){
+		w.setClipSize(0);
 		try {
 			Thread.sleep(millis);
 		} catch (InterruptedException e) {
