@@ -97,10 +97,12 @@ public class MapGraph {
 		List<Vertex> pathCopy = new LinkedList<Vertex>();
 		pathCopy.addAll(path);
 		answers.put(key,last);
+		//answers.put(key.flip(), path.get(path.size()-1)); might work, might not
 		while (pathCopy.size()>1){
 			Vertex v = pathCopy.remove(0);
 			key = new Pair<Vertex, Vertex>(v,endV);
 			answers.put(key,pathCopy.get(0));
+			//answers.put(key.flip(),pathCopy.get(pathCopy.size()-1)); might work, might not
 		}
 		return new Point(last.row,last.col);
 	}
