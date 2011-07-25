@@ -154,6 +154,10 @@ public class Shoot implements KeyListener, MouseListener, MouseMotionListener {
 					break;
 				case KeyEvent.VK_ENTER:
 					map.getPlayer().getCurrentWeapon().reload();
+					break;
+				case KeyEvent.VK_R:
+					map.getPlayer().getCurrentWeapon().reload();
+					break;
 				default:
 					if(e.getKeyChar()>47 && e.getKeyChar()<58)
 						map.getPlayer().switchToWeapon(e.getKeyChar()-48);
