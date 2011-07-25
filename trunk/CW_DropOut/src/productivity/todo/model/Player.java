@@ -5,8 +5,10 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import productivity.todo.ai.AbstractBrain;
 import productivity.todo.ai.Controller;
 import productivity.todo.ai.DefaultBrain;
+import productivity.todo.ai.Objective;
 
 public class Player implements Comparable<Player> {
 	public static final double REGEN_SPEED = 1/15.;
@@ -49,6 +51,9 @@ public class Player implements Comparable<Player> {
 		weapons=Collections.synchronizedList(new ArrayList<Weapon>());
 		currWeapon=0;
 		orientation=0;
+	}
+	public void addObjective(Objective o) {
+		((AbstractBrain)brain).addObjective(o);
 	}
 	public PlayerType getType() {
 		return type;

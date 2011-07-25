@@ -3,9 +3,9 @@ package productivity.todo.config;
 import java.awt.Point;
 import java.awt.geom.Point2D;
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.Scanner;
 
+import productivity.todo.ai.Objective;
 import productivity.todo.model.GameMap;
 import productivity.todo.model.Player;
 import productivity.todo.model.Weapon;
@@ -44,10 +44,23 @@ public class CaptureTheFlagMode extends GameMode {
 
 	@Override
 	public void update() {
-		// TODO Auto-generated method stub
-
+		for(Player p: gameMap.getPlayers()) {
+			if(!(p.getCurrentWeapon()!=null && p.getCurrentWeapon().getName().indexOf("Flag")!=-1))
+			{
+				if(getClosestOtherTeamFlagLocation(p)!=null)
+					p.addObjective(new Objective(getClosestOtherTeamFlagLocation(p), 20., getCostForPath(gameMap.getGridPoint(p.getLocation()),getClosestOtherTeamFlagLocation(p))));
+			}
+			else
+			{
+				if(getTeamFlagLocation(p.getTeam())!=null)
+					p.addObjective(new Objective(gameMap.getGridPoint(getTeamFlagLocation(p.getTeam())), 50., getCostForPath(gameMap.getGridPoint(p.getLocation()),gameMap.getGridPoint(getTeamFlagLocation(p.getTeam())))));
+			}
+		}
 	}
-
+	private double getCostForPath(Point from, Point to) {
+		
+		return from.distance(to);
+	}
 	@Override
 	public int getWinningTeam() {
 		for(int i = 0; i < gameMap.getPlayers().size();i++) {
@@ -67,6 +80,24 @@ public class CaptureTheFlagMode extends GameMode {
 			}
 		}
 		return -1;
+	}
+	public Point getClosestOtherTeamFlagLocation(Player p)
+	{
+		double minDist = Double.MAX_VALUE;
+		Point loc = null;
+		for(int i = 0; i < gameMap.getMap().length;i++) {
+			for(int j = 0; j < gameMap.getMap()[i].length;j++) {
+				if(gameMap.getMap()[i][j] == 'X' || gameMap.getMap()[i][j] == '_') continue;
+				if(new Weapon(gameMap.getMap()[i][j], new Point(i,j)).getName().indexOf("Team "+p.getTeam()+" Flag")!=-1) continue;
+				if(new Weapon(gameMap.getMap()[i][j], new Point(i,j)).getName().indexOf("Flag")!=-1) {
+					if(gameMap.getGridPoint(p.getLocation()).distance(new Point(i,j))<minDist) {
+						minDist = gameMap.getGridPoint(p.getLocation()).distance(new Point(i,j));
+						loc = new Point(i,j);
+					}
+				}
+			}
+		}
+		return loc;
 	}
 	public Point2D.Double getTeamFlagLocation(int team)
 	{
