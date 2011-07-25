@@ -128,7 +128,7 @@ public class Player implements Comparable<Player> {
 	}
 	public Weapon getCurrentWeapon() {
 		if(weapons.size()<=currWeapon) currWeapon=0;
-		return weapons.get(currWeapon);
+		return weapons.size()>currWeapon ? weapons.get(currWeapon) : null;
 		
 	}
 	public void setCurrWeapon(int nextWeapon) {
