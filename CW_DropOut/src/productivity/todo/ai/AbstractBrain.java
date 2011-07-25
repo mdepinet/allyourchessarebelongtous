@@ -2,6 +2,8 @@ package productivity.todo.ai;
 
 import java.awt.Point;
 import java.awt.geom.Point2D;
+import java.util.ArrayList;
+import java.util.List;
 
 import productivity.todo.ai.path.MapGraph;
 import productivity.todo.model.GameMap;
@@ -10,8 +12,9 @@ import productivity.todo.model.Weapon;
 
 
 public abstract class AbstractBrain implements Controller {
-	private static final double MAX_MOVE_DISTANCE = 2.;
+	private static final double MAX_MOVE_DISTANCE = 4.;
 	protected static MapGraph graph = new MapGraph();
+	protected List<Objective> objectives = new ArrayList<Objective>();
 	
 	protected static Point2D.Double getSmartDirectionToLoc(Point2D.Double from, Point2D.Double to, GameMap m) {
 		graph.createGraph(m.getMap());
@@ -51,7 +54,10 @@ public abstract class AbstractBrain implements Controller {
 	protected Weapon getClosestWeapon(GameMap map, Player p){
 		return map.getClosestWeapon(p);
 	}
-	
+	public void addObjective(Objective o) {
+		objectives.remove(o);
+		objectives.add(o);
+	}
 	public final void move(Point2D.Double newLoc, Player p){
 		Point2D.Double currLoc = p.getLocation();
 		if (currLoc.distance(newLoc) > MAX_MOVE_DISTANCE){

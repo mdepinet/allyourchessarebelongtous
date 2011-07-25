@@ -37,6 +37,7 @@ public class GameMap{
 	private ArrayList<Explosion> explosions;
 	private File mapChosen;
 	private Map<Integer, ArrayList<Point2D.Double>> spawnLocs;
+	private int pTeam;
 	public GameMap(File mapFile)
 	{
 		spawnLocs = new HashMap<Integer, ArrayList<Point2D.Double>>();
@@ -58,6 +59,7 @@ public class GameMap{
 		player.setTeam(playerTeam);
 		player.setType(PlayerType.PERSON);
 		players.add(player);
+		
 		for(int i = 1; i < spawnLocs.keySet().size()+1 && !spawnLocs.get(i).isEmpty(); i++) {
 			for(int j = 0; j < NUM_TEAMMATES; j++)
 			{
@@ -238,6 +240,12 @@ public class GameMap{
 	}
 	public void setPlayer(Player player) {
 		this.players.set(0, player);
+	}
+	public int getpTeam() {
+		return pTeam;
+	}
+	public void setpTeam(int pTeam) {
+		this.pTeam = pTeam;
 	}
 	public ArrayList<Explosion> getExplosions() {
 		return explosions;
