@@ -55,7 +55,7 @@ public class CaptureTheFlagMode extends GameMode {
 			if(p.getCurrentWeapon()!=null && p.getCurrentWeapon().getName().indexOf("Flag")!=-1)
 			{
 				if(p.getLocation().distance(getTeamFlagLocation(p.getTeam()))<GameMap.GRID_PIXELS-p.getRadius()) {
-					if(++teamScores[p.getTeam()]==3) {
+					if(++teamScores[p.getTeam()-1]==3) {
 						teamScores = new int[4];
 						return p.getTeam();
 					}
@@ -91,7 +91,7 @@ public class CaptureTheFlagMode extends GameMode {
 
 	@Override
 	public String getScoreForTeam(int team) {
-		return "" + teamScores[team];
+		return "" + teamScores[team-1];
 	}
 
 }

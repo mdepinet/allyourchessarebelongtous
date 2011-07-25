@@ -23,12 +23,13 @@ public class RespawnThread extends Thread {
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
-		if(dead) return;
+		if(dead) { gm.getThreads().remove(this); return; }
 		respawn();
 	}
 	public void respawn() {
 		if (indexZero) gm.getPlayers().add(0, p);
 		else gm.getPlayers().add(p);
 		gm.spawn(p);
+		gm.getThreads().remove(this);
 	}
 }

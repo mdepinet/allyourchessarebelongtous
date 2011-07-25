@@ -35,6 +35,7 @@ import javax.swing.filechooser.FileFilter;
 import productivity.todo.config.GameMode;
 import productivity.todo.config.TeamDeathmatchMode;
 import productivity.todo.control.Shoot;
+import productivity.todo.model.GameMap;
 import productivity.todo.model.Weapon;
 
 public class MainMenuFrame extends JFrame implements ActionListener, ListSelectionListener {
@@ -107,8 +108,11 @@ public class MainMenuFrame extends JFrame implements ActionListener, ListSelecti
 		char c = 0;
 		for(c = 'L'; c <= (int)('O');c++)
 		{
-			button = new JButton(new ImageIcon(new Weapon(c, new Point()).getImage()));
-			button.setPreferredSize(new Dimension(80,40));
+			button = new JButton(GameMap.teamNames[c-76], new ImageIcon(new Weapon(c, new Point()).getImage()));
+			button.setVerticalTextPosition(JButton.BOTTOM);
+			button.setHorizontalTextPosition(JButton.CENTER);
+			button.setPreferredSize(new Dimension(90,60));
+			button.setForeground((c=='L') ? Color.BLACK : Color.WHITE);
 			button.setBackground((c=='L') ? Color.GREEN : Color.BLUE);
 			button.setActionCommand("" + c);
 			button.addActionListener(this);
@@ -182,7 +186,7 @@ public class MainMenuFrame extends JFrame implements ActionListener, ListSelecti
 	        }
 	        resetButtonColors();
 	        for(int i = 0; i < buttonGroup.size();i++)
-	        	if(buttonGroup.get(i).isVisible()) { buttonGroup.get(i).setBackground(Color.GREEN); team = i+1; break; }
+	        	if(buttonGroup.get(i).isVisible()) { buttonGroup.get(i).setForeground(Color.BLACK); buttonGroup.get(i).setBackground(Color.GREEN); team = i+1; break; }
 		}
 		else if(e.getActionCommand().equals("startgame")) {
 			ArrayList<Character> list = new ArrayList<Character>();
@@ -205,6 +209,7 @@ public class MainMenuFrame extends JFrame implements ActionListener, ListSelecti
 		{
 			resetButtonColors();
 			((JButton)e.getSource()).setBackground(Color.GREEN);
+			((JButton)e.getSource()).setForeground(Color.BLACK);
 			switch((char)e.getActionCommand().charAt(0))
 			{
 				case 'L': team = 1; break;
@@ -219,8 +224,10 @@ public class MainMenuFrame extends JFrame implements ActionListener, ListSelecti
 
 	private void resetButtonColors()
 	{
-		for(JButton b: buttonGroup)
+		for(JButton b: buttonGroup) {
 			b.setBackground(Color.BLUE);
+			b.setForeground(Color.WHITE);
+		}
 	}
 	
 	@Override
