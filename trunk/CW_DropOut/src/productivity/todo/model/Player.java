@@ -1,8 +1,9 @@
 package productivity.todo.model;
 
-import java.awt.Point;
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 import productivity.todo.ai.Controller;
 import productivity.todo.ai.DefaultBrain;
@@ -14,7 +15,7 @@ public class Player {
 	private int radius;
 	private String name;
 	private PlayerStats stats;
-	private ArrayList<Weapon> weapons;
+	private List<Weapon> weapons;
 	private double health;
 	private double orientation;
 	private int team;
@@ -30,7 +31,7 @@ public class Player {
 		location=new Point2D.Double(12,12);
 		direction = new Point2D.Double(0,0);
 		radius = 8;
-		weapons=new ArrayList<Weapon>();
+		weapons=Collections.synchronizedList(new ArrayList<Weapon>());
 		currWeapon=0;
 		orientation=0;
 	}
