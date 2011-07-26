@@ -33,6 +33,7 @@ import javax.swing.event.ListSelectionListener;
 import javax.swing.filechooser.FileFilter;
 
 import productivity.todo.config.GameMode;
+import productivity.todo.config.ZombiesWGuns;
 import productivity.todo.config.TeamDeathmatchMode;
 import productivity.todo.control.Shoot;
 import productivity.todo.model.GameMap;
@@ -202,7 +203,8 @@ public class MainMenuFrame extends JFrame implements ActionListener, ListSelecti
 		        char[] teams = new char[list.size()];
 		        for(int i =0; i < teams.length;i++)
 		        	teams[i]=list.get(i);
-			control.startGame(mapChosen, gameMode, teams, team);
+	        if(gameMode instanceof ZombiesWGuns) control.startGame(mapChosen, gameMode, team);
+	        else control.startGame(mapChosen, gameMode, teams, team);
 			this.dispose();
 		}
 		else

@@ -14,7 +14,9 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 
 import productivity.todo.config.GameMode;
+import productivity.todo.config.ZombiesWGuns;
 import productivity.todo.model.Player;
+import productivity.todo.model.PlayerType;
 import productivity.todo.model.Weapon;
 
 public class StatsFrame extends JFrame {
@@ -43,14 +45,28 @@ public class StatsFrame extends JFrame {
 			getContentPane().add(label);
 			labels.add(label);
 		}
-		
-		for(Player x: players) {
+		if(!(gameMode instanceof ZombiesWGuns)) {
+			for(Player x: players) {
+				label = new JLabel(x.getName() + ": " + x.getStats().getNumKills());
+				label.setPreferredSize(new Dimension(200, 30));
+				getContentPane().add(label);
+				labels.add(label);
+			}
+		}
+		else {
+			Player x = players.get(0);
 			label = new JLabel(x.getName() + ": " + x.getStats().getNumKills());
 			label.setPreferredSize(new Dimension(200, 30));
 			getContentPane().add(label);
 			labels.add(label);
 		}
 		
+	}
+	public Player getPlayer() {
+		for(int i = 0; i < players.size(); i++)
+			if(players.get(i).getType() == PlayerType.PERSON) 
+				return players.get(i);
+		return null;
 	}
 	public void updatePlayer(Player p)
 	{
@@ -65,8 +81,8 @@ public class StatsFrame extends JFrame {
 		for(int i = 0; i < teams.length;i++) {
 			labels.get(i).setText(gameMode.getScoreForTeam((teams[i]-75)));
 		}
-		for(int i = 0; i < players.size();i++)
-			labels.get(i+teams.length).setText(gameMode.getScoreForPlayer(players.get(i)));
+		if(gameMode instanceof ZombiesWGuns) labels.get(1).setText(gameMode.getScoreForPlayer(getPlayer()));
+		else for(int i = 0; i < players.size();i++) labels.get(i+teams.length).setText(gameMode.getScoreForPlayer(players.get(i)));
 			
 	}
 }
