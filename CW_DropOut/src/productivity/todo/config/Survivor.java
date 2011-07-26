@@ -8,12 +8,14 @@ import productivity.todo.model.Player;
 import productivity.todo.model.PlayerType;
 
 public class Survivor extends GameMode {
-	public static final int NUM_ENEMIES = 10;
+	public static final int NUM_ENEMIES = 20;
+	private long startTime;
 	
 	public Survivor() {}
 	
 	public Survivor(GameMap map) {
 		super(map);
+		startTime = System.currentTimeMillis();
 	}
 
 	@Override
@@ -27,15 +29,18 @@ public class Survivor extends GameMode {
 		
 	}
 
+	public long getStartTime() {
+		return startTime;
+	}
+
+	public void setStartTime(long startTime) {
+		this.startTime = startTime;
+	}
+
 	@Override
 	public int getWinningTeam() {
-//		int[] teamKills = new int[4];
-//		for(int i = 0; i < gameMap.getPlayers().size();i++)
-//		{
-//			teamKills[gameMap.getPlayers().get(i).getTeam()-1] += gameMap.getPlayers().get(i).getStats().getNumKills() - gameMap.getPlayers().get(i).getStats().getNumSuicides();
 		if(gameMap.getPlayer()==null)
 			return gameMap.getPlayers().get(1).getTeam();
-//		}
 		return -1;
 	}
 
