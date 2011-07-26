@@ -31,7 +31,7 @@ public class Pair<T1, T2> {
 		return hashCode() == p.hashCode();
 	}
 	public int hashCode(){
-		return first.hashCode()*31+second.hashCode();
+		return (first == null ? 0 : first.hashCode())*31+(second == null ? 0 : second.hashCode());
 	}
 	
 	public String toString(){

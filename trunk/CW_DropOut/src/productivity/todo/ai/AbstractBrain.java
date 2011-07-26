@@ -87,6 +87,7 @@ public abstract class AbstractBrain implements Controller {
 		objectives.add(o);
 	}
 	public final void move(Point2D.Double newLoc, Player p){
+		if (newLoc == null || p == null) return;
 		Point2D.Double currLoc = p.getLocation();
 		if (currLoc.distance(newLoc) > MAX_MOVE_DISTANCE){
 			Point2D.Double vector = getVectorBetween(currLoc, newLoc);
