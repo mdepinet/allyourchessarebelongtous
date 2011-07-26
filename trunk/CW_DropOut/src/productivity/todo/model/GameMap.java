@@ -40,6 +40,7 @@ public class GameMap{
 	private File mapChosen;
 	private Map<Integer, ArrayList<Point2D.Double>> spawnLocs;
 	private int pTeam;
+	private List<Point2D.Double> droppedWeps;
 	public GameMap(File mapFile)
 	{
 		spawnLocs = new HashMap<Integer, ArrayList<Point2D.Double>>();
@@ -54,6 +55,7 @@ public class GameMap{
 		explosions = new ArrayList<Explosion>();
 		threads = Collections.synchronizedList(new ArrayList<RespawnThread>());
 		players = Collections.synchronizedList(new LinkedList<Player>());
+		droppedWeps = new ArrayList<Point2D.Double>();
 	}
 	public void init(int playerTeam)
 	{
@@ -398,7 +400,7 @@ public class GameMap{
 			Weapon w;
 			if((w = getWeapon(p))!=null){
 				if(p.addWeapon(w)) {
-					if(w.getName().indexOf("Flag")==-1)
+					if(w.getName().indexOf("Flag")==-1 && !droppedWeps.remove(new Point2D.Double(getPlayerGridX(p), getPlayerGridY(p))))
 						new WeaponAdderThread(map[getPlayerGridX(p)][getPlayerGridY(p)], new Point(getPlayerGridX(p), getPlayerGridY(p)), this).start();
 					map[getPlayerGridX(p)][getPlayerGridY(p)] = '_';
 				}
@@ -579,6 +581,7 @@ public class GameMap{
 		if(p.hasFlag()) spawnWeapon(p.getFlag().getCharacter(), p.getFlag().getSpawnLoc());
 		if(!p.getCurrentWeapon().getType().equalsIgnoreCase("pistol")) {
 			map[getPlayerGridX(p)][getPlayerGridY(p)]=p.getCurrentWeapon().getCharacter();
+			droppedWeps.add(new Point2D.Double(getPlayerGridX(p),getPlayerGridY(p)));
 		} 
 		p.die();
 		int i;
