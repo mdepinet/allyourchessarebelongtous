@@ -59,6 +59,35 @@ public class Shoot implements KeyListener, MouseListener, MouseMotionListener, C
 
 		gameStart();
 	}
+
+	public void startGame(File mapFile, GameMode mode, int team) {
+		char[] teams = new char[1];
+		teams[0] = team == 1 ? 'L' : team==2 ? 'M' : team==3 ? 'N' : 'O';
+		holdCounter = -1;
+		map = new GameMap(mapFile);
+		mode.setGameMap(map);
+		map.setGameMode(mode);
+		map.init(team);
+		mouseLoc = new Point();
+		frame = new GameFrame("Shoot", map);
+		frame.getCanvas().addKeyListener(this);
+		frame.getCanvas().setFocusable(true);
+		frame.getCanvas().addMouseListener(this);
+		frame.getCanvas().addMouseMotionListener(this);
+		frame.getCanvas().requestFocusInWindow();
+		statsFrame = new StatsFrame(mode, map.getPlayers(), teams);
+		frame.addComponentListener(this);
+		frame.addWindowListener(new WindowAdapter(){
+	          public void windowIconified(WindowEvent e){
+	                statsFrame.setVisible(false);
+	          }
+	          public void windowDeiconified(WindowEvent e){
+	                statsFrame.setVisible(true);
+	          }
+	    });
+
+		gameStart();
+	}
 	 public void gameStart() { 
 	      // Create a new thread
 	      Thread gameThread =  new Thread() {

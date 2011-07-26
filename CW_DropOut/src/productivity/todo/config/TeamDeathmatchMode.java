@@ -30,9 +30,11 @@ public class TeamDeathmatchMode extends GameMode {
 		int[] teamKills = new int[4];
 		for(int i = 0; i < gameMap.getPlayers().size();i++)
 		{
-			teamKills[gameMap.getPlayers().get(i).getTeam()-1] += gameMap.getPlayers().get(i).getStats().getNumKills() - gameMap.getPlayers().get(i).getStats().getNumSuicides();
-			if(teamKills[gameMap.getPlayers().get(i).getTeam()-1]>=KILLS_TO_WIN)
-				return gameMap.getPlayers().get(i).getTeam();
+			if(gameMap.getPlayers().get(i).getTeam()!=5) {
+				teamKills[gameMap.getPlayers().get(i).getTeam()-1] += gameMap.getPlayers().get(i).getStats().getNumKills() - gameMap.getPlayers().get(i).getStats().getNumSuicides();
+				if(teamKills[gameMap.getPlayers().get(i).getTeam()-1]>=KILLS_TO_WIN)
+					return gameMap.getPlayers().get(i).getTeam();
+			}
 		}
 		return -1;
 	}

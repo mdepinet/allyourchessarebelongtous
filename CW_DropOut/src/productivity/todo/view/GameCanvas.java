@@ -69,7 +69,7 @@ public class GameCanvas extends Canvas {
 		}
 		for(int i = 0; i < gameMap.getPlayers().size();i++) {
 			Player p = gameMap.getPlayers().get(i);
-			if (p.getHealth() > 0){
+			if (p.getHealth() > 0 && p!=null){
 				Rectangle gun2;
 				if(p.getCurrentWeapon().getType().equals("rifle")) gun2 = new Rectangle((int)p.getLocation().getX()-8,(int)p.getLocation().getY(), 4, 12);
 				else if(p.getCurrentWeapon().getType().equals("grenade")) gun2 = new Rectangle((int)p.getLocation().getX()-8,(int)p.getLocation().getY(), 7, 8);

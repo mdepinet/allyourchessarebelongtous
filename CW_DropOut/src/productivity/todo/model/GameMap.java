@@ -20,7 +20,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
 
 import productivity.todo.config.GameMode;
-import productivity.todo.config.Survivor;
+import productivity.todo.config.ZombiesWGuns;
 import productivity.todo.config.TeamDeathmatchMode;
 import productivity.todo.view.GameCanvas;
 
@@ -63,15 +63,11 @@ public class GameMap{
 		players.add(player);
 		pTeam = playerTeam;
 		
-		if(gameMode instanceof Survivor) {
-			for(int i = 2; i < Survivor.NUM_ENEMIES+2; i++) {
-				Player foe = new Player("Player "  + i);
-				foe.setTeam(5);
-				players.add(foe);
-			}
+		if(gameMode instanceof ZombiesWGuns) {
+			((ZombiesWGuns)gameMode).addZombies(ZombiesWGuns.NUM_ENEMIES);
 		}
 		else {
-			for(int i = 1; i < spawnLocs.keySet().size()+1 && !spawnLocs.get(i).isEmpty(); i++) {
+			for(int i = 1; i < spawnLocs.keySet().size() && !spawnLocs.get(i).isEmpty(); i++) {
 				for(int j = 0; j < NUM_TEAMMATES; j++)
 				{
 					if(i == player.getTeam() && j == 0) continue;
@@ -91,15 +87,20 @@ public class GameMap{
 			}
 			else players.remove(i);
 		}
-		if(gameMode instanceof Survivor) ((Survivor)gameMode).setStartTime(System.currentTimeMillis());
+		if(gameMode instanceof ZombiesWGuns) ((ZombiesWGuns)gameMode).setStartTime(System.currentTimeMillis());
 	}
 	public void resetGame()
 	{
 		bullets.clear();
-		for(int i = 0; i < threads.size(); i++) { RespawnThread t = threads.get(i);
-		/*for(RespawnThread t: threads) {*/ t.kill(); t.respawn(); }
+		for(int i = 0; i < threads.size(); i++) { 
+			RespawnThread t = threads.get(i); 
+			t.respawn(); 
+			t.kill(); 
+		}
 		threads.clear();
-		if(gameMode instanceof Survivor) ((Survivor)gameMode).setStartTime(System.currentTimeMillis());
+		if(gameMode instanceof ZombiesWGuns) {
+			((ZombiesWGuns)gameMode).setStartTime(System.currentTimeMillis());
+		}
 		gameMode.loadGameObjects();
 		
 		for(int i = 0; i < players.size();i++)
@@ -272,8 +273,8 @@ public class GameMap{
 		gameMode.update();
 		int winner;
 		if((winner = gameMode.getWinningTeam()) != -1) {
-			if(winner==5) JOptionPane.showMessageDialog(null, "You died. You lasted " + ((System.currentTimeMillis() - ((Survivor)gameMode).getStartTime())/1000. ) + " seconds", "Game over!", 0, new ImageIcon(new Weapon((char)(pTeam+75), new Point()).getImage()));
-			else JOptionPane.showMessageDialog(null, teamNames[winner-1] + " Wins!", "Winner!", 0, new ImageIcon(new Weapon((char)(winner+75), new Point()).getImage()));
+			if(winner==5) JOptionPane.showMessageDialog(null, "You're dead. You lasted " + ((System.currentTimeMillis() - ((ZombiesWGuns)gameMode).getStartTime())/1000. ) + " seconds", "Game over!", 0, new ImageIcon(new Weapon((char)(pTeam+75), new Point()).getImage()));
+			else JOptionPane.showMessageDialog(null, teamNames[winner-1] + " Wins!", "Game over!", 0, new ImageIcon(new Weapon((char)(winner+75), new Point()).getImage()));
 			resetGame();
 		}
 		OUTTER: for(int i=0;i<bullets.size();i++) {
@@ -538,7 +539,9 @@ public class GameMap{
 				break;
 			}
 		}
-		threads.add(new RespawnThread(this, p, i == 0 && p.getType()==PlayerType.PERSON, 5000));
-		threads.get(threads.size()-1).start();
+		//if(!(gameMode instanceof ZombiesWGuns) || p.getType()==PlayerType.PERSON) {
+			threads.add(new RespawnThread(this, p, i == 0 && p.getType()==PlayerType.PERSON, 5000));
+			threads.get(threads.size()-1).start();
+//		}
 	}
 }

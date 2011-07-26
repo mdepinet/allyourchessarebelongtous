@@ -44,7 +44,8 @@ public class CaptureTheFlagMode extends GameMode {
 
 	@Override
 	public void update() {
-		for(Player p: gameMap.getPlayers()) {
+		for(int i = 0; i< gameMap.getPlayers().size(); i++) {
+			Player p = gameMap.getPlayers().get(i);
 			if(!(p.getCurrentWeapon()!=null && p.getCurrentWeapon().getName().indexOf("Flag")!=-1))
 			{
 				if(getClosestOtherTeamFlagLocation(p)!=null)
