@@ -7,6 +7,10 @@
 -ca +c
 -pan
 -mon
+-fer
+-fe
+-en
+-chi
 bel
 os
 ta
@@ -20,6 +24,9 @@ pe
 er
 par
 a +c
+nan
+li
+qu -v +v
 +pé
 +ño
 +do
