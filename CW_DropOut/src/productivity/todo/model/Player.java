@@ -7,8 +7,8 @@ import java.util.List;
 
 import productivity.todo.ai.AbstractBrain;
 import productivity.todo.ai.Controller;
-import productivity.todo.ai.DefaultBrain;
 import productivity.todo.ai.Objective;
+import productivity.todo.ai.mike.SmartBrain;
 
 public class Player implements Comparable<Player> {
 	public static final double REGEN_SPEED = 1/15.;
@@ -30,7 +30,7 @@ public class Player implements Comparable<Player> {
 		health = 100;
 		type = PlayerType.COMPUTER;
 		stats = new PlayerStats();
-		brain = new DefaultBrain();
+		brain = new SmartBrain();
 		location=new Point2D.Double(12,12);
 		direction = new Point2D.Double(0,0);
 		radius = 8;
@@ -44,7 +44,7 @@ public class Player implements Comparable<Player> {
 		health = 100;
 		type = PlayerType.COMPUTER;
 		stats = new PlayerStats();
-		brain = new DefaultBrain();
+		brain = new SmartBrain();
 		radius = 8;
 		location=new Point2D.Double(12,12);
 		direction = new Point2D.Double(0,0);
