@@ -15,7 +15,18 @@ public class DefaultBrain extends AbstractBrain {
 		Player enemy = getClosestEnemy(map,p);
 		Point2D.Double location = p.getLocation();
 		Point2D.Double newLoc;
-		Point2D.Double destLoc = map.fromGridPoint(objectives.get(0).getLocation());
+		Point2D.Double destLoc;
+		if(!objectives.isEmpty()) destLoc = map.fromGridPoint(objectives.get(0).getLocation());
+		else {
+			if(enemy!=null) {
+				Point2D.Double pLoc = enemy.getLocation();
+				Point2D.Double wLoc = getClosestWeaponLoc(map, p);
+				destLoc = (wLoc==null || location.distance(pLoc) < location.distance(wLoc)) ? pLoc : wLoc;
+			}
+			else {
+				destLoc = getClosestWeaponLoc(map, p);
+			}
+		}
 		if(destLoc!=null)
 		{
 			newLoc = addPoints(location,getSmartDirectionToLoc(location,destLoc,map));
@@ -29,7 +40,7 @@ public class DefaultBrain extends AbstractBrain {
 					if(location.distance(enemy.getLocation())<=enemy.getCurrentWeapon().getEffRange())
 					{
 						if(Math.abs(Math.sin(p.getOrientation()+Math.PI) - Math.sin(enemy.getOrientation()))<=Math.PI/5)
-							newLoc = addPoints(location,multiplyPointByScalar(getSmartDirectionToLoc(location,enemy.getLocation(),map),-1));
+							newLoc = addPoints(location,multiplyPointByScalar(getSmartDirectionToLoc(location,enemy.getLocation(),map),1));
 					}
 					if(location.distance(enemy.getLocation())<=p.getCurrentWeapon().getEffRange()*1.5)
 					{

@@ -20,6 +20,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
 
 import productivity.todo.config.GameMode;
+import productivity.todo.config.Survivor;
 import productivity.todo.config.TeamDeathmatchMode;
 import productivity.todo.view.GameCanvas;
 
@@ -45,6 +46,7 @@ public class GameMap{
 		spawnLocs.put(2, new ArrayList<Point2D.Double>());
 		spawnLocs.put(3, new ArrayList<Point2D.Double>());
 		spawnLocs.put(4, new ArrayList<Point2D.Double>());
+		spawnLocs.put(5, new ArrayList<Point2D.Double>());
 		mapChosen = mapFile;
 		bullets = new ArrayList<Bullet>();
 		gameMode = new TeamDeathmatchMode(this);
@@ -59,14 +61,24 @@ public class GameMap{
 		player.setTeam(playerTeam);
 		player.setType(PlayerType.PERSON);
 		players.add(player);
+		pTeam = playerTeam;
 		
-		for(int i = 1; i < spawnLocs.keySet().size()+1 && !spawnLocs.get(i).isEmpty(); i++) {
-			for(int j = 0; j < NUM_TEAMMATES; j++)
-			{
-				if(i == player.getTeam() && j == 0) continue;
-				Player p2 = new Player("Player " + (((i-1)*2)+j+(i>=player.getTeam()?1:2)));
-				p2.setTeam(i);
-				players.add(p2);
+		if(gameMode instanceof Survivor) {
+			for(int i = 2; i < Survivor.NUM_ENEMIES+2; i++) {
+				Player foe = new Player("Player "  + i);
+				foe.setTeam(5);
+				players.add(foe);
+			}
+		}
+		else {
+			for(int i = 1; i < spawnLocs.keySet().size()+1 && !spawnLocs.get(i).isEmpty(); i++) {
+				for(int j = 0; j < NUM_TEAMMATES; j++)
+				{
+					if(i == player.getTeam() && j == 0) continue;
+					Player p2 = new Player("Player " + (((i-1)*2)+j+(i>=player.getTeam()?1:2)));
+					p2.setTeam(i);
+					players.add(p2);
+				}
 			}
 		}
 		for(int i = 0; i < players.size();i++)
@@ -75,17 +87,19 @@ public class GameMap{
 			if(spawnLocs.get(new Integer(p.getTeam()))==null) System.out.println("null");
 			if(!spawnLocs.get(new Integer(p.getTeam())).isEmpty()) {
 				spawn(p);
-				p.setLocation(spawnLocs.get(p.getTeam()).get((int)(Math.random()*spawnLocs.size())));
+				p.setLocation(spawnLocs.get(p.getTeam()).get((int)(Math.random()*spawnLocs.get(p.getTeam()).size())));
 			}
 			else players.remove(i);
 		}
+		if(gameMode instanceof Survivor) ((Survivor)gameMode).setStartTime(System.currentTimeMillis());
 	}
 	public void resetGame()
 	{
 		bullets.clear();
-		for(RespawnThread t: threads) { t.kill(); t.respawn(); }
+		for(int i = 0; i < threads.size(); i++) { RespawnThread t = threads.get(i);
+		/*for(RespawnThread t: threads) {*/ t.kill(); t.respawn(); }
 		threads.clear();
-		
+		if(gameMode instanceof Survivor) ((Survivor)gameMode).setStartTime(System.currentTimeMillis());
 		gameMode.loadGameObjects();
 		
 		for(int i = 0; i < players.size();i++)
@@ -96,7 +110,7 @@ public class GameMap{
 			if(spawnLocs.get(new Integer(p.getTeam()))==null) System.out.println("null");
 			if(!spawnLocs.get(new Integer(p.getTeam())).isEmpty()) {
 				spawn(p);
-				p.setLocation(spawnLocs.get(p.getTeam()).get((int)(Math.random()*spawnLocs.size())));
+				p.setLocation(spawnLocs.get(p.getTeam()).get((int)(Math.random()*spawnLocs.get(p.getTeam()).size())));
 			}
 			else players.remove(i);
 		}
@@ -125,7 +139,7 @@ public class GameMap{
 					map[j][i] = next.charAt(0);
 				else
 					map[j][i] = '_';
-				if (next.matches("\\d+")) { if(next.equals("1") || next.equals("2") || next.equals("3") || next.equals("4")) { spawnLocs.get(new Integer(next)).add(new Point2D.Double((j*GRID_PIXELS)+12.5,(i*GRID_PIXELS)+12.5)); map[j][i] = '_'; } }
+				if (next.matches("\\d+")) { if(next.equals("1") || next.equals("2") || next.equals("3") || next.equals("4") || next.equals("5")) { spawnLocs.get(new Integer(next)).add(new Point2D.Double((j*GRID_PIXELS)+12.5,(i*GRID_PIXELS)+12.5)); map[j][i] = '_'; } }
 			}
 			if(scan.hasNextLine())
 				scan.nextLine();
@@ -241,12 +255,6 @@ public class GameMap{
 	public void setPlayer(Player player) {
 		this.players.set(0, player);
 	}
-	public int getpTeam() {
-		return pTeam;
-	}
-	public void setpTeam(int pTeam) {
-		this.pTeam = pTeam;
-	}
 	public ArrayList<Explosion> getExplosions() {
 		return explosions;
 	}
@@ -264,7 +272,8 @@ public class GameMap{
 		gameMode.update();
 		int winner;
 		if((winner = gameMode.getWinningTeam()) != -1) {
-			JOptionPane.showMessageDialog(null, teamNames[winner-1] + " Wins!", "Winner!", 0, new ImageIcon(new Weapon((char)(winner+75), new Point()).getImage()));
+			if(winner==5) JOptionPane.showMessageDialog(null, "You died. You lasted " + ((System.currentTimeMillis() - ((Survivor)gameMode).getStartTime())/1000. ) + " seconds", "Game over!", 0, new ImageIcon(new Weapon((char)(pTeam+75), new Point()).getImage()));
+			else JOptionPane.showMessageDialog(null, teamNames[winner-1] + " Wins!", "Winner!", 0, new ImageIcon(new Weapon((char)(winner+75), new Point()).getImage()));
 			resetGame();
 		}
 		OUTTER: for(int i=0;i<bullets.size();i++) {
