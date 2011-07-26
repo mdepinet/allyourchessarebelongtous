@@ -116,12 +116,13 @@ public class GameCanvas extends Canvas {
 			if(gameMap.getPlayer().getCurrentWeapon().getClipSize()==0 && !gameMap.getPlayer().getCurrentWeapon().getType().equalsIgnoreCase("melee"))
 				backg.drawString("Reloading...", GameMap.WIDTH-100, GameMap.HEIGHT-10);
 			else{
-				for(int i=0; i < gameMap.getPlayer().getCurrentWeapon().getClipSize()*((gameMap.getPlayer().getCurrentWeapon().getType().equalsIgnoreCase("shotgun"))? 1 : gameMap.getPlayer().getCurrentWeapon().getRoundsPerShot());i++)
+				int clipSize = gameMap.getPlayer().getCurrentWeapon().getClipSize()*((gameMap.getPlayer().getCurrentWeapon().getType().equalsIgnoreCase("shotgun"))? 1 : gameMap.getPlayer().getCurrentWeapon().getRoundsPerShot());
+				for(int i=0; i < clipSize;i++)
 				{	
-					if(i<20)
+					if(i<20 || i<clipSize/2)
 						backg.fillRect(GameMap.WIDTH-7-(i*6),GameMap.HEIGHT-23, 4, 10);
 					else
-						backg.fillRect(GameMap.WIDTH-7-((i-20)*6),GameMap.HEIGHT-11, 4, 10);
+						backg.fillRect(GameMap.WIDTH-7-((i-Math.max(20, clipSize/2)))*6,GameMap.HEIGHT-11, 4, 10);
 				}
 			}
 		}
