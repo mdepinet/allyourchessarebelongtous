@@ -1,15 +1,29 @@
--jal
 -cór
--jos
--rod
--rob
+-jos +v
+-rod +v
+-rob +v
+-car
+-es
+-ca +c
+-pan
+-mon
+bel
 os
-v
+ta
+te
+té +c
+v +v -v
 an
 ber
 al
+pe
+er
+par
+a +c
++pé
++ño
 +do
-+alapeño
++go
 +a
 +o
 +é
@@ -19,3 +33,5 @@ al
 +ón
 +íto
 +guéz
++igo
++za
