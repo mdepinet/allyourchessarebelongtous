@@ -71,9 +71,9 @@ public class GameCanvas extends Canvas {
 			Player p = gameMap.getPlayers().get(i);
 			if (p.getHealth() > 0 && p!=null){
 				Rectangle gun2;
-				if(p.getCurrentWeapon().getType().equals("rifle")) gun2 = new Rectangle((int)p.getLocation().getX()-8,(int)p.getLocation().getY(), 4, 12);
-				else if(p.getCurrentWeapon().getType().equals("grenade")) gun2 = new Rectangle((int)p.getLocation().getX()-8,(int)p.getLocation().getY(), 7, 8);
-				else  gun2 = new Rectangle((int)p.getLocation().getX()-8,(int)p.getLocation().getY(), 4, 12);
+				/*if(p.getCurrentWeapon().getType().equals("rifle")) gun2 = new Rectangle((int)p.getLocation().getX()-8,(int)p.getLocation().getY(), 4, 12);
+				else if(p.getCurrentWeapon().getType().equals("grenade")) gun2 = new Rectangle((int)p.getLocation().getX()-8,(int)p.getLocation().getY(), 7, 8);*/
+				gun2 = new Rectangle((int)p.getLocation().getX()-8,(int)p.getLocation().getY(), 4, 12);
 				AffineTransform transform = new AffineTransform();
 				transform.rotate(p.getOrientation(), p.getLocation().x, p.getLocation().y);
 				backg.draw(transform.createTransformedShape(gun2));
@@ -90,7 +90,7 @@ public class GameCanvas extends Canvas {
 				backg.fillOval((int)p.getLocation().getX()-8,(int)p.getLocation().getY()-8, 16, 16);
 				backg.drawString(p.getName(), (int)(p.getLocation().getX()-metrics.stringWidth(p.getName())/2), (int)(p.getLocation().getY()-p.getRadius()-2));
 				backg.setColor(Color.BLACK);
-				if(p.getCurrentWeapon().getImage()!=null)
+				if(p.getCurrentWeapon() !=null && p.getCurrentWeapon().getImage()!=null)
 				{
 					backg.drawImage(p.getCurrentWeapon().getImage(), (int)p.getLocation().x+6, (int)p.getLocation().y-15, 30, 15, this);
 				}
