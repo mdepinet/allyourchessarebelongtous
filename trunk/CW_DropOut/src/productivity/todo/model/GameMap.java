@@ -252,7 +252,7 @@ public class GameMap{
 		}
 		return ret;
 	}
-	public Player getClosestTeamPlayer(int team,Point2D.Double loc)
+	public Player getClosestNonTeamPlayer(int team,Point2D.Double loc)
 	{
 		double dist = Double.MAX_VALUE;
 		Player ret = null;
@@ -265,6 +265,34 @@ public class GameMap{
 			}
 		}
 		return ret;
+	}
+	public Player getClosestTeamPlayer(int team,Point2D.Double loc)
+	{
+		double dist = Double.MAX_VALUE;
+		Player ret = null;
+		for(int i = 0; i < players.size();i++)
+		{
+			Player p = players.get(i);
+			if(p.getTeam()==team)
+			{
+				if(loc.distance(p.getLocation())<dist) { dist = loc.distance(p.getLocation()); ret = p; }
+			}
+		}
+		return ret;
+	}
+	public Player[] getEnemies(Player p){
+		List<Player> enemies = new LinkedList<Player>();
+		for (Player o : players){
+			if (o.getTeam()!=p.getTeam()) enemies.add(o);
+		}
+		return enemies.toArray(new Player[enemies.size()]);
+	}
+	public Player[] getAllies(Player p){
+		List<Player> allies = new LinkedList<Player>();
+		for (Player o : players){
+			if (o.getTeam()==p.getTeam()) allies.add(o);
+		}
+		return allies.toArray(new Player[allies.size()]);
 	}
 	public Player getPlayer() {
 		if(players.get(0).getType()==PlayerType.PERSON)
