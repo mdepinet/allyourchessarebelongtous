@@ -1,7 +1,10 @@
 -jal
 -cór
 -jos
- 
+-rod
+os
+v
+ber
 +alapeño
 +a
 +o
@@ -11,3 +14,4 @@
 +los
 +ón
 +íto
++guéz
