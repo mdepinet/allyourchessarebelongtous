@@ -17,6 +17,7 @@ import java.io.File;
 import productivity.todo.config.GameMode;
 import productivity.todo.menu.MainMenuFrame;
 import productivity.todo.model.GameMap;
+import productivity.todo.model.Weapon;
 import productivity.todo.view.GameFrame;
 import productivity.todo.view.StatsFrame;
 
@@ -114,8 +115,11 @@ public class Shoot implements KeyListener, MouseListener, MouseMotionListener, C
 		         if(holdCounter>=0)
 		         {
 		        	 holdCounter++;
-		        	 if(holdCounter > 15 && map.getPlayer().getCurrentWeapon().canShoot())
+		        	 Weapon w =map.getPlayer().getCurrentWeapon();
+		        	 if(holdCounter > 15 && !w.getType().equalsIgnoreCase("minigun") && w.canShoot())
 		     			map.shoot(map.getPlayer());
+		        	 else if(holdCounter>40 && w.canShoot())
+		        		map.shoot(map.getPlayer());
 		         }
 	         }
 	         else
