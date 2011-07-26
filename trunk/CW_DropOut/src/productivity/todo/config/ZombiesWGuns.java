@@ -1,18 +1,23 @@
 package productivity.todo.config;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import productivity.todo.model.GameMap;
 import productivity.todo.model.NameGenerator;
 import productivity.todo.model.Player;
 
 public class ZombiesWGuns extends GameMode {
-	public static final int NUM_ENEMIES = 20;
+	public static final int NUM_ENEMIES = 10;
+	public static final int WAVE_TIME_LIMIT = 10;
+	public static final int ZOMBIES_TEAM_NUM = 5;
 	private long startTime;
 	private int wave;
 	private long waveStartTime;
 	private Player player;
 	private int numZombies;
+	private List<Player> zombies;
 	public ZombiesWGuns() {}
 	
 	public ZombiesWGuns(GameMap map) {
@@ -22,6 +27,10 @@ public class ZombiesWGuns extends GameMode {
 		waveStartTime = System.currentTimeMillis();
 		wave = 1;
 		numZombies = 1;
+		zombies = new ArrayList<Player>();
+	}
+	public void createZombieList() {
+		zombies = new ArrayList<Player>();
 	}
 
 	@Override
@@ -32,18 +41,21 @@ public class ZombiesWGuns extends GameMode {
 	@Override
 	public void update() {
 		player = gameMap.getPlayer();
-		if((System.currentTimeMillis() - getStartTime())/1000. >= 45) {
-			addZombies(NUM_ENEMIES);
+		if((System.currentTimeMillis() - getWaveStartTime())/1000. >= WAVE_TIME_LIMIT) {
+			addZombies(5);
 			respawnZombies();
 			setWave(getWave()+1);
 			setWaveStartTime(System.currentTimeMillis());
 		}
 	}
 	public void respawnZombies() {
-		if(gameMap.getPlayers().size()>0) {
-			for(int i = 0; i < gameMap.getPlayers().size(); i++)
-				if(gameMap.getPlayers().get(i).getHealth()<=0)
-					gameMap.spawn(gameMap.getPlayers().get(i));
+		//if(zombies==null) zombies = new ArrayList<Player>();
+		if(zombies.size()>0) {
+			for(int i = 0; i < zombies.size(); i++)
+				if(zombies.get(i).getHealth()<=0) {
+					gameMap.spawn(zombies.get(i));
+					zombies.remove(i--);
+				}
 		}
 	}
 	public void addZombies(int num) {
@@ -59,7 +71,12 @@ public class ZombiesWGuns extends GameMode {
 			Player foe = new Player(gen.compose((int)(Math.random()*3)+2));
 			foe.setTeam(5);
 			gameMap.getPlayers().add(foe);
+			gameMap.spawn(foe);
+			//zombies.add(foe);
 		}
+	}
+	public List<Player> getDeadZombies() {
+		return zombies;
 	}
 	public void setWaveStartTime(long start) {
 		waveStartTime = start;
@@ -80,11 +97,15 @@ public class ZombiesWGuns extends GameMode {
 	public void setWave(int num) {
 		wave = num;
 	}
+	public void addDeadZombie(Player p) {
+		if(zombies==null) zombies = new ArrayList<Player>();
+		zombies.add(p);
+	}
 	@Override
 	public int getWinningTeam() {
 		if(gameMap.getPlayer()==null)
 			if(gameMap.getPlayer()==null)
-				return gameMap.getPlayers().get(1).getTeam();
+				return ZOMBIES_TEAM_NUM;
 		return -1;
 	}
 
@@ -98,12 +119,13 @@ public class ZombiesWGuns extends GameMode {
 
 	@Override
 	public String getScoreForTeam(int team) {
-		int kills = 0;
+		/*int kills = 0;
 		for(Player p : gameMap.getPlayers()) {
 			if(p.getTeam()==team)
 				kills += p.getStats().getNumKills();
 		}
-		return ""+kills;
+		return ""+kills;*/
+		return "Wave " + (getWave()==0 ? 1 : getWave());
 	}
 
 }

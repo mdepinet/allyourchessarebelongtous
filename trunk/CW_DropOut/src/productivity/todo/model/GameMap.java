@@ -71,6 +71,7 @@ public class GameMap{
 			e.printStackTrace();
 		}
 		if(gameMode instanceof ZombiesWGuns) {
+			((ZombiesWGuns)gameMode).createZombieList();
 			((ZombiesWGuns)gameMode).addZombies(ZombiesWGuns.NUM_ENEMIES);
 		}
 		else {
@@ -108,6 +109,15 @@ public class GameMap{
 		threads.clear();
 		if(gameMode instanceof ZombiesWGuns) {
 			((ZombiesWGuns)gameMode).setStartTime(System.currentTimeMillis());
+			for(int i = 0; i < players.size(); i++)
+				if(players.get(i).getType()!=PlayerType.PERSON) {
+					players.remove(i);
+					i--;
+				}
+			((ZombiesWGuns)gameMode).addZombies(ZombiesWGuns.NUM_ENEMIES);
+			((ZombiesWGuns)gameMode).setWave(1);
+			((ZombiesWGuns)gameMode).setWaveStartTime(System.currentTimeMillis());
+			((ZombiesWGuns)gameMode).getDeadZombies().clear();
 		}
 		gameMode.loadGameObjects();
 		
@@ -547,9 +557,12 @@ public class GameMap{
 				break;
 			}
 		}
-		//if(!(gameMode instanceof ZombiesWGuns) || p.getType()==PlayerType.PERSON) {
+		if(!(gameMode instanceof ZombiesWGuns) || p.getType()==PlayerType.PERSON) {
 			threads.add(new RespawnThread(this, p, i == 0 && p.getType()==PlayerType.PERSON, 5000));
 			threads.get(threads.size()-1).start();
-//		}
+		}
+		else if(gameMode instanceof ZombiesWGuns && p.getType()==PlayerType.COMPUTER && p.getTeam() == 5) {
+			((ZombiesWGuns)gameMode).getDeadZombies().add(p);
+		}
 	}
 }
