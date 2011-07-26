@@ -64,7 +64,7 @@ public class GameMap{
 		pTeam = playerTeam;
 		NameGenerator gen = null;
 		try {
-			gen = new NameGenerator("resource/nameParts.txt");
+			gen = new NameGenerator("resource/namePartsArab.txt");
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
