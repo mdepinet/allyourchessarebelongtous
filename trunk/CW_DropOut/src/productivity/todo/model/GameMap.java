@@ -548,7 +548,10 @@ public class GameMap{
 	}
 	
 	private void kill(Player p){
-		if(p.hasFlag()) spawnWeapon(p.getFlag().getCharacter(), p.getFlag().getSpawnLoc()); 
+		if(p.hasFlag()) spawnWeapon(p.getFlag().getCharacter(), p.getFlag().getSpawnLoc());
+		if(!p.getCurrentWeapon().getType().equalsIgnoreCase("pistol")) {
+			map[getPlayerGridX(p)][getPlayerGridY(p)]=p.getCurrentWeapon().getCharacter();
+		} 
 		p.die();
 		int i;
 		for (i = 0; i<players.size(); i++){
