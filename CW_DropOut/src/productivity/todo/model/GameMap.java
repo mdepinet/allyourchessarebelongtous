@@ -62,7 +62,13 @@ public class GameMap{
 		player.setType(PlayerType.PERSON);
 		players.add(player);
 		pTeam = playerTeam;
-		
+		NameGenerator gen = null;
+		try {
+			gen = new NameGenerator("resource/nameParts.txt");
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		if(gameMode instanceof ZombiesWGuns) {
 			((ZombiesWGuns)gameMode).addZombies(ZombiesWGuns.NUM_ENEMIES);
 		}
@@ -71,7 +77,8 @@ public class GameMap{
 				for(int j = 0; j < NUM_TEAMMATES; j++)
 				{
 					if(i == player.getTeam() && j == 0) continue;
-					Player p2 = new Player("Player " + (((i-1)*2)+j+(i>=player.getTeam()?1:2)));
+					//Player p2 = new Player("Player " + (((i-1)*2)+j+(i>=player.getTeam()?1:2)));
+					Player p2 = new Player(gen.compose((int)(Math.random()*3)+2));
 					p2.setTeam(i);
 					players.add(p2);
 				}

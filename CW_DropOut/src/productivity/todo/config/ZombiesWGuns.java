@@ -1,6 +1,9 @@
 package productivity.todo.config;
 
+import java.io.IOException;
+
 import productivity.todo.model.GameMap;
+import productivity.todo.model.NameGenerator;
 import productivity.todo.model.Player;
 
 public class ZombiesWGuns extends GameMode {
@@ -44,8 +47,16 @@ public class ZombiesWGuns extends GameMode {
 		}
 	}
 	public void addZombies(int num) {
+		NameGenerator gen = null;
+		try {
+			gen = new NameGenerator("resource/nameParts.txt");
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		for(int i = 1; i < num; i++) {
-			Player foe = new Player("Zombie "  + numZombies++);
+			//Player foe = new Player("Zombie "  + numZombies++);
+			Player foe = new Player(gen.compose((int)(Math.random()*3)+2));
 			foe.setTeam(5);
 			gameMap.getPlayers().add(foe);
 		}
