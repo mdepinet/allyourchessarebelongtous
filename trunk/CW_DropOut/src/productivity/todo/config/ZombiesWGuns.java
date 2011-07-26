@@ -49,7 +49,7 @@ public class ZombiesWGuns extends GameMode {
 	public void addZombies(int num) {
 		NameGenerator gen = null;
 		try {
-			gen = new NameGenerator("resource/namePartsArab.txt");
+			gen = new NameGenerator(GameMap.NAMETYPES);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
