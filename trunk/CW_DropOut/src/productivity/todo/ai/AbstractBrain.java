@@ -13,6 +13,7 @@ import productivity.todo.model.Weapon;
 
 public abstract class AbstractBrain implements Controller {
 	protected static final double MAX_MOVE_DISTANCE = 2.;
+	protected static final double MIN_MOVE_DISTANCE = 0.5;
 	protected static MapGraph graph = new MapGraph();
 	protected List<Objective> objectives = new ArrayList<Objective>();
 	
@@ -91,6 +92,9 @@ public abstract class AbstractBrain implements Controller {
 			Point2D.Double vector = getVectorBetween(currLoc, newLoc);
 			vector = scaleVector(normalize(vector), MAX_MOVE_DISTANCE);
 			p.setLocation(addVectors(currLoc,vector));
+		}
+		else if (currLoc.distance(newLoc) < MIN_MOVE_DISTANCE){
+			//Do nothing (Don't fidget!)
 		}
 		else p.setLocation(newLoc);
 	}
