@@ -32,7 +32,7 @@ public class GameMap{
 	public static final int WIDTH = 750;
 	public static final int GRID_PIXELS = GameCanvas.GRID_PIXELS;
 	public static final int NUM_TEAMMATES = 2;
-	public static final String NAMETYPES = "resource/namePartsHispanic.txt";
+	public static final String NAMETYPES = "resource/namePartsArab.txt";
 	private GameMode gameMode;
 	private List<RespawnThread> threads;
 	private ArrayList<Bullet> bullets;
