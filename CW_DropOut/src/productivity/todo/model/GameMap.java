@@ -291,7 +291,7 @@ public class GameMap{
 		gameMode.update();
 		int winner;
 		if((winner = gameMode.getWinningTeam()) != -1) {
-			if(winner==5) JOptionPane.showMessageDialog(null, "You're dead. You lasted " + ((System.currentTimeMillis() - ((ZombiesWGuns)gameMode).getStartTime())/1000. ) + " seconds", "Game over!", 0, new ImageIcon(new Weapon((char)(pTeam+75), new Point()).getImage()));
+			if(winner==5) JOptionPane.showMessageDialog(null, "You're dead. You lasted " + ((System.currentTimeMillis() - ((ZombiesWGuns)gameMode).getStartTime())/1000. ) + " seconds and survived through " + ((ZombiesWGuns)gameMode).getWave() + " waves.", "Game over!", 0, new ImageIcon(new Weapon((char)(pTeam+75), new Point()).getImage()));
 			else JOptionPane.showMessageDialog(null, teamNames[winner-1] + " Wins!", "Game over!", 0, new ImageIcon(new Weapon((char)(winner+75), new Point()).getImage()));
 			resetGame();
 		}

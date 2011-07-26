@@ -75,8 +75,10 @@ public class StatsFrame extends JFrame {
 				players.set(i, p);
 	}
 	public void updateStats(List<Player> p) {
-		for(Player x:p)
+		for(int i = 0; i<p.size(); i++) {
+			Player x = p.get(i);
 			updatePlayer(x);
+		}
 		Collections.sort(players);
 		for(int i = 0; i < teams.length;i++) {
 			labels.get(i).setText(gameMode.getScoreForTeam((teams[i]-75)));
