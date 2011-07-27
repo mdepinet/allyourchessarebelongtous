@@ -19,10 +19,13 @@ public class CaptureTheFlagMode extends GameMode {
 	private static final int capturesToWin = 3;
 	private Map<Player, Integer> flagsCaptured;
 	private Map<Integer, Point> flagSpawnLocs;
+	//indices of the longs are the teams which those flags belong to
+	private long[] flagRespawnTimes;
 	private static final char[] FLAG_CHARS= {'L','M','N','O'};
 	public CaptureTheFlagMode(){
 		flagsCaptured = new HashMap<Player,Integer>();
 		flagSpawnLocs = new HashMap<Integer, Point>();
+		flagRespawnTimes= new long[4];
 	}
 	@Override
 	public String getModeName() {
@@ -65,7 +68,8 @@ public class CaptureTheFlagMode extends GameMode {
 
 	@Override
 	public void update(List<Player> players) {
-		for(Player p : players){
+		for(int i = 0; i<players.size(); i++){
+			Player p = players.get(i);
 			if(isFlag(p.getCurrWeapon())){
 				if(flagSpawnLocs.get(p.getTeam()).equals(GameMap.getGridPoint(p.getLocation())) && modeMap[flagSpawnLocs.get(p.getTeam()).x][flagSpawnLocs.get(p.getTeam()).y]==(char)(p.getTeam()+75)) {
 					flagsCaptured.put(p, (flagsCaptured.get(p)!=null ? flagsCaptured.get(p)+1 : 1));
@@ -86,9 +90,22 @@ public class CaptureTheFlagMode extends GameMode {
 				}
 			}
 		}
+		//Respawn any flags that have been sitting around for >10 seconds
+		for(int i = 0; i<flagRespawnTimes.length;i++){
+			if(flagRespawnTimes[i]!=0)
+				if(System.currentTimeMillis()>flagRespawnTimes[i]+10000){
+					for(int r = 0; r<modeMap.length; r++)
+						for(int c = 0; c<modeMap[r].length; c++)
+							if(modeMap[r][c]==(char)(i+75))
+								modeMap[r][c]=GameOptions.BLANK_CHARACTER;
+					modeMap[flagSpawnLocs.get(i).x][flagSpawnLocs.get(i).x] = (char)(i+75);
+				}
+					
+		}
 	}
 	private void resetMode(List<Player> players)
 	{
+		flagRespawnTimes= new long[4];
 		for(Player p : players) {
 			p.getWeapons().clear(); p.addWeapon(new Weapon("Default"), this);
 		}
@@ -155,6 +172,7 @@ public class CaptureTheFlagMode extends GameMode {
 		if(playerHasFlag(p)){
 			Point loc = GameMap.getGridPoint(p.getLocation());
 			modeMap[loc.x][loc.y]=p.getCurrWeapon().getCharacter();
+			flagRespawnTimes[p.getTeam()] = System.currentTimeMillis();
 		}
 
 	}
