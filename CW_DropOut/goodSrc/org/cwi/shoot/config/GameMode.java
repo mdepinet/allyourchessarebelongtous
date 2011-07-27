@@ -101,4 +101,8 @@ public abstract class GameMode {
 			}
 		}
 	}
+	
+	public boolean handlesRespawn(){
+		return false;
+	}
 }

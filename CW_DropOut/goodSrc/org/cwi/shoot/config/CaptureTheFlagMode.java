@@ -118,11 +118,11 @@ public class CaptureTheFlagMode extends GameMode {
 			modeMap[flagSpawnLocs.get(i).x][flagSpawnLocs.get(i).y] = (char)(i+75);
 	}
 	private boolean isFlag(Weapon w){
-		return w.getType()==WeaponType.OBJECTIVE;
+		return w != null && w.getType()==WeaponType.OBJECTIVE;
 	}
 	
 	private boolean playerHasFlag(Player p) {
-		return p.getCurrWeapon().getType().equals(WeaponType.OBJECTIVE);
+		return p.getCurrWeapon() != null && p.getCurrWeapon().getType().equals(WeaponType.OBJECTIVE);
 	}
 
 	@Override
@@ -176,8 +176,6 @@ public class CaptureTheFlagMode extends GameMode {
 			modeMap[loc.x][loc.y]=p.getCurrWeapon().getCharacter();
 			flagRespawnTimes[p.getTeam()] = System.currentTimeMillis();
 		}
-		threads.add(new RespawnThread(gameMap, p, p.getType()==PlayerType.HUMAN, 5000));
-		threads.get(threads.size()-1).start();
 	}
 
 	@Override
