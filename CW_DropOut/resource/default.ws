@@ -12,3 +12,4 @@ Team 1 Flag,	OBJECTIVE,0,	0,					0,		0,		1,				0,				-1,				0,		0,		resource/ima
 Team 2 Flag,	OBJECTIVE,0,	0,					0,		0,		1,				0,				-1,				0,		0,		resource/images/UKFlag.png,null,		M
 Team 3 Flag,	OBJECTIVE,0,	0,					0,		0,		1,				0,				-1,				0,		0,		resource/images/MexicoFlag.jpg,null,	N
 Team 4 Flag,	OBJECTIVE,0,	0,					0,		0,		1,				0,				-1,				0,		0,		resource/images/CanadaFlag.png,null,	O
+OddBall,		OBJECTIVE,0,	0,					0,		0,		1,				0,				-1,				0,		0,		null,				null,				I
