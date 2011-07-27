@@ -10,5 +10,5 @@ BFG,			SPECIAL,100,	600,				10,		10,		1,				1,				3,				50,		50,		resource/BFG,	
 Minigun,		SPECIAL,12,		200,				13,		1,		30,				200,			1,				1,		10,		resource/Minigun,	resource/bullet,	C
 Team 1 Flag,	OBJECTIVE,0,	0,					0,		0,		1,				0,				-1,				0,		0,		resource/images/USFlag.gif,null,		L
 Team 2 Flag,	OBJECTIVE,0,	0,					0,		0,		1,				0,				-1,				0,		0,		resource/images/UKFlag.png,null,		M
-Team 3 Flag,	OBJECTIVE,0,	0,					0,		0,		1,				0,				-1,				0,		0,		resource/images/MexicoFlag.gif,null,	N
+Team 3 Flag,	OBJECTIVE,0,	0,					0,		0,		1,				0,				-1,				0,		0,		resource/images/MexicoFlag.jpg,null,	N
 Team 4 Flag,	OBJECTIVE,0,	0,					0,		0,		1,				0,				-1,				0,		0,		resource/images/CanadaFlag.png,null,	O
