@@ -1,9 +1,9 @@
-package productivity.todo.model;
+package org.cwi.shoot.threads;
 
 import java.awt.Point;
-import java.awt.geom.Point2D;
-import java.util.LinkedList;
-import java.util.Random;
+
+import org.cwi.shoot.map.GameMap;
+
 
 public class WeaponAdderThread extends Thread {
 	private GameMap gameMap;

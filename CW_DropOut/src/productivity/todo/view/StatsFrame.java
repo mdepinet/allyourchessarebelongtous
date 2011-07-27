@@ -64,7 +64,7 @@ public class StatsFrame extends JFrame {
 	}
 	public Player getPlayer() {
 		for(int i = 0; i < players.size(); i++)
-			if(players.get(i).getType() == PlayerType.PERSON) 
+			if(players.get(i).getType() == PlayerType.HUMAN) 
 				return players.get(i);
 		return null;
 	}

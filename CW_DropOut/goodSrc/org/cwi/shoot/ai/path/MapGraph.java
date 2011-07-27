@@ -1,4 +1,4 @@
-package productivity.todo.ai.path;
+package org.cwi.shoot.ai.path;
 
 import java.awt.Point;
 import java.util.ArrayList;

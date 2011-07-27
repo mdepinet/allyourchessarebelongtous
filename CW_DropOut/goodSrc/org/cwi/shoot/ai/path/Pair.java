@@ -1,4 +1,4 @@
-package productivity.todo.ai.path;
+package org.cwi.shoot.ai.path;
 
 public class Pair<T1, T2> {
 	private T1 first;

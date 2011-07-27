@@ -1,8 +1,10 @@
-package productivity.todo.model;
+package org.cwi.shoot.model;
 
 import java.awt.geom.Point2D;
 
-public class Bullet {
+import org.cwi.shoot.map.Updatable;
+
+public class Bullet implements Updatable{
 	private String bulletImgLoc;
 	private Point2D.Double location;
 	private Point2D.Double velocity;
@@ -11,13 +13,13 @@ public class Bullet {
 	private double distanceTraveled;
 	
 	public Bullet(Weapon weapon, Player p) {
-		this.weapon=weapon;
+		this.weapon = weapon;
 		this.player = p;
 		setLocation(player.getGunLocation());
 		distanceTraveled = 0;
 	}
 	public void update() {
-		Point2D.Double newLoc = new Point2D.Double(getLocation().x+getVelocity().x, getLocation().y+getVelocity().y);
+		Point2D.Double newLoc = new Point2D.Double(location.x+velocity.x, location.y+velocity.y);
 		distanceTraveled += location.distance(newLoc);
 		setLocation(newLoc);
 	}

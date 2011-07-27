@@ -1,4 +1,4 @@
-package productivity.todo.model;
+package org.cwi.shoot.util;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -6,9 +6,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 /**
- * This class is released under GNU general public license
  * 
- * Description: This class generates random names from syllables, and provides programmer a 
+ * Description: This class generates random names from syllables, and provides programmers a 
  * simple way to set a group of rules for generator to avoid unpronounceable and bizarre names. 
  * 
  * SYLLABLE FILE REQUIREMENTS/FORMAT: 
@@ -35,8 +34,8 @@ import java.util.ArrayList;
  * RULES:
  * 1) +v means that next syllable must definitely start with a Vowel.
  * 2) +c means that next syllable must definitely start with a consonant.
- * 3) -v means that this syllable can only be added to another syllable, that ends with a Vowel.
- * 4) -c means that this syllable can only be added to another syllable, that ends with a consonant.
+ * 3) -v means that this syllable can only be added to another syllable that ends with a Vowel.
+ * 4) -c means that this syllable can only be added to another syllable that ends with a consonant.
  * So, our example: "aad +v -c" means that "aad" can only be after consonant and next syllable must start with Vowel.
  * Beware of creating logical mistakes, like providing only syllables ending with consonants, but expecting only Vowels, which will be detected 
  * and RuntimeException will be thrown.

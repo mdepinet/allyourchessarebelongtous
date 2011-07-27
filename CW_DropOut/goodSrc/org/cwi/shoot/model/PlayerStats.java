@@ -1,4 +1,4 @@
-package productivity.todo.model;
+package org.cwi.shoot.model;
 
 public class PlayerStats implements Comparable<PlayerStats> {
 	private int numKills, numDeaths, numSuicides, shotsFired;
@@ -6,7 +6,7 @@ public class PlayerStats implements Comparable<PlayerStats> {
 		resetStats();
 	}
 	public void resetStats() {
-		numKills = numDeaths = shotsFired = 0;
+		numKills = numDeaths = numSuicides = shotsFired = 0;
 	}
 	public int compareTo(PlayerStats stats)
 	{

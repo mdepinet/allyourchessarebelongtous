@@ -1,4 +1,8 @@
-package productivity.todo.model;
+package org.cwi.shoot.threads;
+
+import org.cwi.shoot.map.GameMap;
+import org.cwi.shoot.model.Player;
+
 
 public class RespawnThread extends Thread {
 	private long millis;

@@ -1,10 +1,11 @@
-package productivity.todo.model;
+package org.cwi.shoot.model;
 
 import java.awt.Rectangle;
 import java.awt.geom.Point2D;
-import java.awt.geom.Rectangle2D;
 
-public class Explosion {
+import org.cwi.shoot.map.Updatable;
+
+public class Explosion implements Updatable{
 	private double alpha;
 	private double scale;
 	private double maxSize;
@@ -19,6 +20,9 @@ public class Explosion {
 		scale = 0.0;
 		active = true;
 	}
+	/**
+	 * Update takes care of expanding then fading out and disappearing
+	 */
 	public void update()
 	{
 		scheduler++;
@@ -29,6 +33,10 @@ public class Explosion {
 		}
 		else scale = scheduler/15.;
 	}
+	/**
+	 * Get the smallest rectangle surrounding this explosion on the map
+	 * @return The smallest rectangle surround this explosion on the map
+	 */
 	public Rectangle getRect()
 	{
 		return new Rectangle((int)(location.x-(scale*maxSize*0.5)), (int)(location.y-(scale*maxSize*0.5)), (int)(scale*maxSize), (int)(scale*maxSize));

@@ -1,4 +1,4 @@
-package productivity.todo.model;
+package org.cwi.shoot.util;
 
 import java.io.File;
 import java.io.IOException;
@@ -6,8 +6,12 @@ import java.util.Map;
 import java.util.Scanner;
 import java.util.TreeMap;
 
+import org.cwi.shoot.model.Weapon;
+
 public class WeaponLoader {
-	private static String defaultWeaponSet = "resource/default.ws";
+	private static final String defaultWeaponSet = "resource/default.ws";
+	private static final String COMMENT_MARKER = "#";
+	
 	private static Map<String,WeaponDefinition> definitions;
 	private static Map<Character,WeaponDefinition> chars;
 	private static WeaponDefinition defaultWeapon;
@@ -35,10 +39,13 @@ public class WeaponLoader {
 		try{
 			scan = new Scanner(new File(defaultWeaponSet));
 			while (scan.hasNext()){
-				WeaponDefinition wepDef = new WeaponDefinition(scan.nextLine());
-				if (defaultWeapon == null) defaultWeapon = wepDef;
-				definitions.put(wepDef.getName(), wepDef);
-				chars.put(wepDef.getRepresentativeChar(), wepDef);
+				String line = scan.nextLine();
+				if (!line.startsWith(COMMENT_MARKER)){
+					WeaponDefinition wepDef = new WeaponDefinition(line);
+					if (defaultWeapon == null) defaultWeapon = wepDef;
+					definitions.put(wepDef.getName(), wepDef);
+					chars.put(wepDef.getRepresentativeChar(), wepDef);
+				}
 			}
 		} catch (IOException ex){
 			ex.printStackTrace();
