@@ -85,8 +85,6 @@ public class TeamDeathmatchMode extends GameMode {
 	@Override
 	public void onPlayerDeath(Player p) {
 		// TODO Auto-generated method stub
-		threads.add(new RespawnThread(gameMap, p, p.getType()==PlayerType.HUMAN, 5000));
-		threads.get(threads.size()-1).start();
 	}
 
 	@Override

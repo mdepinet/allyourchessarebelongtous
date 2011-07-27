@@ -65,12 +65,14 @@ public class GameMap{
 		bullets.clear();
 		explosions.clear();
 		droppedWeps.clear();
-		/*for(int i = 0; i < threads.size(); i++) { 
-			RespawnThread t = threads.get(i); 
-			t.respawn(); 
-			t.kill(); 
+		if (!setup.getMode().handlesRespawn()){
+			for(int i = 0; i < threads.size(); i++) { 
+				RespawnThread t = threads.get(i); 
+				t.respawn(); 
+				t.kill(); 
+			}
+			threads.clear();
 		}
-		threads.clear();*/
 		
 		Player p = new Player(setup.getPlayerName());
 		p.setTeam(setup.getPlayerTeam());
@@ -490,7 +492,6 @@ public class GameMap{
 		return true;
 	}
 	
-	//Mode handles respawn thread
 	private void kill(Player p){
 		if(p.getCurrWeapon()!=null && p.getCurrWeapon().getType() != Weapon.WeaponType.PISTOL &&p.getCurrWeapon().getType()!= WeaponType.OBJECTIVE) {
 			map[getPlayerGridX(p)][getPlayerGridY(p)]=p.getCurrWeapon().getCharacter();
@@ -504,7 +505,9 @@ public class GameMap{
 				break;
 			}
 		}
-		
-		
+		if (!setup.getMode().handlesRespawn()){
+			threads.add(new RespawnThread(this, p, i == 0 && p.getType()==PlayerType.HUMAN, 5000));
+			threads.get(threads.size()-1).start();
+		}
 	}
 }
