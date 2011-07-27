@@ -2,8 +2,10 @@ package org.cwi.shoot.config;
 
 import java.awt.Graphics2D;
 import java.awt.Point;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 
 import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
@@ -15,25 +17,23 @@ import org.cwi.shoot.model.Weapon;
 public abstract class GameMode {
 	public static final List<Class<? extends GameMode>> availableTypes = new LinkedList<Class<? extends GameMode>>();
 	static{
-		availableTypes.add(TeamDeathmatchMode.class);
-		availableTypes.add(CaptureTheFlagMode.class);
-		availableTypes.add(ZombiesWGuns.class);
+		availableTypes.add(TeamDeathmatch.class);
+//		availableTypes.add(CaptureTheFlagMode.class);
+//		availableTypes.add(ZombiesWGuns.class);
 	}
 
 	protected char[][] modeMap;
 	
 	public GameMode() {
-		availableTypes.add(this.getClass());
 	}
 	
 	public abstract String getModeName();
 	public abstract String getScoreForPlayer(Player player);
 	public abstract String getScoreForTeam(int team, List<Player> players);
-	public abstract void loadGameObjects(GameMap map);
 	public abstract void update(List<Player> players);
 	public abstract int getWinningTeam(List<Player> players);
 	public abstract boolean canGetWeapon(Player p, Weapon w);
-	public abstract char[] getIgnoredMapChars();
+	public abstract char[] getAdditionalMapChars();
 	public abstract int getMaxNumTeams();
 	public abstract void addObjectives(GameMap map, Player p);
 	public abstract void onPlayerDeath(Player p);
@@ -42,8 +42,8 @@ public abstract class GameMode {
 	public abstract void drawModeMapPost(Graphics2D g, List<Player> players);
 	
 	public void onStartup(GameMap map, GameOptions setup){
-		for(int i = 1; i<Math.min(setup.getNumTeams(), getMaxNumTeams()); i++) {
-			for(int j = 0; j < getNumPlayersOnTeam(i, map.getPlayers()); j++) {
+		for(int i = 1; i<=Math.min(setup.getNumTeams(), getMaxNumTeams()); i++) {
+			for(int j = 0; j < setup.getPlayersPerTeam(); j++) {
 				if(i == setup.getPlayerTeam() && j == 0) continue;
 				Player p2 = new Player(setup.getNameGen().compose((int)(Math.random()*3)+2));
 				p2.setTeam(i);
@@ -56,8 +56,8 @@ public abstract class GameMode {
 		}
 	}
 	public void onReset(GameMap map, GameOptions setup){
-		for(int i = 1; i<Math.min(setup.getNumTeams(), getMaxNumTeams()); i++) {
-			for(int j = 0; j < getNumPlayersOnTeam(i, map.getPlayers()); j++) {
+		for(int i = 1; i<=Math.min(setup.getNumTeams(), getMaxNumTeams()); i++) {
+			for(int j = 0; j < setup.getPlayersPerTeam(); j++) {
 				if(i == setup.getPlayerTeam() && j == 0) continue;
 				Player p2 = new Player(setup.getNameGen().compose((int)(Math.random()*3)+2));
 				p2.setTeam(i);
@@ -81,5 +81,23 @@ public abstract class GameMode {
 			if (p.getTeam() == team) count++;
 		}
 		return count;
+	}
+	
+	public void loadGameObjects(GameMap map){
+		char[][] charMap = map.getMap();
+		Set<Character> myChars = new HashSet<Character>();
+		char[] myCharsArray = getAdditionalMapChars();
+		for (char c : myCharsArray){
+			myChars.add(c);
+		}
+		modeMap = new char[charMap.length][charMap[0].length];
+		for (int r = 0; r < charMap.length; r++){
+			for (int c = 0; c < charMap[r].length; c++){
+				if (myChars.contains(charMap[r][c])){
+					modeMap[r][c] = charMap[r][c];
+					charMap[r][c] = '_';
+				}
+			}
+		}
 	}
 }

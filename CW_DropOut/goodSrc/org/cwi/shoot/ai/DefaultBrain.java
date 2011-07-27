@@ -35,11 +35,11 @@ public class DefaultBrain extends AbstractBrain {
 					p.nextWeapon();
 				if(enemy.getHealth()>0)
 				{
-					if(location.distance(enemy.getLocation())<=enemy.getCurrWeapon().getEffRange())
+					if(enemy.getCurrWeapon() != null && location.distance(enemy.getLocation())<=enemy.getCurrWeapon().getEffRange())
 					{
 							newLoc = scaleVector(getDirectionToLoc(location,enemy.getLocation()),-1);
 					}
-					if(location.distance(enemy.getLocation())<=p.getCurrWeapon().getEffRange()*1.5)
+					if(p.getCurrWeapon() != null && location.distance(enemy.getLocation())<=p.getCurrWeapon().getEffRange()*1.5)
 					{
 							shoot(map,p);
 					}

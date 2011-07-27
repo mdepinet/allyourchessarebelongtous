@@ -37,7 +37,7 @@ public class Shoot implements KeyListener, MouseListener, MouseMotionListener, C
 	}
 	
 	public void startGame(File mapFile, GameMode mode, char[] teams, int team) {
-		GameOptions setup = new GameOptions(mode, mapFile, null, teams.length, team, "Player 1");
+		GameOptions setup = new GameOptions(mode, mapFile, null, teams.length, team, "Player 1", 4);
 		holdCounter = -1;
 		map = new GameMap(setup);
 		this.mode = mode;
@@ -85,7 +85,7 @@ public class Shoot implements KeyListener, MouseListener, MouseMotionListener, C
 		        if(holdCounter>=0) {
 		        	holdCounter++;
 		        	Weapon w = map.getPlayer().getCurrWeapon();
-		        	if(holdCounter>40 && w.canShoot()) map.shoot(map.getPlayer());
+		        	if(holdCounter>40 && w != null && w.canShoot()) map.shoot(map.getPlayer());
 		        }
 	        }
 	        else holdCounter = -1;
@@ -109,13 +109,13 @@ public class Shoot implements KeyListener, MouseListener, MouseMotionListener, C
 		if(map.getPlayer()==null) return;
 		switch(e.getKeyCode()) {
 			case KeyEvent.VK_DOWN:
-				map.getPlayer().setOrientation(0);
+				map.getPlayer().setDirection(new Point2D.Double(map.getPlayer().getDirection().getX(),1));
 				break;
 			case KeyEvent.VK_UP:
-				map.getPlayer().setOrientation(Math.PI/2);
+				map.getPlayer().setDirection(new Point2D.Double(map.getPlayer().getDirection().getX(),-1));
 				break;
 			case KeyEvent.VK_LEFT:
-				map.getPlayer().setOrientation(Math.PI);
+				map.getPlayer().setDirection(new Point2D.Double(-1,map.getPlayer().getDirection().getY()));
 				break;
 			case KeyEvent.VK_RIGHT:
 				map.getPlayer().setDirection(new Point2D.Double(1,map.getPlayer().getDirection().getY()));
@@ -202,7 +202,7 @@ public class Shoot implements KeyListener, MouseListener, MouseMotionListener, C
 	}
 	@Override
 	public void mouseReleased(MouseEvent e) {
-		if(map.getPlayer()==null) return;
+		if(map.getPlayer()==null || map.getPlayer().getCurrWeapon() == null) return;
 		if(map.getPlayer().getCurrWeapon().canShoot()) map.shoot(map.getPlayer());
 		holdCounter=-1;
 	}

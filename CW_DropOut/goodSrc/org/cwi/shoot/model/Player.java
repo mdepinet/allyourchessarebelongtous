@@ -211,6 +211,7 @@ public class Player implements Comparable<Player>, MapUpdatable {
 		stats.incNumDeaths();
 		health = 0;
 		weapons.clear();
+		direction = new Point2D.Double(0,0);
 	}
 	public void respawn(Point2D.Double loc, GameMode mode){
 		currWeapon = 0;

@@ -71,6 +71,9 @@ public class GameMap{
 			t.kill(); 
 		}
 		threads.clear();
+		Player p = getPlayer();
+		players.clear();
+		players.add(p);
 		setup.getMode().onReset(this, setup);
 		setup.getMode().loadGameObjects(this);
 	}
@@ -81,7 +84,12 @@ public class GameMap{
 		}
 		for (int r = 0; r<map.length; r++){
 			for (int c = 0; c<map[r].length; c++){
-				if (Character.isDigit(map[r][c])) spawnLocs.get(Character.digit(map[r][c],10)).add(new Point2D.Double(r,c));
+				List<Point2D.Double> locs = null;
+				if (Character.isDigit(map[r][c])){
+					locs = spawnLocs.get(Character.getNumericValue(map[r][c]));
+					map[r][c] = GameOptions.BLANK_CHARACTER;
+				}
+				if (locs != null) locs.add(fromGridPoint(new Point(r,c)));
 			}
 		}
 	}
@@ -167,7 +175,7 @@ public class GameMap{
 		Point2D.Double ret = null;
 		for(int i =0;i<map.length;i++) {
 			for(int j = 0;j < map[i].length; j++)
-				if(map[i][j] != '_' && map[i][j]!='X') {
+				if(map[i][j] != GameOptions.BLANK_CHARACTER && map[i][j]!=GameOptions.WALL_CHARACTER) {
 					if(!p.canGetWeapon(new Weapon(map[i][j], new Point(i,j)), setup.getMode())) continue;
 					if(p.getLocation().distance(new Point2D.Double(12.5+(i*25),12.5+(j*25)))<dist) { dist = p.getLocation().distance(new Point2D.Double(12.5+(i*25),12.5+(j*25))); ret = new Point2D.Double(12.5+(i*25),12.5+(j*25)); }
 				}
@@ -179,7 +187,7 @@ public class GameMap{
 		Weapon ret = null;
 		for(int i =0;i<map.length;i++) {
 			for(int j = 0;j < map[i].length; j++)
-				if(map[i][j] != '_' && map[i][j]!='X') {
+				if(map[i][j] != GameOptions.BLANK_CHARACTER && map[i][j]!=GameOptions.WALL_CHARACTER) {
 					if(!p.canGetWeapon(new Weapon(map[i][j], new Point(i,j)), setup.getMode())) continue;
 					if(p.getLocation().distance(new Point2D.Double(12.5+(i*25),12.5+(j*25)))<dist) { dist = p.getLocation().distance(new Point2D.Double(12.5+(i*25),12.5+(j*25))); ret = new Weapon(map[i][j], new Point(i,j)); }
 				}
@@ -242,7 +250,7 @@ public class GameMap{
 			
 			for(int j = 0; j < map.length; j++) {
 				for(int k = 0; k < map[j].length;k++)
-					if(map[j][k] == 'X'){
+					if(map[j][k] == GameOptions.WALL_CHARACTER){
 						Point2D.Double intersection = bulletColDetect(b,new Rectangle(j*GRID_PIXELS,k*GRID_PIXELS,GRID_PIXELS,GRID_PIXELS));
 						if(intersection!=null && b.getWeapon().getType() != Weapon.WeaponType.THROWN){
 							b.setLocation(intersection);
@@ -309,7 +317,7 @@ public class GameMap{
 				if(p.addWeapon(w,setup.getMode())) {
 					if(w.getName().indexOf("Flag")==-1 && !droppedWeps.remove(new Point2D.Double(getPlayerGridX(p), getPlayerGridY(p))))
 						new WeaponAdderThread(map[getPlayerGridX(p)][getPlayerGridY(p)], new Point(getPlayerGridX(p), getPlayerGridY(p)), this).start();
-					map[getPlayerGridX(p)][getPlayerGridY(p)] = '_';
+					map[getPlayerGridX(p)][getPlayerGridY(p)] = GameOptions.BLANK_CHARACTER;
 				}
 			}
 		}
@@ -415,7 +423,7 @@ public class GameMap{
 		if(loc.x>(map[0].length*GRID_PIXELS)-radius || loc.x<radius || loc.y <radius || loc.y>(map.length*GRID_PIXELS)-radius) return false;
 		for(int i = 0; i < map.length; i++) {
 			for(int j = 0; j < map[0].length;j++)
-				if(map[i][j] == 'X' && new Rectangle(i*GRID_PIXELS,j*GRID_PIXELS,GRID_PIXELS,GRID_PIXELS).intersects(new Rectangle((int)loc.x-radius,(int)loc.y-radius,radius*2,radius*2)))
+				if(map[i][j] == GameOptions.WALL_CHARACTER && new Rectangle(i*GRID_PIXELS,j*GRID_PIXELS,GRID_PIXELS,GRID_PIXELS).intersects(new Rectangle((int)loc.x-radius,(int)loc.y-radius,radius*2,radius*2)))
 						return false;
 		}
 		return true;

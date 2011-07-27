@@ -49,7 +49,9 @@ public class TeamDeathmatch extends GameMode {
 		Map<Integer, Integer> teamKills = new TreeMap<Integer, Integer>();
 		for(Player p : players){
 			int team = p.getTeam();
-			teamKills.put(team, teamKills.get(team)+p.getStats().getKillsMinusSuicides());
+			if (teamKills.containsKey(team)) teamKills.put(team, teamKills.get(team)+p.getStats().getKillsMinusSuicides());
+			else teamKills.put(team, p.getStats().getKillsMinusSuicides());
+			
 		}
 		for(int i : teamKills.keySet())
 			if(teamKills.get(i)>=KILLS_TO_WIN)
@@ -63,14 +65,13 @@ public class TeamDeathmatch extends GameMode {
 	}
 
 	@Override
-	public char[] getIgnoredMapChars() {
+	public char[] getAdditionalMapChars() {
 		return new char[0];
 	}
 
 	@Override
-	public int getNumTeams() {
-		// TODO Auto-generated method stub
-		return 0;
+	public int getMaxNumTeams() {
+		return 8;
 	}
 
 	@Override
@@ -89,6 +90,16 @@ public class TeamDeathmatch extends GameMode {
 	public void onPlayerRespawn(Player p) {
 		// TODO Auto-generated method stub
 
+	}
+	@Override
+	public void drawModeMapPre(Graphics2D g) {
+		// TODO Auto-generated method stub
+		
+	}
+	@Override
+	public void drawModeMapPost(Graphics2D g, List<Player> players) {
+		// TODO Auto-generated method stub
+		
 	}
 
 }
