@@ -70,7 +70,7 @@ public class CaptureTheFlagMode extends GameMode {
 	public void update(List<Player> players) {
 		for(int i = 0; i<players.size(); i++){
 			Player p = players.get(i);
-			if(isFlag(p.getCurrWeapon())){
+			if(p.getCurrWeapon()!=null && isFlag(p.getCurrWeapon())){
 				if(flagSpawnLocs.get(p.getTeam()).equals(GameMap.getGridPoint(p.getLocation())) && modeMap[flagSpawnLocs.get(p.getTeam()).x][flagSpawnLocs.get(p.getTeam()).y]==(char)(p.getTeam()+75)) {
 					flagsCaptured.put(p, (flagsCaptured.get(p)!=null ? flagsCaptured.get(p)+1 : 1));
 					resetMode(players);
@@ -84,6 +84,7 @@ public class CaptureTheFlagMode extends GameMode {
 					Weapon w = new Weapon(c,gridPoint);
 					if(canGetWeapon(p,w)) {
 						p.addWeapon(w, this);
+						flagRespawnTimes[w.getCharacter()-76] = 0;
 						p.switchToWeapon(p.getNumWeapons()-1);
 						modeMap[gridPoint.x][gridPoint.y] = GameOptions.BLANK_CHARACTER;
 					}
@@ -96,9 +97,9 @@ public class CaptureTheFlagMode extends GameMode {
 				if(System.currentTimeMillis()>flagRespawnTimes[i]+10000){
 					for(int r = 0; r<modeMap.length; r++)
 						for(int c = 0; c<modeMap[r].length; c++)
-							if(modeMap[r][c]==(char)(i+75))
+							if(modeMap[r][c]==(char)(i+76))
 								modeMap[r][c]=GameOptions.BLANK_CHARACTER;
-					modeMap[flagSpawnLocs.get(i).x][flagSpawnLocs.get(i).x] = (char)(i+75);
+					modeMap[flagSpawnLocs.get(i+1).x][flagSpawnLocs.get(i+1).y] = (char)(i+76);
 				}
 					
 		}
@@ -172,7 +173,7 @@ public class CaptureTheFlagMode extends GameMode {
 		if(playerHasFlag(p)){
 			Point loc = GameMap.getGridPoint(p.getLocation());
 			modeMap[loc.x][loc.y]=p.getCurrWeapon().getCharacter();
-			flagRespawnTimes[p.getTeam()] = System.currentTimeMillis();
+			flagRespawnTimes[p.getCurrWeapon().getCharacter()-76] = System.currentTimeMillis();
 		}
 
 	}
