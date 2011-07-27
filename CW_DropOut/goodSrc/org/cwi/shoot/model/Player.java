@@ -18,6 +18,7 @@ import org.cwi.shoot.util.VectorTools;
 public class Player implements Comparable<Player>, MapUpdatable {
 	private static final double REGEN_SPEED = 1/15.;
 	public static final double radius = 8;
+	public static final char[] SPAWNLOC_CHARS ={'1','2','3','4'};
 	public enum PlayerType {
 		HUMAN, COMPUTER
 	}
