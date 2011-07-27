@@ -17,6 +17,9 @@ public class PlayerStats implements Comparable<PlayerStats> {
 		else
 			return numSuicides-stats.getNumSuicides();
 	}
+	public int getKillsMinusSuicides(){
+		return numKills-numSuicides;
+	}
 	public int getNumKills() {
 		return numKills;
 	}

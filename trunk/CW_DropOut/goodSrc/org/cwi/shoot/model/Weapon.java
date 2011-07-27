@@ -14,6 +14,8 @@ import org.cwi.shoot.map.Updatable;
 import org.cwi.shoot.threads.ReloadThread;
 
 public class Weapon implements Updatable{
+	//Valid chars for the basic (non-objective) weapons
+	public static final char[] WEAPON_CHARS = {'P','R','B','S','H','G','A','F','C'};
 	private static final int reloadMillis = 3000; //3 seconds
 	private static final int updatesPerSec = 30;
 	public enum WeaponType{
