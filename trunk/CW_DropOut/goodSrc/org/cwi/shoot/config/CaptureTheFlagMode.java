@@ -12,8 +12,10 @@ import java.util.Set;
 
 import org.cwi.shoot.map.GameMap;
 import org.cwi.shoot.model.Player;
+import org.cwi.shoot.model.Player.PlayerType;
 import org.cwi.shoot.model.Weapon;
 import org.cwi.shoot.model.Weapon.WeaponType;
+import org.cwi.shoot.threads.RespawnThread;
 
 public class CaptureTheFlagMode extends GameMode {
 	private static final int capturesToWin = 3;
@@ -70,7 +72,7 @@ public class CaptureTheFlagMode extends GameMode {
 	public void update(List<Player> players) {
 		for(int i = 0; i<players.size(); i++){
 			Player p = players.get(i);
-			if(p.getCurrWeapon()!=null && isFlag(p.getCurrWeapon())){
+			if(isFlag(p.getCurrWeapon())){
 				if(flagSpawnLocs.get(p.getTeam()).equals(GameMap.getGridPoint(p.getLocation())) && modeMap[flagSpawnLocs.get(p.getTeam()).x][flagSpawnLocs.get(p.getTeam()).y]==(char)(p.getTeam()+75)) {
 					flagsCaptured.put(p, (flagsCaptured.get(p)!=null ? flagsCaptured.get(p)+1 : 1));
 					resetMode(players);
@@ -84,7 +86,6 @@ public class CaptureTheFlagMode extends GameMode {
 					Weapon w = new Weapon(c,gridPoint);
 					if(canGetWeapon(p,w)) {
 						p.addWeapon(w, this);
-						flagRespawnTimes[w.getCharacter()-76] = 0;
 						p.switchToWeapon(p.getNumWeapons()-1);
 						modeMap[gridPoint.x][gridPoint.y] = GameOptions.BLANK_CHARACTER;
 					}
@@ -97,9 +98,9 @@ public class CaptureTheFlagMode extends GameMode {
 				if(System.currentTimeMillis()>flagRespawnTimes[i]+10000){
 					for(int r = 0; r<modeMap.length; r++)
 						for(int c = 0; c<modeMap[r].length; c++)
-							if(modeMap[r][c]==(char)(i+76))
+							if(modeMap[r][c]==(char)(i+75))
 								modeMap[r][c]=GameOptions.BLANK_CHARACTER;
-					modeMap[flagSpawnLocs.get(i+1).x][flagSpawnLocs.get(i+1).y] = (char)(i+76);
+					modeMap[flagSpawnLocs.get(i).x][flagSpawnLocs.get(i).x] = (char)(i+75);
 				}
 					
 		}
@@ -173,9 +174,10 @@ public class CaptureTheFlagMode extends GameMode {
 		if(playerHasFlag(p)){
 			Point loc = GameMap.getGridPoint(p.getLocation());
 			modeMap[loc.x][loc.y]=p.getCurrWeapon().getCharacter();
-			flagRespawnTimes[p.getCurrWeapon().getCharacter()-76] = System.currentTimeMillis();
+			flagRespawnTimes[p.getTeam()] = System.currentTimeMillis();
 		}
-
+		threads.add(new RespawnThread(gameMap, p, p.getType()==PlayerType.HUMAN, 5000));
+		threads.get(threads.size()-1).start();
 	}
 
 	@Override

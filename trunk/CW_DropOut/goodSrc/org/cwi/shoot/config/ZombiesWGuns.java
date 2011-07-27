@@ -1,82 +1,107 @@
 package org.cwi.shoot.config;
 
+import java.awt.Graphics2D;
+import java.awt.Point;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import productivity.todo.model.GameMap;
-import productivity.todo.model.NameGenerator;
-import productivity.todo.model.Player;
+import javax.swing.ImageIcon;
+import javax.swing.JOptionPane;
+
+import org.cwi.shoot.map.GameMap;
+import org.cwi.shoot.model.Player;
+import org.cwi.shoot.model.Player.PlayerType;
+import org.cwi.shoot.model.Weapon;
+import org.cwi.shoot.threads.RespawnThread;
+import org.cwi.shoot.util.NameGenerator;
 
 public class ZombiesWGuns extends GameMode {
 	public static final int NUM_ENEMIES = 10;
 	public static final int WAVE_TIME_LIMIT = 10;
-	public static final int ZOMBIES_TEAM_NUM = 5;
+	public static final int ZOMBIES_TEAM_NUM = 0;
 	private long startTime;
 	private int wave;
 	private long waveStartTime;
-	private Player player;
-	private int numZombies;
-	private List<Player> zombies;
-	public ZombiesWGuns() {}
+	private List<Player> deadZombies;
 	
-	public ZombiesWGuns(GameMap map) {
-		super(map);
-		player = gameMap.getPlayer();
+	public ZombiesWGuns() {
 		startTime = System.currentTimeMillis();
 		waveStartTime = System.currentTimeMillis();
 		wave = 1;
-		numZombies = 1;
-		zombies = new ArrayList<Player>();
-	}
-	public void createZombieList() {
-		zombies = new ArrayList<Player>();
-	}
-
-	@Override
-	public void loadGameObjects() {
-		
+		deadZombies = new ArrayList<Player>();
 	}
 	
-	@Override
-	public void update() {
-		player = gameMap.getPlayer();
-		if((System.currentTimeMillis() - getWaveStartTime())/1000. >= WAVE_TIME_LIMIT) {
-			addZombies(5);
-			respawnZombies();
-			setWave(getWave()+1);
-			setWaveStartTime(System.currentTimeMillis());
+	public void onStartup(GameMap map, GameOptions setup){
+		gameMap = map;
+		map.spawn(map.getPlayer());
+		/*List<Player> z = */addZombies(NUM_ENEMIES);
+		/*for(int i = 0; i < z.size(); i++) {
+			Player zombie = z.get(i);
+			if(map.getSpawnLocs().get(ZOMBIES_TEAM_NUM)!=null && !map.getSpawnLocs().get(zombie.getTeam()).isEmpty()) {
+				map.getPlayers().add(zombie);
+				map.spawn(zombie);
+			}
+		}*/
+			
+	}
+	public void onReset(GameMap map, GameOptions setup){
+		for(int i = 0; i < threads.size(); i++) { 
+			RespawnThread t = threads.get(i); 
+			t.respawn(); 
+			t.kill(); 
 		}
+		threads.clear();
+		map.spawn(map.getPlayer());
+		/*List<Player> z = */addZombies(NUM_ENEMIES);
+		/*for(int i = 0; i < z.size(); i++) {
+			Player zombie = z.get(i);
+			if(map.getSpawnLocs().get(ZOMBIES_TEAM_NUM)!=null && !map.getSpawnLocs().get(zombie.getTeam()).isEmpty()) {
+				map.getPlayers().add(zombie);
+				map.spawn(zombie);
+			}
+		}*/
+		setWave(1);
+		setWaveStartTime(System.currentTimeMillis());
+		setStartTime(System.currentTimeMillis());
+	}
+	
+	public void createZombieList() {
+		deadZombies = new ArrayList<Player>();
 	}
 	public void respawnZombies() {
 		//if(zombies==null) zombies = new ArrayList<Player>();
-		if(zombies.size()>0) {
-			for(int i = 0; i < zombies.size(); i++)
-				if(zombies.get(i).getHealth()<=0) {
-					gameMap.spawn(zombies.get(i));
-					zombies.remove(i--);
+		if(deadZombies.size()>0) {
+			for(int i = 0; i < deadZombies.size(); i++)
+				if(deadZombies.get(i).getHealth()<=0) {
+					gameMap.getPlayers().add(deadZombies.get(i));
+					gameMap.spawn(deadZombies.get(i));
+					deadZombies.remove(i--);
 				}
 		}
 	}
-	public void addZombies(int num) {
+	public List<Player> addZombies(int num) {
+		ArrayList<Player> zombiesToAdd = new ArrayList<Player>();
 		NameGenerator gen = null;
 		try {
-			gen = new NameGenerator(GameMap.NAMETYPES);
+			gen = new NameGenerator(GameOptions.NAME_RESOURCE);
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		for(int i = 1; i < num; i++) {
 			//Player foe = new Player("Zombie "  + numZombies++);
 			Player foe = new Player(gen.compose((int)(Math.random()*3)+2));
-			foe.setTeam(5);
+			foe.setTeam(ZOMBIES_TEAM_NUM);
+			foe.setType(PlayerType.COMPUTER);
+			zombiesToAdd.add(foe);
 			gameMap.getPlayers().add(foe);
 			gameMap.spawn(foe);
 			//zombies.add(foe);
 		}
+		return zombiesToAdd;
 	}
 	public List<Player> getDeadZombies() {
-		return zombies;
+		return deadZombies;
 	}
 	public void setWaveStartTime(long start) {
 		waveStartTime = start;
@@ -98,27 +123,21 @@ public class ZombiesWGuns extends GameMode {
 		wave = num;
 	}
 	public void addDeadZombie(Player p) {
-		if(zombies==null) zombies = new ArrayList<Player>();
-		zombies.add(p);
-	}
-	@Override
-	public int getWinningTeam() {
-		if(gameMap.getPlayer()==null)
-			if(gameMap.getPlayer()==null)
-				return ZOMBIES_TEAM_NUM;
-		return -1;
+		if(deadZombies==null) deadZombies = new ArrayList<Player>();
+		deadZombies.add(p);
 	}
 
 	@Override
 	public String getModeName() { return "Zombies... with Guns"; }
 
 	@Override
-	public String getScoreForPlayer(Player player) {
+	public String getScoreForPlayer(org.cwi.shoot.model.Player player) {
 		return player.getName() + ": " + player.getStats().getNumKills();
 	}
 
 	@Override
-	public String getScoreForTeam(int team) {
+	public String getScoreForTeam(int team,
+			List<org.cwi.shoot.model.Player> players) {
 		/*int kills = 0;
 		for(Player p : gameMap.getPlayers()) {
 			if(p.getTeam()==team)
@@ -126,6 +145,76 @@ public class ZombiesWGuns extends GameMode {
 		}
 		return ""+kills;*/
 		return "Wave " + (getWave()==0 ? 1 : getWave());
+	}
+
+	@Override
+	public void update(List<org.cwi.shoot.model.Player> players) {
+		if((System.currentTimeMillis() - getWaveStartTime())/1000. >= WAVE_TIME_LIMIT) {
+			addZombies(5);
+			respawnZombies();
+			setWave(getWave()+1);
+			setWaveStartTime(System.currentTimeMillis());
+		}
+	}
+
+	@Override
+	public int getWinningTeam(List<org.cwi.shoot.model.Player> players) {
+		for(int i = 0; i < players.size(); i++)
+			if(players.get(i).getType()==PlayerType.HUMAN)
+				return -1;
+		return ZOMBIES_TEAM_NUM;
+	}
+	public void showGameEndDialog(GameMap map, int winner){
+		Weapon w = new Weapon((char)(76), new Point());
+		JOptionPane.showMessageDialog(null, "You're dead. You lasted " + (System.currentTimeMillis() - getStartTime())/1000. + " seconds.", "Game over!", 0, new ImageIcon(Weapon.getWeaponImg(w.getImgLoc())));
+	}
+	@Override
+	public boolean canGetWeapon(org.cwi.shoot.model.Player p, Weapon w) {
+		return true;//p.getType()==PlayerType.COMPUTER ? false : true;
+	}
+
+	@Override
+	public char[] getAdditionalMapChars() {
+		// TODO Auto-generated method stub
+		return new char[0];
+	}
+
+	@Override
+	public int getMaxNumTeams() {
+		return 1;
+	}
+
+	@Override
+	public void addObjectives(org.cwi.shoot.map.GameMap map,
+			org.cwi.shoot.model.Player p) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onPlayerDeath(org.cwi.shoot.model.Player p) {
+		if(p.getType() == PlayerType.COMPUTER) {
+			deadZombies.add(p);
+		}
+	}
+
+	@Override
+	public void onPlayerRespawn(org.cwi.shoot.model.Player p) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void drawModeMapPre(Graphics2D g) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void drawModeMapPost(Graphics2D g,
+			List<org.cwi.shoot.model.Player> players) {
+		// TODO Auto-generated method stub
+		
 	}
 
 }
