@@ -1,8 +1,12 @@
 package org.cwi.shoot.view;
 
+import java.awt.Canvas;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.Image;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.util.ArrayList;
@@ -15,8 +19,10 @@ import javax.swing.JLabel;
 
 import org.cwi.shoot.config.GameMode;
 import org.cwi.shoot.config.ZombiesWGuns;
+import org.cwi.shoot.map.GameMap;
 import org.cwi.shoot.model.Player;
 import org.cwi.shoot.model.Player.PlayerType;
+import org.cwi.shoot.model.Weapon.WeaponType;
 import org.cwi.shoot.model.Weapon;
 
 
@@ -25,6 +31,7 @@ public class StatsFrame extends JFrame {
 	public static final int WIDTH = 200;
 	public static final int HEIGHT = 500;
 	private GameMode gameMode;
+	private PlayerInfoCanvas playerInfoCanvas;
 	private List<Player> players;
 	private List<JLabel> labels;
 	private char[] teams;
@@ -33,6 +40,9 @@ public class StatsFrame extends JFrame {
 		this.setUndecorated(true);
 		this.setBackground(Color.WHITE);
 		this.setVisible(true);
+		this.playerInfoCanvas = new PlayerInfoCanvas(p.get(0));
+		playerInfoCanvas.setPreferredSize(new Dimension(180,60));
+		
 		getContentPane().setLayout(new FlowLayout());
 		gameMode = mode;
 		labels = new ArrayList<JLabel>();
@@ -63,7 +73,8 @@ public class StatsFrame extends JFrame {
 			getContentPane().add(label);
 			labels.add(label);
 		}
-		
+		getContentPane().add(playerInfoCanvas);
+		playerInfoCanvas.init();
 	}
 	public Player getPlayer() {
 		for(int i = 0; i < players.size(); i++)
@@ -88,34 +99,58 @@ public class StatsFrame extends JFrame {
 		}
 		if(gameMode instanceof ZombiesWGuns) labels.get(1).setText(gameMode.getScoreForPlayer(getPlayer()));
 		else for(int i = 0; i < players.size();i++) labels.get(i+teams.length).setText(gameMode.getScoreForPlayer(players.get(i)));
-			
+		
+		playerInfoCanvas.updateGraphics();
 	}
 }
-
-
-//Draw player info box
-//backg.setColor(new Color(0f,0f,0f,0.3f));
-//backg.fillRect(GameMap.WIDTH-200,GameMap.HEIGHT-50,200,50);
-//backg.setColor(new Color(0f,0f,0f,0.5f));
-//if(gameMap.getPlayer()!=null)
-//{
-//	backg.setColor(new Color((gameMap.getPlayer().getHealth()>50) ? (float)(1-gameMap.getPlayer().getHealth()/100) : 1.0f,(gameMap.getPlayer().getHealth()<=50) ? (float)(gameMap.getPlayer().getHealth()/50):1.0f,0f,0.5f));
-//	backg.fillRect(GameMap.WIDTH-105, GameMap.HEIGHT-35, (int)gameMap.getPlayer().getHealth(), 10);
-//	backg.setColor(new Color(0f,0f,0f,0.5f));
-//	backg.drawString("Health:", GameMap.WIDTH-145, GameMap.HEIGHT-26);
-//	backg.drawString(gameMap.getPlayer().getCurrentWeapon().getName(), GameMap.WIDTH-115, GameMap.HEIGHT-38);
-//	if(gameMap.getPlayer().getCurrentWeapon().getClipCount()>=0)
-//		backg.drawString(""+gameMap.getPlayer().getCurrentWeapon().getClipCount(), GameMap.WIDTH-20, GameMap.HEIGHT-38);
-//	if(gameMap.getPlayer().getCurrentWeapon().getClipSize()==0 && !gameMap.getPlayer().getCurrentWeapon().getType().equalsIgnoreCase("melee"))
-//		backg.drawString("Reloading...", GameMap.WIDTH-100, GameMap.HEIGHT-10);
-//	else{
-//		int clipSize = gameMap.getPlayer().getCurrentWeapon().getClipSize()*((gameMap.getPlayer().getCurrentWeapon().getType().equalsIgnoreCase("shotgun"))? 1 : gameMap.getPlayer().getCurrentWeapon().getRoundsPerShot());
-//		for(int i=0; i < clipSize;i++)
-//		{	
-//			if(i<20 || i<clipSize/2)
-//				backg.fillRect(GameMap.WIDTH-7-(i*6),GameMap.HEIGHT-23, 4, 10);
-//			else
-//				backg.fillRect(GameMap.WIDTH-7-((i-Math.max(20, clipSize/2)))*6,GameMap.HEIGHT-11, 4, 10);
-//		}
-//	}
-//}
+class PlayerInfoCanvas extends Canvas {
+	private Image backbuffer;
+	private Graphics2D backg;
+	private Player player;
+	
+	public PlayerInfoCanvas(Player p) {
+		this.player = p;
+	}
+	public void init() {
+		backbuffer = createImage( GameFrame.WIDTH, GameFrame.HEIGHT );
+	    backg = (Graphics2D)backbuffer.getGraphics();
+	    backg.setBackground( Color.white );
+	    backg.clearRect(0, 0, WIDTH, HEIGHT);
+	    backg.setFont(backg.getFont().deriveFont(GameMap.GRID_PIXELS));
+	}
+	
+	public void updateGraphics() {
+		backg.setBackground(new Color(1f,1f,1f,1f));
+		backg.clearRect(0,0,getWidth(), getHeight());
+		backg.setColor(new Color(0f,0f,0f,1f));
+		if(player!=null && player.getCurrWeapon()!=null)
+		{
+			backg.setColor(new Color((player.getHealth()>50) ? (float)(1-player.getHealth()/100) : 1.0f,(player.getHealth()<=50) ? (float)(player.getHealth()/50):1.0f,0f,1f));
+			backg.fillRect(getWidth()-105, getHeight()-35, (int)player.getHealth(), 10);
+			backg.setColor(new Color(0f,0f,0f,1f));
+			backg.drawString("Health:", getWidth()-145, getHeight()-26);
+			backg.drawString(player.getCurrWeapon().getName(), getWidth()-115, getHeight()-38);
+			if(player.getCurrWeapon().getClipCount()>=0)
+				backg.drawString(""+player.getCurrWeapon().getClipCount(), getWidth()-20, getHeight()-38);
+			if(player.getCurrWeapon().getClipSize()==0 && player.getCurrWeapon().getEffRange()>0)
+				backg.drawString("Reloading...", getWidth()-100, getHeight()-10);
+			else{
+				int clipSize = player.getCurrWeapon().getClipSize()*((player.getCurrWeapon().getType()==WeaponType.SHOTGUN)? 1 : player.getCurrWeapon().getRoundsPerShot());
+				for(int i=0; i < clipSize;i++)
+				{	
+					if(i<20 || i<clipSize/2)
+						backg.fillRect(getWidth()-7-(i*6),getHeight()-23, 4, 10);
+					else
+						backg.fillRect(getWidth()-7-((i-Math.max(20, clipSize/2)))*6,getHeight()-11, 4, 10);
+				}
+			}
+		}
+		repaint();
+	}
+	public void update(Graphics g) {
+		g.drawImage(backbuffer,0,0,this);
+	}
+	public void paint (Graphics g) {
+		update(g);
+	}
+}
