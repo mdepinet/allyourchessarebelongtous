@@ -75,7 +75,7 @@ public class GameMap{
 	}
 	private void setupSpawnLocs(){
 		spawnLocs = new HashMap<Integer, List<Point2D.Double>>();
-		for (int i = 0; i<setup.getMode().getNumTeams();){
+		for (int i = 0; i<Math.min(setup.getNumTeams(),setup.getMode().getMaxNumTeams());){
 			spawnLocs.put(++i, new ArrayList<Point2D.Double>());
 		}
 		for (int r = 0; r<map.length; r++){

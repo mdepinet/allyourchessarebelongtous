@@ -1,4 +1,4 @@
-package productivity.todo.view;
+package org.cwi.shoot.view;
 
 import java.awt.Color;
 import java.awt.Dimension;
@@ -12,6 +12,8 @@ import java.util.List;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+
+import org.cwi.shoot.map.GameMap;
 
 import productivity.todo.config.GameMode;
 import productivity.todo.config.ZombiesWGuns;
@@ -88,3 +90,31 @@ public class StatsFrame extends JFrame {
 			
 	}
 }
+
+
+//Draw player info box
+//backg.setColor(new Color(0f,0f,0f,0.3f));
+//backg.fillRect(GameMap.WIDTH-200,GameMap.HEIGHT-50,200,50);
+//backg.setColor(new Color(0f,0f,0f,0.5f));
+//if(gameMap.getPlayer()!=null)
+//{
+//	backg.setColor(new Color((gameMap.getPlayer().getHealth()>50) ? (float)(1-gameMap.getPlayer().getHealth()/100) : 1.0f,(gameMap.getPlayer().getHealth()<=50) ? (float)(gameMap.getPlayer().getHealth()/50):1.0f,0f,0.5f));
+//	backg.fillRect(GameMap.WIDTH-105, GameMap.HEIGHT-35, (int)gameMap.getPlayer().getHealth(), 10);
+//	backg.setColor(new Color(0f,0f,0f,0.5f));
+//	backg.drawString("Health:", GameMap.WIDTH-145, GameMap.HEIGHT-26);
+//	backg.drawString(gameMap.getPlayer().getCurrentWeapon().getName(), GameMap.WIDTH-115, GameMap.HEIGHT-38);
+//	if(gameMap.getPlayer().getCurrentWeapon().getClipCount()>=0)
+//		backg.drawString(""+gameMap.getPlayer().getCurrentWeapon().getClipCount(), GameMap.WIDTH-20, GameMap.HEIGHT-38);
+//	if(gameMap.getPlayer().getCurrentWeapon().getClipSize()==0 && !gameMap.getPlayer().getCurrentWeapon().getType().equalsIgnoreCase("melee"))
+//		backg.drawString("Reloading...", GameMap.WIDTH-100, GameMap.HEIGHT-10);
+//	else{
+//		int clipSize = gameMap.getPlayer().getCurrentWeapon().getClipSize()*((gameMap.getPlayer().getCurrentWeapon().getType().equalsIgnoreCase("shotgun"))? 1 : gameMap.getPlayer().getCurrentWeapon().getRoundsPerShot());
+//		for(int i=0; i < clipSize;i++)
+//		{	
+//			if(i<20 || i<clipSize/2)
+//				backg.fillRect(GameMap.WIDTH-7-(i*6),GameMap.HEIGHT-23, 4, 10);
+//			else
+//				backg.fillRect(GameMap.WIDTH-7-((i-Math.max(20, clipSize/2)))*6,GameMap.HEIGHT-11, 4, 10);
+//		}
+//	}
+//}

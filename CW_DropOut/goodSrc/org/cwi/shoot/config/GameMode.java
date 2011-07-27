@@ -29,14 +29,15 @@ public abstract class GameMode {
 	public abstract int getWinningTeam(List<Player> players);
 	public abstract boolean canGetWeapon(Player p, Weapon w);
 	public abstract char[] getIgnoredMapChars();
-	public abstract int getNumTeams();
+	public abstract int getMaxNumTeams();
 	public abstract void addObjectives(GameMap map, Player p);
 	public abstract void onPlayerDeath(Player p);
 	public abstract void onPlayerRespawn(Player p);
-	public abstract void drawModeMap(Graphics2D g);
+	public abstract void drawModeMapPre(Graphics2D g);
+	public abstract void drawModeMapPost(Graphics2D g, List<Player> players);
 	
 	public void onStartup(GameMap map, GameOptions setup){
-		for(int i = 1; i<getNumTeams(); i++) {
+		for(int i = 1; i<Math.min(setup.getNumTeams(), getMaxNumTeams()); i++) {
 			for(int j = 0; j < getNumPlayersOnTeam(i, map.getPlayers()); j++) {
 				if(i == setup.getPlayerTeam() && j == 0) continue;
 				Player p2 = new Player(setup.getNameGen().compose((int)(Math.random()*3)+2));
@@ -50,7 +51,7 @@ public abstract class GameMode {
 		}
 	}
 	public void onReset(GameMap map, GameOptions setup){
-		for(int i = 1; i<getNumTeams(); i++) {
+		for(int i = 1; i<Math.min(setup.getNumTeams(), getMaxNumTeams()); i++) {
 			for(int j = 0; j < getNumPlayersOnTeam(i, map.getPlayers()); j++) {
 				if(i == setup.getPlayerTeam() && j == 0) continue;
 				Player p2 = new Player(setup.getNameGen().compose((int)(Math.random()*3)+2));
@@ -65,7 +66,8 @@ public abstract class GameMode {
 	}
 	
 	public void showGameEndDialog(GameMap map, int winner){
-		JOptionPane.showMessageDialog(null, GameMap.teamNames[winner-1] + " Wins!", "Game over!", 0, new ImageIcon(new Weapon((char)(winner+75), new Point()).getImage()));
+		Weapon w = new Weapon((char)(winner+75), new Point());
+		JOptionPane.showMessageDialog(null, GameMap.teamNames[winner-1] + " Wins!", "Game over!", 0, new ImageIcon(Weapon.getWeaponImg(w.getImgLoc())));
 	}
 	
 	public int getNumPlayersOnTeam(int team, List<Player> players){
