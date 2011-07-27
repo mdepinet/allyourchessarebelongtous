@@ -20,6 +20,7 @@ import org.cwi.shoot.model.Player;
 import org.cwi.shoot.model.Player.PlayerType;
 import org.cwi.shoot.model.PlayerStats;
 import org.cwi.shoot.model.Weapon;
+import org.cwi.shoot.model.Weapon.WeaponType;
 import org.cwi.shoot.threads.RespawnThread;
 import org.cwi.shoot.threads.WeaponAdderThread;
 
@@ -447,11 +448,11 @@ public class GameMap{
 	private int getPlayerGridY(Player p){
 		return (int) (Math.floor(p.getLocation().y/GRID_PIXELS));
 	}
-	public Point getGridPoint(Point2D.Double p){
+	public static Point getGridPoint(Point2D.Double p){
 		if (p == null) return null;
 		return new Point((int) Math.floor(p.x/GRID_PIXELS), (int) Math.floor(p.y/GRID_PIXELS));
 	}
-	public Point2D.Double fromGridPoint(Point p){
+	public static Point2D.Double fromGridPoint(Point p){
 		if (p == null) return null;
 		return new Point2D.Double(p.x*GRID_PIXELS+(GRID_PIXELS/2),p.y*GRID_PIXELS+(GRID_PIXELS/2));
 	}
@@ -478,8 +479,7 @@ public class GameMap{
 	}
 	
 	private void kill(Player p){
-		if(p.hasFlag()) spawnWeapon(p.getFlag().getCharacter(), p.getFlag().getSpawnLoc());
-		if(p.getCurrWeapon().getType() != Weapon.WeaponType.PISTOL) {
+		if(p.getCurrWeapon().getType() != Weapon.WeaponType.PISTOL &&p.getCurrWeapon().getType()!= WeaponType.OBJECTIVE) {
 			map[getPlayerGridX(p)][getPlayerGridY(p)]=p.getCurrWeapon().getCharacter();
 			droppedWeps.add(new Point2D.Double(getPlayerGridX(p),getPlayerGridY(p)));
 		} 
