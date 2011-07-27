@@ -65,13 +65,17 @@ public class GameMap{
 		bullets.clear();
 		explosions.clear();
 		droppedWeps.clear();
-		for(int i = 0; i < threads.size(); i++) { 
+		/*for(int i = 0; i < threads.size(); i++) { 
 			RespawnThread t = threads.get(i); 
 			t.respawn(); 
 			t.kill(); 
 		}
-		threads.clear();
-		Player p = getPlayer();
+		threads.clear();*/
+		
+		Player p = new Player(setup.getPlayerName());
+		p.setTeam(setup.getPlayerTeam());
+		p.setType(Player.PlayerType.HUMAN);
+		
 		players.clear();
 		players.add(p);
 		setup.getMode().onReset(this, setup);
@@ -79,8 +83,8 @@ public class GameMap{
 	}
 	private void setupSpawnLocs(){
 		spawnLocs = new HashMap<Integer, List<Point2D.Double>>();
-		for (int i = 0; i<Math.min(setup.getNumTeams(),setup.getMode().getMaxNumTeams());){
-			spawnLocs.put(++i, new ArrayList<Point2D.Double>());
+		for (int i = 0; i<=Math.min(setup.getNumTeams(),setup.getMode().getMaxNumTeams());){
+			spawnLocs.put(i++, new ArrayList<Point2D.Double>());
 		}
 		for (int r = 0; r<map.length; r++){
 			for (int c = 0; c<map[r].length; c++){
@@ -486,8 +490,9 @@ public class GameMap{
 		return true;
 	}
 	
+	//Mode handles respawn thread
 	private void kill(Player p){
-		if(p.getCurrWeapon().getType() != Weapon.WeaponType.PISTOL &&p.getCurrWeapon().getType()!= WeaponType.OBJECTIVE) {
+		if(p.getCurrWeapon()!=null && p.getCurrWeapon().getType() != Weapon.WeaponType.PISTOL &&p.getCurrWeapon().getType()!= WeaponType.OBJECTIVE) {
 			map[getPlayerGridX(p)][getPlayerGridY(p)]=p.getCurrWeapon().getCharacter();
 			droppedWeps.add(new Point2D.Double(getPlayerGridX(p),getPlayerGridY(p)));
 		} 
@@ -499,7 +504,7 @@ public class GameMap{
 				break;
 			}
 		}
-		threads.add(new RespawnThread(this, p, i == 0 && p.getType()==PlayerType.HUMAN, 5000));
-		threads.get(threads.size()-1).start();
+		
+		
 	}
 }

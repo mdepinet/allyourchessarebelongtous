@@ -50,7 +50,7 @@ public class StatsFrame extends JFrame {
 		players.addAll(p);
 		teams = t;
 		JLabel label;
-		for(int i = 0; i < teams.length;i++)
+		for(int i = 0; i < (gameMode instanceof ZombiesWGuns ? 1 : teams.length);i++)
 		{
 			Weapon w = new Weapon(teams[i], new Point());
 			label = new JLabel("0", new ImageIcon(Weapon.getWeaponImg(w.getImgLoc())), JLabel.CENTER);

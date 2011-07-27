@@ -8,6 +8,8 @@ import java.util.TreeMap;
 import org.cwi.shoot.map.GameMap;
 import org.cwi.shoot.model.Player;
 import org.cwi.shoot.model.Weapon;
+import org.cwi.shoot.model.Player.PlayerType;
+import org.cwi.shoot.threads.RespawnThread;
 
 public class TeamDeathmatchMode extends GameMode {
 	public static final int KILLS_TO_WIN = 10;
@@ -83,7 +85,8 @@ public class TeamDeathmatchMode extends GameMode {
 	@Override
 	public void onPlayerDeath(Player p) {
 		// TODO Auto-generated method stub
-
+		threads.add(new RespawnThread(gameMap, p, p.getType()==PlayerType.HUMAN, 5000));
+		threads.get(threads.size()-1).start();
 	}
 
 	@Override

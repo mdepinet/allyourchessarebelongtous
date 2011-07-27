@@ -2,6 +2,8 @@ package org.cwi.shoot.config;
 
 import java.awt.Graphics2D;
 import java.awt.Point;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -13,16 +15,19 @@ import javax.swing.JOptionPane;
 import org.cwi.shoot.map.GameMap;
 import org.cwi.shoot.model.Player;
 import org.cwi.shoot.model.Weapon;
+import org.cwi.shoot.threads.RespawnThread;
 
 public abstract class GameMode {
 	public static final List<Class<? extends GameMode>> availableTypes = new LinkedList<Class<? extends GameMode>>();
 	static{
 		availableTypes.add(TeamDeathmatchMode.class);
 		availableTypes.add(CaptureTheFlagMode.class);
-//		availableTypes.add(ZombiesWGuns.class);
+		availableTypes.add(ZombiesWGuns.class);
 	}
 
 	protected char[][] modeMap;
+	protected GameMap gameMap;
+	protected static List<RespawnThread> threads = Collections.synchronizedList(new ArrayList<RespawnThread>());;
 	
 	public GameMode() {
 	}
@@ -42,6 +47,7 @@ public abstract class GameMode {
 	public abstract void drawModeMapPost(Graphics2D g, List<Player> players);
 	
 	public void onStartup(GameMap map, GameOptions setup){
+		gameMap = map;
 		for(int i = 1; i<=Math.min(setup.getNumTeams(), getMaxNumTeams()); i++) {
 			for(int j = 0; j < setup.getPlayersPerTeam(); j++) {
 				if(i == setup.getPlayerTeam() && j == 0) continue;
@@ -56,6 +62,12 @@ public abstract class GameMode {
 		}
 	}
 	public void onReset(GameMap map, GameOptions setup){
+		for(int i = 0; i < threads.size(); i++) { 
+			RespawnThread t = threads.get(i); 
+			t.respawn(); 
+			t.kill(); 
+		}
+		threads.clear();
 		for(int i = 1; i<=Math.min(setup.getNumTeams(), getMaxNumTeams()); i++) {
 			for(int j = 0; j < setup.getPlayersPerTeam(); j++) {
 				if(i == setup.getPlayerTeam() && j == 0) continue;
