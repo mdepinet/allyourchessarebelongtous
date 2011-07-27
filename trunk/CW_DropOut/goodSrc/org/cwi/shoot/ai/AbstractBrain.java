@@ -1,14 +1,15 @@
-package productivity.todo.ai;
+package org.cwi.shoot.ai;
 
 import java.awt.Point;
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
 import java.util.List;
 
-import productivity.todo.ai.path.MapGraph;
-import productivity.todo.model.GameMap;
-import productivity.todo.model.Player;
-import productivity.todo.model.Weapon;
+import org.cwi.shoot.ai.path.MapGraph;
+import org.cwi.shoot.map.GameMap;
+import org.cwi.shoot.model.Player;
+import org.cwi.shoot.model.Weapon;
+
 
 
 public abstract class AbstractBrain implements Controller {
@@ -103,9 +104,9 @@ public abstract class AbstractBrain implements Controller {
 		p.setOrientation(orientation);
 	}
 	public final void shoot(GameMap map, Player p){
-		if (p.getCurrentWeapon().canShoot()) map.shoot(p);
+		if (p.getCurrWeapon().canShoot()) map.shoot(p);
 	}
-	public final void switchWeapon(Player p, int weapon){
+	public final void switchWeapon(Player p, Weapon weapon){
 		p.setCurrWeapon(weapon);
 	}
 	

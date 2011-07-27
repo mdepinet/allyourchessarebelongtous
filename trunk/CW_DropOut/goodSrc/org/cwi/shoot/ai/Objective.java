@@ -1,4 +1,4 @@
-package productivity.todo.ai;
+package org.cwi.shoot.ai;
 
 import java.awt.Point;
 

@@ -1,4 +1,6 @@
-package productivity.todo.model;
+package org.cwi.shoot.threads;
+
+import org.cwi.shoot.model.Weapon;
 
 public class ReloadThread extends Thread {
 	private long millis;

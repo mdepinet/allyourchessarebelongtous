@@ -1,12 +1,10 @@
-package productivity.todo.model;
+package org.cwi.shoot.map;
 
 
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.geom.Line2D;
 import java.awt.geom.Point2D;
-import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -14,91 +12,54 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Scanner;
 
-import javax.swing.ImageIcon;
-import javax.swing.JOptionPane;
+import org.cwi.shoot.config.GameOptions;
+import org.cwi.shoot.model.Bullet;
+import org.cwi.shoot.model.Explosion;
+import org.cwi.shoot.model.Player;
+import org.cwi.shoot.model.Player.PlayerType;
+import org.cwi.shoot.model.PlayerStats;
+import org.cwi.shoot.model.Weapon;
+import org.cwi.shoot.threads.RespawnThread;
+import org.cwi.shoot.threads.WeaponAdderThread;
 
-import productivity.todo.config.GameMode;
-import productivity.todo.config.ZombiesWGuns;
-import productivity.todo.config.TeamDeathmatchMode;
 import productivity.todo.view.GameCanvas;
 
 public class GameMap{
-	private List<Player> players;
-	private char[][] map;
 	public static final String[] teamNames = { "America", "England", "Mexico", "Canada" };
-	public static final int HEIGHT = 750;
-	public static final int WIDTH = 750;
 	public static final int GRID_PIXELS = GameCanvas.GRID_PIXELS;
-	public static final int NUM_TEAMMATES = 2;
-	public static final String NAMETYPES = "resource/namePartsArab.txt";
-	private GameMode gameMode;
+	
+	private GameOptions setup;
+	private char[][] map;
+	private List<Player> players;
 	private List<RespawnThread> threads;
-	private ArrayList<Bullet> bullets;
-	private ArrayList<Explosion> explosions;
-	private File mapChosen;
-	private Map<Integer, ArrayList<Point2D.Double>> spawnLocs;
-	private int pTeam;
+	private List<Bullet> bullets;
+	private List<Explosion> explosions;
+	private Map<Integer, List<Point2D.Double>> spawnLocs;
 	private List<Point2D.Double> droppedWeps;
-	public GameMap(File mapFile)
-	{
-		spawnLocs = new HashMap<Integer, ArrayList<Point2D.Double>>();
-		spawnLocs.put(1, new ArrayList<Point2D.Double>());
-		spawnLocs.put(2, new ArrayList<Point2D.Double>());
-		spawnLocs.put(3, new ArrayList<Point2D.Double>());
-		spawnLocs.put(4, new ArrayList<Point2D.Double>());
-		spawnLocs.put(5, new ArrayList<Point2D.Double>());
-		mapChosen = mapFile;
+	
+	public GameMap(GameOptions setup) {
+		this.setup = setup;
+		init();
+	}
+	public void init() {
+		map = setup.loadMap();
+		
 		bullets = new ArrayList<Bullet>();
-		gameMode = new TeamDeathmatchMode(this);
 		explosions = new ArrayList<Explosion>();
 		threads = Collections.synchronizedList(new ArrayList<RespawnThread>());
 		players = Collections.synchronizedList(new LinkedList<Player>());
-		droppedWeps = new ArrayList<Point2D.Double>();
-	}
-	public void init(int playerTeam)
-	{
-		loadMap();
-		Player player = new Player("Player 1");
-		player.setTeam(playerTeam);
-		player.setType(PlayerType.PERSON);
+		droppedWeps = Collections.synchronizedList(new ArrayList<Point2D.Double>());
+		
+		setupSpawnLocs();
+		
+		Player player = new Player(setup.getPlayerName());
+		player.setTeam(setup.getPlayerTeam());
+		player.setType(Player.PlayerType.HUMAN);
 		players.add(player);
-		pTeam = playerTeam;
-		NameGenerator gen = null;
-		try {
-			gen = new NameGenerator(NAMETYPES);
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		if(gameMode instanceof ZombiesWGuns) {
-			((ZombiesWGuns)gameMode).createZombieList();
-			((ZombiesWGuns)gameMode).addZombies(ZombiesWGuns.NUM_ENEMIES);
-		}
-		else {
-			for(int i = 1; i < spawnLocs.keySet().size() && !spawnLocs.get(i).isEmpty(); i++) {
-				for(int j = 0; j < NUM_TEAMMATES; j++)
-				{
-					if(i == player.getTeam() && j == 0) continue;
-					//Player p2 = new Player("Player " + (((i-1)*2)+j+(i>=player.getTeam()?1:2)));
-					Player p2 = new Player(gen.compose((int)(Math.random()*3)+2));
-					p2.setTeam(i);
-					players.add(p2);
-				}
-			}
-		}
-		for(int i = 0; i < players.size();i++)
-		{
-			Player p = players.get(i);
-			if(spawnLocs.get(new Integer(p.getTeam()))==null) System.out.println("null");
-			if(!spawnLocs.get(new Integer(p.getTeam())).isEmpty()) {
-				spawn(p);
-				p.setLocation(spawnLocs.get(p.getTeam()).get((int)(Math.random()*spawnLocs.get(p.getTeam()).size())));
-			}
-			else players.remove(i);
-		}
-		if(gameMode instanceof ZombiesWGuns) ((ZombiesWGuns)gameMode).setStartTime(System.currentTimeMillis());
+
+		setup.getMode().onStartup(this, setup);
+		setup.getMode().loadGameObjects(this);
 	}
 	public void resetGame()
 	{
@@ -109,19 +70,8 @@ public class GameMap{
 			t.kill(); 
 		}
 		threads.clear();
-		if(gameMode instanceof ZombiesWGuns) {
-			((ZombiesWGuns)gameMode).setStartTime(System.currentTimeMillis());
-			for(int i = 0; i < players.size(); i++)
-				if(players.get(i).getType()!=PlayerType.PERSON) {
-					players.remove(i);
-					i--;
-				}
-			((ZombiesWGuns)gameMode).addZombies(ZombiesWGuns.NUM_ENEMIES);
-			((ZombiesWGuns)gameMode).setWave(1);
-			((ZombiesWGuns)gameMode).setWaveStartTime(System.currentTimeMillis());
-			((ZombiesWGuns)gameMode).getDeadZombies().clear();
-		}
-		gameMode.loadGameObjects();
+		setup.getMode().onReset(this);
+		setup.getMode().loadGameObjects(this);
 		
 		for(int i = 0; i < players.size();i++)
 		{
@@ -136,85 +86,23 @@ public class GameMap{
 			else players.remove(i);
 		}
 	}
-	public ArrayList<Bullet> getBullets() {
-		return bullets;
-	}
-	public void setBullets(ArrayList<Bullet> bullets) {
-		this.bullets = bullets;
-	}
-	public void loadMap()
-	{
-		map = new char[30][30];
-		Scanner scan = null;
-		try
-		{
-			scan = new Scanner(mapChosen);
+	private void setupSpawnLocs(){
+		spawnLocs = new HashMap<Integer, List<Point2D.Double>>();
+		for (int i = 0; i<setup.getMode().getNumTeams();){
+			spawnLocs.put(++i, new ArrayList<Point2D.Double>());
 		}
-		catch(IOException e)
-		{}
-		for(int i = 0; i < map.length;i++)
-		{
-			for(int j = 0; j < map[i].length && scan.hasNext() ; j++) {
-				String next = scan.next();
-				if(!next.matches("[L-O]"))
-					map[j][i] = next.charAt(0);
-				else
-					map[j][i] = '_';
-				if (next.matches("\\d+")) { if(next.equals("1") || next.equals("2") || next.equals("3") || next.equals("4") || next.equals("5")) { spawnLocs.get(new Integer(next)).add(new Point2D.Double((j*GRID_PIXELS)+12.5,(i*GRID_PIXELS)+12.5)); map[j][i] = '_'; } }
-			}
-			if(scan.hasNextLine())
-				scan.nextLine();
-		}
-		gameMode.loadGameObjects();
-	}
-	public Player melee(Player p) {
-		for(int i = 0; i < players.size(); i++) {
-			if(players.get(i).getTeam()==p.getTeam()) continue;
-			if(p.getLocation().distance(players.get(i).getLocation())<p.getRadius()*3) {
-				return players.get(i);
+		for (int r = 0; r<map.length; r++){
+			for (int c = 0; c<map[r].length; c++){
+				if (Character.isDigit(map[r][c])) spawnLocs.get(Character.digit(map[r][c],10)).add(new Point2D.Double(r,c));
 			}
 		}
-		return null;
 	}
-	public List<PlayerStats> getPlayerStats()
-	{
-		List<PlayerStats> ret = new ArrayList<PlayerStats>();
-		for(Player p: players)
-			ret.add(p.getStats());
-		return ret;
-	}
-	public void shoot(Player p) {
-		double tempAngle = p.getOrientation();
-		if(p.getCurrentWeapon().getType().equals("Melee")) {
-			p.getCurrentWeapon().setSwung(true);
-			return;
-		}
-		p.getStats().incShotsFired();
-		for(int i = 1; i<=p.getCurrentWeapon().getRoundsPerShot(); i++){
-			int spreadModifier = Math.random()>.5? -1:1;
-			Bullet bullet = new Bullet(p.getCurrentWeapon(), p);
-			tempAngle += spreadModifier*Math.toRadians(Math.random()*p.getCurrentWeapon().getSpread()/2);
-			bullet.setVelocity(new Point2D.Double(Math.cos(tempAngle+Math.PI/2)*p.getCurrentWeapon().getBulletSpeed(),Math.sin(tempAngle+Math.PI/2)*p.getCurrentWeapon().getBulletSpeed()));
-			bullets.add(bullet);
-			tempAngle=p.getOrientation();
-		}
-		p.getCurrentWeapon().setClipSize(p.getCurrentWeapon().getClipSize()-1);
-		if(p.getCurrentWeapon().getClipSize()<=0 && p.getCurrentWeapon().getClipCount()==0) {
-			p.removeWeapon(p.getCurrentWeapon());
-			p.nextWeapon();
-		}
-	}
+	
 	public char[][] getMap() {
 		return map;
 	}
 	public void setMap(char[][] map) {
 		this.map = map;
-	}
-	public GameMode getGameMode() {
-		return gameMode;
-	}
-	public void setGameMode(GameMode gameMode) {
-		this.gameMode = gameMode;
 	}
 	public List<Player> getPlayers() {
 		return players;
@@ -222,19 +110,72 @@ public class GameMap{
 	public List<RespawnThread> getThreads() {
 		return threads;
 	}
-	public void setThreads(ArrayList<RespawnThread> threads) {
-		this.threads = threads;
+	public List<Bullet> getBullets() {
+		return bullets;
 	}
-	public Point2D.Double getClosestWeaponLoc(Player p)
+	public List<Explosion> getExplosions() {
+		return explosions;
+	}
+	public Map<Integer, List<Point2D.Double>> getSpawnLocs() {
+		return spawnLocs;
+	}
+	public List<Point2D.Double> getDroppedWeps() {
+		return droppedWeps;
+	}
+	public Player getPlayer() {
+		if(players.get(0).getType()==PlayerType.HUMAN) return players.get(0);
+		return null;
+	}
+	public void setPlayer(Player player) {
+		this.players.set(0, player);
+	}
+	
+	public List<PlayerStats> getPlayerStats()
 	{
+		List<PlayerStats> ret = new ArrayList<PlayerStats>();
+		for(Player p: players)
+			ret.add(p.getStats());
+		return ret;
+	}
+	
+	public void shoot(Player p) {
+		double tempAngle = p.getOrientation();
+		if(p.getCurrWeapon().getType().equals("Melee")) {
+			p.getCurrWeapon().setSwung(true);
+			return;
+		}
+		p.getStats().incShotsFired();
+		for(int i = 1; i<=p.getCurrWeapon().getRoundsPerShot(); i++){
+			int spreadModifier = Math.random()>.5? -1:1;
+			Bullet bullet = new Bullet(p.getCurrWeapon(), p);
+			tempAngle += spreadModifier*Math.toRadians(Math.random()*p.getCurrWeapon().getSpread()/2);
+			bullet.setVelocity(new Point2D.Double(Math.cos(tempAngle+Math.PI/2)*p.getCurrWeapon().getBulletSpeed(),Math.sin(tempAngle+Math.PI/2)*p.getCurrWeapon().getBulletSpeed()));
+			bullets.add(bullet);
+			tempAngle=p.getOrientation();
+		}
+		p.getCurrWeapon().setClipSize(p.getCurrWeapon().getClipSize()-1);
+		if(p.getCurrWeapon().getClipSize()<=0 && p.getCurrWeapon().getClipCount()==0) {
+			p.removeWeapon(p.getCurrWeapon());
+			p.nextWeapon();
+		}
+	}
+	public Player melee(Player p) {
+		for(int i = 0; i < players.size(); i++) {
+			if(players.get(i).getTeam()==p.getTeam()) continue;
+			if(p.getLocation().distance(players.get(i).getLocation())<Player.radius*3) {
+				return players.get(i);
+			}
+		}
+		return null;
+	}
+	
+	public Point2D.Double getClosestWeaponLoc(Player p) {
 		double dist = Double.MAX_VALUE;
 		Point2D.Double ret = null;
-		for(int i =0;i<map.length;i++)
-		{
+		for(int i =0;i<map.length;i++) {
 			for(int j = 0;j < map[i].length; j++)
-				if(map[i][j] != '_' && map[i][j]!='X')
-				{
-					if(!p.canGetWeapon(new Weapon(map[i][j], new Point(i,j)))) continue;
+				if(map[i][j] != '_' && map[i][j]!='X') {
+					if(!p.canGetWeapon(new Weapon(map[i][j], new Point(i,j)), setup.getMode())) continue;
 					if(p.getLocation().distance(new Point2D.Double(12.5+(i*25),12.5+(j*25)))<dist) { dist = p.getLocation().distance(new Point2D.Double(12.5+(i*25),12.5+(j*25))); ret = new Point2D.Double(12.5+(i*25),12.5+(j*25)); }
 				}
 		}
@@ -243,40 +184,32 @@ public class GameMap{
 	public Weapon getClosestWeapon(Player p){
 		double dist = Double.MAX_VALUE;
 		Weapon ret = null;
-		for(int i =0;i<map.length;i++)
-		{
+		for(int i =0;i<map.length;i++) {
 			for(int j = 0;j < map[i].length; j++)
-				if(map[i][j] != '_' && map[i][j]!='X')
-				{
-					if(!p.canGetWeapon(new Weapon(map[i][j], new Point(i,j)))) continue;
+				if(map[i][j] != '_' && map[i][j]!='X') {
+					if(!p.canGetWeapon(new Weapon(map[i][j], new Point(i,j)), setup.getMode())) continue;
 					if(p.getLocation().distance(new Point2D.Double(12.5+(i*25),12.5+(j*25)))<dist) { dist = p.getLocation().distance(new Point2D.Double(12.5+(i*25),12.5+(j*25))); ret = new Weapon(map[i][j], new Point(i,j)); }
 				}
 		}
 		return ret;
 	}
-	public Player getClosestNonTeamPlayer(int team,Point2D.Double loc)
-	{
+	public Player getClosestNonTeamPlayer(int team,Point2D.Double loc) {
 		double dist = Double.MAX_VALUE;
 		Player ret = null;
-		for(int i = 0; i < players.size();i++)
-		{
+		for(int i = 0; i < players.size();i++) {
 			Player p = players.get(i);
-			if(p.getTeam()!=team)
-			{
+			if(p.getTeam()!=team) {
 				if(loc.distance(p.getLocation())<dist) { dist = loc.distance(p.getLocation()); ret = p; }
 			}
 		}
 		return ret;
 	}
-	public Player getClosestTeamPlayer(int team,Point2D.Double loc)
-	{
+	public Player getClosestTeamPlayer(int team,Point2D.Double loc) {
 		double dist = Double.MAX_VALUE;
 		Player ret = null;
-		for(int i = 0; i < players.size();i++)
-		{
+		for(int i = 0; i < players.size();i++) {
 			Player p = players.get(i);
-			if(p.getTeam()==team)
-			{
+			if(p.getTeam()==team) {
 				if(loc.distance(p.getLocation())<dist) { dist = loc.distance(p.getLocation()); ret = p; }
 			}
 		}
@@ -296,50 +229,29 @@ public class GameMap{
 		}
 		return allies.toArray(new Player[allies.size()]);
 	}
-	public Player getPlayer() {
-		if(players.get(0).getType()==PlayerType.PERSON)
-			return players.get(0);
-		return null;
-	}
-	public void setPlayer(Player player) {
-		this.players.set(0, player);
-	}
-	public ArrayList<Explosion> getExplosions() {
-		return explosions;
-	}
-	public void setExplosions(ArrayList<Explosion> explosions) {
-		this.explosions = explosions;
-	}
-	public File getMapChosen() {
-		return mapChosen;
-	}
-	public void setMapChosen(File mapChosen) {
-		this.mapChosen = mapChosen;
-	}
-	public void gameUpdate()
-	{
-		gameMode.update();
+
+	public void gameUpdate() {
+		setup.getMode().update(this);
 		int winner;
-		if((winner = gameMode.getWinningTeam()) != -1) {
-			if(winner==5) JOptionPane.showMessageDialog(null, "You're dead. You lasted " + ((System.currentTimeMillis() - ((ZombiesWGuns)gameMode).getStartTime())/1000. ) + " seconds and survived through " + ((ZombiesWGuns)gameMode).getWave() + " waves.", "Game over!", 0, new ImageIcon(new Weapon((char)(pTeam+75), new Point()).getImage()));
-			else JOptionPane.showMessageDialog(null, teamNames[winner-1] + " Wins!", "Game over!", 0, new ImageIcon(new Weapon((char)(winner+75), new Point()).getImage()));
+		if((winner = setup.getMode().getWinningTeam()) != -1) {
+			setup.getMode().showGameEndDialog(this, winner);
 			resetGame();
 		}
 		OUTTER: for(int i=0;i<bullets.size();i++) {
+			
 			Bullet b = bullets.get(i);
 			if(!isValid(b.getLocation(),1)) 
-				if(!b.getWeapon().getType().equalsIgnoreCase("thrown")){
+				if(b.getWeapon().getType() != Weapon.WeaponType.THROWN){
 					explode(b); 
 					bullets.remove(i--); 
 					continue OUTTER;
 				}
 			
-			for(int j = 0; j < map.length; j++)
-			{
+			for(int j = 0; j < map.length; j++) {
 				for(int k = 0; k < map[j].length;k++)
 					if(map[j][k] == 'X'){
 						Point2D.Double intersection = bulletColDetect(b,new Rectangle(j*GRID_PIXELS,k*GRID_PIXELS,GRID_PIXELS,GRID_PIXELS));
-						if(intersection!=null && !b.getWeapon().getType().equalsIgnoreCase("thrown")){
+						if(intersection!=null && b.getWeapon().getType() != Weapon.WeaponType.THROWN){
 							b.setLocation(intersection);
 							explode(b);
 							bullets.remove(i--); 
@@ -347,6 +259,7 @@ public class GameMap{
 						}
 					}
 			}
+			
 			Player hit = getHitPlayer(b);
 			b.update();
 			double effRange = b.getWeapon().getEffRange();
@@ -357,6 +270,7 @@ public class GameMap{
 					i--;
 					continue OUTTER;
 				}
+			
 			if(b.getDistanceTraveled() > effRange*2) { bullets.remove(b); i--; continue OUTTER; }
 			if (hit != null){
 				double damage = b.getWeapon().getPower();
@@ -372,12 +286,13 @@ public class GameMap{
 				i--;
 			}
 		}
-		for(int i =0; i<players.size(); i++)
-		{
+		
+		
+		for(int i =0; i<players.size(); i++) {
 			Player p= players.get(i);
 			Point2D.Double loc = p.getLocation();
-			p.update(this);
-			if(p.getCurrentWeapon()!=null && p.getCurrentWeapon().isSwung()) {
+			p.update(setup.getMode(), this);
+			if(p.getCurrWeapon()!=null && p.getCurrWeapon().isSwung()) {
 				Player hit = melee(p);
 				if(hit!=null) {
 					hit.setHealth(0);
@@ -385,13 +300,12 @@ public class GameMap{
 					kill(hit);
 					players.remove(hit);
 				}
-				p.getCurrentWeapon().setSwung(false);
+				p.getCurrWeapon().setSwung(false);
 			}
-			if(!isValid(p.getLocation(), p.getRadius()))
-			{
-				if(isValid(new Point2D.Double(p.getLocation().x,loc.y), p.getRadius()))
+			if(!isValid(p.getLocation(), (int) Player.radius)) {
+				if(isValid(new Point2D.Double(p.getLocation().x,loc.y), (int) Player.radius))
 					p.setLocation(new Point2D.Double(p.getLocation().x,loc.y));
-				else if(isValid(new Point2D.Double(loc.x,p.getLocation().y), p.getRadius()))
+				else if(isValid(new Point2D.Double(loc.x,p.getLocation().y), (int) Player.radius))
 					p.setLocation(new Point2D.Double(loc.x,p.getLocation().y));
 				else
 					p.setLocation(loc);
@@ -399,50 +313,46 @@ public class GameMap{
 			
 			Weapon w;
 			if((w = getWeapon(p))!=null){
-				if(p.addWeapon(w)) {
+				if(p.addWeapon(w,setup.getMode())) {
 					if(w.getName().indexOf("Flag")==-1 && !droppedWeps.remove(new Point2D.Double(getPlayerGridX(p), getPlayerGridY(p))))
 						new WeaponAdderThread(map[getPlayerGridX(p)][getPlayerGridY(p)], new Point(getPlayerGridX(p), getPlayerGridY(p)), this).start();
 					map[getPlayerGridX(p)][getPlayerGridY(p)] = '_';
 				}
 			}
 		}
-		for(int i = 0; i < explosions.size();i++)
-		{	
+		
+		for(int i = 0; i < explosions.size();i++) {	
 			explosions.get(i).update();
 			if(!explosions.get(i).isActive())
 				explosions.remove(i);
 		}
 	}
-	public Weapon getWeapon(Player p)
-	{
+	
+	public Weapon getWeapon(Player p) {
 		try {
 			return getObjectAtPlayer(p);
 		} 
-		catch(IllegalArgumentException e) { }
-		return null;
+		catch(IllegalArgumentException e) {return null;}
 	}
-	public void spawnWeapon(char c, Point location)
-	{
+	
+	public void spawnWeapon(char c, Point location) {
 		map[location.x][location.y] = c;
 	}
-	public Player getHitPlayer(Bullet bullet)
-	{
-		for(int i = 0; i < players.size();i++)
-		{
+	
+	public Player getHitPlayer(Bullet bullet) {
+		for(int i = 0; i < players.size();i++) {
 			Player p = players.get(i);
 			if(bulletColDetect(bullet,p))
 				return p;
 		}
 		return null;
 	}
-	public Point2D.Double bulletColDetect(Bullet bullet, Rectangle r)
-	{
+	public Point2D.Double bulletColDetect(Bullet bullet, Rectangle r) {
 		Line2D.Double bulletSegment = new Line2D.Double(
 				bullet.getLocation(),
 				new Point2D.Double(bullet.getVelocity().x+bullet.getLocation().x,bullet.getVelocity().y+bullet.getLocation().y));
 		
-		if(bulletSegment.intersects(r))
-		{
+		if(bulletSegment.intersects(r)) {
 			double angle = Math.toDegrees(Math.atan2(bulletSegment.y2-bulletSegment.y1, bulletSegment.x2-bulletSegment.x1));
 			Line2D.Double top = new Line2D.Double(r.x,r.y,r.x+r.width,r.y);
 			Line2D.Double bottom = new Line2D.Double(r.x,r.y+r.height,r.x+r.width,r.y+r.height);
@@ -502,27 +412,22 @@ public class GameMap{
 		}
 		return false;
 	}
-	public boolean bulletColDetect(Bullet bullet, Player p)
-	{
+	public boolean bulletColDetect(Bullet bullet, Player p) {
 		if(bullet.getTeam()==p.getTeam()) return false;
 		double velX = bullet.getVelocity().x;
 		double velY = bullet.getVelocity().y;
-		return lineIntersectsCircle(new Line2D.Double(bullet.getLocation(), new Point2D.Double(bullet.getLocation().x+velX, bullet.getLocation().y+velY)), p.getLocation(), p.getRadius());
+		return lineIntersectsCircle(new Line2D.Double(bullet.getLocation(), new Point2D.Double(bullet.getLocation().x+velX, bullet.getLocation().y+velY)), p.getLocation(), (int)Player.radius);
 	}
-	public boolean isValid(Point2D.Double loc, int radius)
-	{
+	public boolean isValid(Point2D.Double loc, int radius) {
 		if(loc.x>(map[0].length*GRID_PIXELS)-radius || loc.x<radius || loc.y <radius || loc.y>(map.length*GRID_PIXELS)-radius) return false;
-		for(int i = 0; i < map.length; i++)
-		{
+		for(int i = 0; i < map.length; i++) {
 			for(int j = 0; j < map[0].length;j++)
 				if(map[i][j] == 'X' && new Rectangle(i*GRID_PIXELS,j*GRID_PIXELS,GRID_PIXELS,GRID_PIXELS).intersects(new Rectangle((int)loc.x-radius,(int)loc.y-radius,radius*2,radius*2)))
 						return false;
 		}
 		return true;
 	}
-	public void setPlayers(List<Player> players) {
-		this.players = players;
-	}
+	
 	public Player getPlayerByName(String name) {
 		Iterator<Player> it = players.iterator();
 		while( it.hasNext() ) {
@@ -533,8 +438,9 @@ public class GameMap{
 	}
 	
 	public void spawn(Player p){
-		p.respawn(spawnLocs.get(p.getTeam()).get((int)(Math.random()*spawnLocs.get(p.getTeam()).size())));
+		p.respawn(spawnLocs.get(p.getTeam()).get((int)(Math.random()*spawnLocs.get(p.getTeam()).size())), setup.getMode());
 	}
+	
 	public Weapon getObjectAtPlayer(Player p){
 		int x = getPlayerGridX(p);
 		int y = getPlayerGridY(p);
@@ -565,7 +471,7 @@ public class GameMap{
 		for (int i = 0; i<players.size(); i++){
 			Player p = players.get(i);
 			if(p.getTeam()==b.getPlayer().getTeam() && p != b.getPlayer()) continue;
-			double distance = p.getLocation().distance(b.getLocation()) - p.getRadius();
+			double distance = p.getLocation().distance(b.getLocation()) - Player.radius;
 			if(distance<splash) {
 				p.takeDamage(b.getWeapon().getPower()*((splash-distance)/splash));
 				if (p.getHealth() <= 0){ 
@@ -581,11 +487,11 @@ public class GameMap{
 	
 	private void kill(Player p){
 		if(p.hasFlag()) spawnWeapon(p.getFlag().getCharacter(), p.getFlag().getSpawnLoc());
-		if(!p.getCurrentWeapon().getType().equalsIgnoreCase("pistol")) {
-			map[getPlayerGridX(p)][getPlayerGridY(p)]=p.getCurrentWeapon().getCharacter();
+		if(p.getCurrWeapon().getType() != Weapon.WeaponType.PISTOL) {
+			map[getPlayerGridX(p)][getPlayerGridY(p)]=p.getCurrWeapon().getCharacter();
 			droppedWeps.add(new Point2D.Double(getPlayerGridX(p),getPlayerGridY(p)));
 		} 
-		p.die();
+		p.die(setup.getMode());
 		int i;
 		for (i = 0; i<players.size(); i++){
 			if (players.get(i) == p){
@@ -593,12 +499,7 @@ public class GameMap{
 				break;
 			}
 		}
-		if(!(gameMode instanceof ZombiesWGuns) || p.getType()==PlayerType.PERSON) {
-			threads.add(new RespawnThread(this, p, i == 0 && p.getType()==PlayerType.PERSON, 5000));
-			threads.get(threads.size()-1).start();
-		}
-		else if(gameMode instanceof ZombiesWGuns && p.getType()==PlayerType.COMPUTER && p.getTeam() == 5) {
-			((ZombiesWGuns)gameMode).getDeadZombies().add(p);
-		}
+		threads.add(new RespawnThread(this, p, i == 0 && p.getType()==PlayerType.HUMAN, 5000));
+		threads.get(threads.size()-1).start();
 	}
 }
