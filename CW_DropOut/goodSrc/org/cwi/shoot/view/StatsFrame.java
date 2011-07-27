@@ -13,13 +13,13 @@ import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 
-import org.cwi.shoot.map.GameMap;
+import org.cwi.shoot.config.GameMode;
+import org.cwi.shoot.model.Player;
+import org.cwi.shoot.model.Player.PlayerType;
+import org.cwi.shoot.model.Weapon;
 
-import productivity.todo.config.GameMode;
 import productivity.todo.config.ZombiesWGuns;
-import productivity.todo.model.Player;
-import productivity.todo.model.PlayerType;
-import productivity.todo.model.Weapon;
+
 
 public class StatsFrame extends JFrame {
 	public static final int WIDTH = 200;

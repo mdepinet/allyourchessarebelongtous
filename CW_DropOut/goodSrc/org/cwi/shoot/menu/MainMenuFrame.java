@@ -1,4 +1,4 @@
-package productivity.todo.menu;
+package org.cwi.shoot.menu;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -11,7 +11,6 @@ import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
 import java.nio.MappedByteBuffer;
 import java.nio.channels.FileChannel;
 import java.nio.charset.Charset;
@@ -32,12 +31,11 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.filechooser.FileFilter;
 
-import productivity.todo.config.GameMode;
-import productivity.todo.config.ZombiesWGuns;
-import productivity.todo.config.TeamDeathmatchMode;
-import productivity.todo.control.Shoot;
-import productivity.todo.model.GameMap;
-import productivity.todo.model.Weapon;
+import org.cwi.shoot.config.GameMode;
+import org.cwi.shoot.config.GameOptions;
+import org.cwi.shoot.control.Shoot;
+import org.cwi.shoot.map.GameMap;
+import org.cwi.shoot.model.Weapon;
 
 public class MainMenuFrame extends JFrame implements ActionListener, ListSelectionListener {
 	private static final long serialVersionUID = -6659414234158999706L;
@@ -48,15 +46,19 @@ public class MainMenuFrame extends JFrame implements ActionListener, ListSelecti
 	private int team;
 	private GameMode gameMode;
 	private JTable table;
+	private GameMode[] modes;
+	
 	public MainMenuFrame(Shoot control) {
 		super("Shoot Menu");
 		team = 1;
 		this.control = control;
 		buttonGroup = new ArrayList<JButton>();
-		gameMode = new TeamDeathmatchMode();
-		mapChosen = new File("resource/maps/default.map");
+		gameMode = null;
+		mapChosen = new File(GameOptions.MAP_RESOURCE);
 		setBounds(new Rectangle(400,300,400,400));
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		getContentPane().setLayout(new BorderLayout());
+		
 		JPanel filePane = new JPanel();
 		filePane.setPreferredSize(new Dimension(400, 60));
 		filePane.setLayout(new FlowLayout());
@@ -64,30 +66,28 @@ public class MainMenuFrame extends JFrame implements ActionListener, ListSelecti
 		JLabel label = new JLabel("Pick a Map", SwingConstants.CENTER);
 		label.setPreferredSize(new Dimension(300,20));
 		filePane.add(label);
-		textField = new JTextField("default.map");
+		textField = new JTextField(GameOptions.MAP_RESOURCE);
 		textField.setPreferredSize(new Dimension(250, 25));
 		JButton button = new JButton("Browse...");
 		button.setActionCommand("mapchooser");
 		button.addActionListener(this);
-		getContentPane().setLayout(new BorderLayout());
 		filePane.add(textField);
 		filePane.add(button);
 		getContentPane().add(filePane, BorderLayout.NORTH);
+		
 		String[] columnNames = {"Select a Mode"};
-		String[][] modeNames = new String[GameMode.modes.length][1];
-		for(int i = 0; i < GameMode.modes.length;i++)
+		String[][] modeNames = new String[GameMode.availableTypes.size()][1];
+		modes = new GameMode[GameMode.availableTypes.size()];
+		for(int i = 0; i < GameMode.availableTypes.size();i++)
 		{
 			try {
-				modeNames[i][0] = (String)GameMode.modes[i].getMethod("getModeName").invoke(GameMode.modes[i].newInstance());
+				modes[i] = GameMode.availableTypes.get(i).newInstance();
+				modeNames[i][0] = modes[i].getModeName();
 			} catch (IllegalArgumentException e) {
 				e.printStackTrace();
 			} catch (SecurityException e) {
 				e.printStackTrace();
 			} catch (IllegalAccessException e) {
-				e.printStackTrace();
-			} catch (InvocationTargetException e) {
-				e.printStackTrace();
-			} catch (NoSuchMethodException e) {
 				e.printStackTrace();
 			} catch (InstantiationException e) {
 				e.printStackTrace();
@@ -107,9 +107,9 @@ public class MainMenuFrame extends JFrame implements ActionListener, ListSelecti
 		
 		JPanel buttonPanel = new JPanel(new FlowLayout());
 		char c = 0;
-		for(c = 'L'; c <= (int)('O');c++)
-		{
-			button = new JButton(GameMap.teamNames[c-76], new ImageIcon(new Weapon(c, new Point()).getImage()));
+		for(c = 'L'; c <= (int)('O');c++) {
+			Weapon w = new Weapon(c, new Point());
+			button = new JButton(GameMap.teamNames[c-76], new ImageIcon(Weapon.getWeaponImg(w.getImgLoc())));
 			button.setVerticalTextPosition(JButton.BOTTOM);
 			button.setHorizontalTextPosition(JButton.CENTER);
 			button.setPreferredSize(new Dimension(90,60));
@@ -122,12 +122,14 @@ public class MainMenuFrame extends JFrame implements ActionListener, ListSelecti
 		}
 		panel.add(buttonPanel);
 		getContentPane().add(panel, BorderLayout.CENTER);
+		
 		button = new JButton("Start Game");
 		button.setAlignmentY(JButton.RIGHT_ALIGNMENT);
 		button.setActionCommand("startgame");
 		button.setSize(new Dimension(200, 30));
 		button.addActionListener(this);
 		getContentPane().add(button, BorderLayout.SOUTH);
+		
 		String mapString = "";
         try {
         	 mapString = readFile(mapChosen);
@@ -171,7 +173,7 @@ public class MainMenuFrame extends JFrame implements ActionListener, ListSelecti
 			mapChosen = null;
 			int returnVal = chooser.showOpenDialog(null);
 	        if (returnVal == JFileChooser.APPROVE_OPTION) mapChosen = chooser.getSelectedFile();
-	        else mapChosen = new File("resource/maps/default.map");
+	        else mapChosen = new File(GameOptions.MAP_RESOURCE);
 	        textField.setText(mapChosen.getName());
 	        String mapString = "";
 	        try {
@@ -203,8 +205,7 @@ public class MainMenuFrame extends JFrame implements ActionListener, ListSelecti
 		        char[] teams = new char[list.size()];
 		        for(int i =0; i < teams.length;i++)
 		        	teams[i]=list.get(i);
-	        if(gameMode instanceof ZombiesWGuns) control.startGame(mapChosen, gameMode, team);
-	        else control.startGame(mapChosen, gameMode, teams, team);
+	        control.startGame(mapChosen, gameMode, teams, team);
 			this.dispose();
 		}
 		else
@@ -234,16 +235,6 @@ public class MainMenuFrame extends JFrame implements ActionListener, ListSelecti
 	
 	@Override
 	public void valueChanged(ListSelectionEvent e) {
-		try {
-			gameMode = (GameMode) GameMode.modes[table.getSelectedRow()].newInstance();
-		} catch (IllegalArgumentException e1) {
-			e1.printStackTrace();
-		} catch (SecurityException e1) {
-			e1.printStackTrace();
-		} catch (InstantiationException e1) {
-			e1.printStackTrace();
-		} catch (IllegalAccessException e1) {
-			e1.printStackTrace();
-		}
+		gameMode = modes[table.getSelectedRow()];
 	}
 }
