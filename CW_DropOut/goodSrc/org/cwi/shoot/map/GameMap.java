@@ -23,11 +23,9 @@ import org.cwi.shoot.model.Weapon;
 import org.cwi.shoot.threads.RespawnThread;
 import org.cwi.shoot.threads.WeaponAdderThread;
 
-import productivity.todo.view.GameCanvas;
-
 public class GameMap{
 	public static final String[] teamNames = { "America", "England", "Mexico", "Canada" };
-	public static final int GRID_PIXELS = GameCanvas.GRID_PIXELS;
+	public static final int GRID_PIXELS = 25;
 	
 	private GameOptions setup;
 	private char[][] map;
@@ -227,7 +225,7 @@ public class GameMap{
 	public void gameUpdate() {
 		setup.getMode().update(this);
 		int winner;
-		if((winner = setup.getMode().getWinningTeam()) != -1) {
+		if((winner = setup.getMode().getWinningTeam(this)) != -1) {
 			setup.getMode().showGameEndDialog(this, winner);
 			resetGame();
 		}

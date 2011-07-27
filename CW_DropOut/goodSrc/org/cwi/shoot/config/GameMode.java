@@ -20,10 +20,10 @@ public abstract class GameMode {
 	
 	public abstract String getModeName();
 	public abstract String getScoreForPlayer(Player player);
-	public abstract String getScoreForTeam(int team);
+	public abstract String getScoreForTeam(int team, List<Player> players);
 	public abstract void loadGameObjects(GameMap map);
 	public abstract void update(GameMap map);
-	public abstract int getWinningTeam();
+	public abstract int getWinningTeam(GameMap map);
 	public abstract boolean canGetWeapon(Player p, Weapon w);
 	public abstract char[] getIgnoredMapChars();
 	public abstract int getNumTeams();
