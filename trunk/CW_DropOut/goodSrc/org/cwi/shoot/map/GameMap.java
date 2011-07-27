@@ -64,27 +64,16 @@ public class GameMap{
 	public void resetGame()
 	{
 		bullets.clear();
+		explosions.clear();
+		droppedWeps.clear();
 		for(int i = 0; i < threads.size(); i++) { 
 			RespawnThread t = threads.get(i); 
 			t.respawn(); 
 			t.kill(); 
 		}
 		threads.clear();
-		setup.getMode().onReset(this);
+		setup.getMode().onReset(this, setup);
 		setup.getMode().loadGameObjects(this);
-		
-		for(int i = 0; i < players.size();i++)
-		{
-			Player p = players.get(i);
-			p.getWeapons().clear();
-			p.clearStats();
-			if(spawnLocs.get(new Integer(p.getTeam()))==null) System.out.println("null");
-			if(!spawnLocs.get(new Integer(p.getTeam())).isEmpty()) {
-				spawn(p);
-				p.setLocation(spawnLocs.get(p.getTeam()).get((int)(Math.random()*spawnLocs.get(p.getTeam()).size())));
-			}
-			else players.remove(i);
-		}
 	}
 	private void setupSpawnLocs(){
 		spawnLocs = new HashMap<Integer, List<Point2D.Double>>();
@@ -130,12 +119,17 @@ public class GameMap{
 		this.players.set(0, player);
 	}
 	
-	public List<PlayerStats> getPlayerStats()
-	{
+	public List<PlayerStats> getPlayerStats() {
 		List<PlayerStats> ret = new ArrayList<PlayerStats>();
 		for(Player p: players)
 			ret.add(p.getStats());
 		return ret;
+	}
+	public int getPixelWidth(){
+		return map.length*GRID_PIXELS;
+	}
+	public int getPixelHeight(){
+		return map[0].length*GRID_PIXELS;
 	}
 	
 	public void shoot(Player p) {

@@ -23,7 +23,6 @@ public abstract class GameMode {
 	public abstract String getScoreForTeam(int team);
 	public abstract void loadGameObjects(GameMap map);
 	public abstract void update(GameMap map);
-	public abstract void onReset(GameMap map);
 	public abstract int getWinningTeam();
 	public abstract boolean canGetWeapon(Player p, Weapon w);
 	public abstract char[] getIgnoredMapChars();
@@ -34,6 +33,20 @@ public abstract class GameMode {
 	public abstract void onPlayerRespawn(Player p);
 	
 	public void onStartup(GameMap map, GameOptions setup){
+		for(int i = 1; i<getNumTeams(); i++) {
+			for(int j = 0; j < getPlayersOnTeam(i); j++) {
+				if(i == setup.getPlayerTeam() && j == 0) continue;
+				Player p2 = new Player(setup.getNameGen().compose((int)(Math.random()*3)+2));
+				p2.setTeam(i);
+				map.getPlayers().add(p2);
+			}
+		}
+		for(int i = 0; i < map.getPlayers().size();i++) {
+			Player p = map.getPlayers().get(i);
+			if(map.getSpawnLocs().get(p.getTeam())!=null && !map.getSpawnLocs().get(p.getTeam()).isEmpty()) map.spawn(p);
+		}
+	}
+	public void onReset(GameMap map, GameOptions setup){
 		for(int i = 1; i<getNumTeams(); i++) {
 			for(int j = 0; j < getPlayersOnTeam(i); j++) {
 				if(i == setup.getPlayerTeam() && j == 0) continue;
