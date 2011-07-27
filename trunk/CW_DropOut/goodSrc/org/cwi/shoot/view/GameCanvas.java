@@ -23,6 +23,7 @@ import org.cwi.shoot.model.Bullet;
 import org.cwi.shoot.model.Explosion;
 import org.cwi.shoot.model.Player;
 import org.cwi.shoot.model.Weapon;
+import org.cwi.shoot.model.Weapon.WeaponType;
 
 public class GameCanvas extends Canvas {
 	private static final long serialVersionUID = 4179148853338726809L;
@@ -92,16 +93,11 @@ public class GameCanvas extends Canvas {
 				if (p.getCurrWeapon() != null){
 					AffineTransform transform = new AffineTransform();
 					backg.setColor(Color.BLACK);
-					BufferedImage wepImg = null;
-					if ((wepImg = Weapon.getWeaponImg(p.getCurrWeapon().getImgLoc())) != null){
-						backg.drawImage(wepImg, transform, this);
-					}
-					else{
-						Rectangle gun2;
-						gun2 = new Rectangle((int)Math.round(HRZ_SCALE*(p.getLocation().getX()-8)),(int)Math.round(VERT_SCALE*p.getLocation().getY()), (int) Math.round(4*HRZ_SCALE), (int) Math.round(12*VERT_SCALE));
-						transform.rotate(p.getOrientation(), p.getLocation().x, p.getLocation().y);
-						if (p.getCurrWeapon().getType() != Weapon.WeaponType.THROWN) backg.draw(transform.createTransformedShape(gun2));
-					}
+					Rectangle gun2;
+					gun2 = new Rectangle((int)Math.round(HRZ_SCALE*(p.getLocation().getX()-8)),(int)Math.round(VERT_SCALE*p.getLocation().getY()), (int) Math.round(4*HRZ_SCALE), (int) Math.round(12*VERT_SCALE));
+					transform.rotate(p.getOrientation(), p.getLocation().x, p.getLocation().y);
+					if (p.getCurrWeapon().getType() != Weapon.WeaponType.THROWN) backg.draw(transform.createTransformedShape(gun2));
+					
 				}
 
 				//Draw player and name

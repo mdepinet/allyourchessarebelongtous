@@ -141,7 +141,7 @@ public class GameMap{
 	
 	public void shoot(Player p) {
 		double tempAngle = p.getOrientation();
-		if(p.getCurrWeapon().getType().equals("Melee")) {
+		if(p.getCurrWeapon().getEffRange()==0) {
 			p.getCurrWeapon().setSwung(true);
 			return;
 		}
