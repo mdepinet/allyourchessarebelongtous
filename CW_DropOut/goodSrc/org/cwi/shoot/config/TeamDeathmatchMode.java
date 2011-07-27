@@ -91,12 +91,14 @@ public class TeamDeathmatchMode extends GameMode {
 		// TODO Auto-generated method stub
 
 	}
+	@Override
 	public void drawModeMapPre(Graphics2D g) {
 		// TODO Auto-generated method stub
-
+		
 	}
+	@Override
 	public void drawModeMapPost(Graphics2D g, List<Player> players) {
 		// TODO Auto-generated method stub
-
+		
 	}
 }
