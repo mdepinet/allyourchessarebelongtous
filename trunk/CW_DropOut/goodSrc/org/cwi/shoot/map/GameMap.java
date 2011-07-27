@@ -223,9 +223,9 @@ public class GameMap{
 	}
 
 	public void gameUpdate() {
-		setup.getMode().update(this);
+		setup.getMode().update(players);
 		int winner;
-		if((winner = setup.getMode().getWinningTeam(this)) != -1) {
+		if((winner = setup.getMode().getWinningTeam(players)) != -1) {
 			setup.getMode().showGameEndDialog(this, winner);
 			resetGame();
 		}
