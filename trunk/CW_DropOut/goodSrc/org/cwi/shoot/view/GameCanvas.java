@@ -17,6 +17,7 @@ import java.util.Arrays;
 import javax.imageio.ImageIO;
 
 import org.cwi.shoot.config.GameMode;
+import org.cwi.shoot.config.GameOptions;
 import org.cwi.shoot.map.GameMap;
 import org.cwi.shoot.model.Bullet;
 import org.cwi.shoot.model.Explosion;
@@ -69,12 +70,12 @@ public class GameCanvas extends Canvas {
 		//Draw map
 		for(int i = 0; i < gameMap.getMap().length;i++) {
 			for(int j = 0; j < gameMap.getMap()[i].length; j++)
-				if(gameMap.getMap()[i][j] == 'X')
+				if(gameMap.getMap()[i][j] == GameOptions.WALL_CHARACTER)
 					backg.fillRect((int) Math.round(i*GRID_PIXELS*HRZ_SCALE),
 							(int) Math.round(j*GRID_PIXELS*VERT_SCALE),
 							(int) Math.round(GRID_PIXELS*HRZ_SCALE),
 							(int) Math.round(GRID_PIXELS*VERT_SCALE));
-				else if(gameMap.getMap()[i][j] != '_' && !Arrays.asList(mode.getIgnoredMapChars()).contains(gameMap.getMap()[i][j])) {
+				else if(gameMap.getMap()[i][j] != GameOptions.BLANK_CHARACTER) {
 					backg.drawRect((int) Math.round(i*GRID_PIXELS*HRZ_SCALE),
 							(int) Math.round(j*GRID_PIXELS*VERT_SCALE),
 							(int) Math.round(GRID_PIXELS*HRZ_SCALE),
@@ -88,16 +89,19 @@ public class GameCanvas extends Canvas {
 			Player p = gameMap.getPlayers().get(i);
 			if (p.getHealth() > 0 && p!=null){
 				//Draw weapon
-				AffineTransform transform = new AffineTransform();
-				BufferedImage wepImg = null;
-				if ((wepImg = Weapon.getWeaponImg(p.getCurrWeapon().getBulletImgLoc())) != null){
-					backg.drawImage(wepImg, transform, this);
-				}
-				else{
-					Rectangle gun2;
-					gun2 = new Rectangle((int)Math.round(HRZ_SCALE*(p.getLocation().getX()-8)),(int)Math.round(VERT_SCALE*p.getLocation().getY()), (int) Math.round(4*HRZ_SCALE), (int) Math.round(12*VERT_SCALE));
-					transform.rotate(p.getOrientation(), p.getLocation().x, p.getLocation().y);
-					if (p.getCurrWeapon().getType() != Weapon.WeaponType.THROWN) backg.draw(transform.createTransformedShape(gun2));
+				if (p.getCurrWeapon() != null){
+					AffineTransform transform = new AffineTransform();
+					backg.setColor(Color.BLACK);
+					BufferedImage wepImg = null;
+					if ((wepImg = Weapon.getWeaponImg(p.getCurrWeapon().getImgLoc())) != null){
+						backg.drawImage(wepImg, transform, this);
+					}
+					else{
+						Rectangle gun2;
+						gun2 = new Rectangle((int)Math.round(HRZ_SCALE*(p.getLocation().getX()-8)),(int)Math.round(VERT_SCALE*p.getLocation().getY()), (int) Math.round(4*HRZ_SCALE), (int) Math.round(12*VERT_SCALE));
+						transform.rotate(p.getOrientation(), p.getLocation().x, p.getLocation().y);
+						if (p.getCurrWeapon().getType() != Weapon.WeaponType.THROWN) backg.draw(transform.createTransformedShape(gun2));
+					}
 				}
 
 				//Draw player and name

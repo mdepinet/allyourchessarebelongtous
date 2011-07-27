@@ -21,6 +21,7 @@ public class Weapon implements Updatable{
 		OBJECTIVE, PISTOL, EXPLOSIVE, RIFLE, SNIPER, SHOTGUN, THROWN, SPECIAL, MELEE
 	}
 	private static Map<String, BufferedImage> images = new HashMap<String, BufferedImage>();
+	public static char[] DEFAULT_WEAPONS = new char[]{'P','R','S','B','F','G','H','C','F'};
 	
 	private String name;
 	private WeaponType type;

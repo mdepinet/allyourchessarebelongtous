@@ -14,14 +14,14 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 
 import org.cwi.shoot.config.GameMode;
+import org.cwi.shoot.config.ZombiesWGuns;
 import org.cwi.shoot.model.Player;
 import org.cwi.shoot.model.Player.PlayerType;
 import org.cwi.shoot.model.Weapon;
 
-import productivity.todo.config.ZombiesWGuns;
-
 
 public class StatsFrame extends JFrame {
+	private static final long serialVersionUID = -6714533167738097176L;
 	public static final int WIDTH = 200;
 	public static final int HEIGHT = 500;
 	private GameMode gameMode;
@@ -42,7 +42,8 @@ public class StatsFrame extends JFrame {
 		JLabel label;
 		for(int i = 0; i < teams.length;i++)
 		{
-			label = new JLabel("0", new ImageIcon(new Weapon(teams[i], new Point()).getImage()), JLabel.CENTER);
+			Weapon w = new Weapon(teams[i], new Point());
+			label = new JLabel("0", new ImageIcon(Weapon.getWeaponImg(w.getImgLoc())), JLabel.CENTER);
 			label.setPreferredSize(new Dimension(100,40));
 			getContentPane().add(label);
 			labels.add(label);
@@ -83,7 +84,7 @@ public class StatsFrame extends JFrame {
 		}
 		Collections.sort(players);
 		for(int i = 0; i < teams.length;i++) {
-			labels.get(i).setText(gameMode.getScoreForTeam((teams[i]-75)));
+			labels.get(i).setText(gameMode.getScoreForTeam(teams[i]-75, players));
 		}
 		if(gameMode instanceof ZombiesWGuns) labels.get(1).setText(gameMode.getScoreForPlayer(getPlayer()));
 		else for(int i = 0; i < players.size();i++) labels.get(i+teams.length).setText(gameMode.getScoreForPlayer(players.get(i)));

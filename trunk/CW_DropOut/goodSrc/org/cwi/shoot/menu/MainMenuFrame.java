@@ -66,7 +66,7 @@ public class MainMenuFrame extends JFrame implements ActionListener, ListSelecti
 		JLabel label = new JLabel("Pick a Map", SwingConstants.CENTER);
 		label.setPreferredSize(new Dimension(300,20));
 		filePane.add(label);
-		textField = new JTextField(GameOptions.MAP_RESOURCE);
+		textField = new JTextField(mapChosen.getName());
 		textField.setPreferredSize(new Dimension(250, 25));
 		JButton button = new JButton("Browse...");
 		button.setActionCommand("mapchooser");
@@ -109,7 +109,8 @@ public class MainMenuFrame extends JFrame implements ActionListener, ListSelecti
 		char c = 0;
 		for(c = 'L'; c <= (int)('O');c++) {
 			Weapon w = new Weapon(c, new Point());
-			button = new JButton(GameMap.teamNames[c-76], new ImageIcon(Weapon.getWeaponImg(w.getImgLoc())));
+			if (Weapon.getWeaponImg(w.getImgLoc()) != null) button = new JButton(GameMap.teamNames[c-76], new ImageIcon(Weapon.getWeaponImg(w.getImgLoc())));
+			else button = new JButton(GameMap.teamNames[c-76]);
 			button.setVerticalTextPosition(JButton.BOTTOM);
 			button.setHorizontalTextPosition(JButton.CENTER);
 			button.setPreferredSize(new Dimension(90,60));
