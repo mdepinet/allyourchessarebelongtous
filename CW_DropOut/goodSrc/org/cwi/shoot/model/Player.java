@@ -183,6 +183,7 @@ public class Player implements Comparable<Player>, MapUpdatable {
 		currWeapon=0;
 	}
 	public void switchToWeapon(int num) {
+		if(getCurrWeapon()!=null && getCurrWeapon().getType() == Weapon.WeaponType.OBJECTIVE) return;
 		if(weapons.size()>num) currWeapon = num;
 	}
 	

@@ -1,13 +1,15 @@
 package org.cwi.shoot.config;
 
 import java.awt.Graphics2D;
+import java.awt.Image;
 import java.awt.Point;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
-import org.cwi.shoot.ai.Objective;
 import org.cwi.shoot.map.GameMap;
 import org.cwi.shoot.model.Player;
 import org.cwi.shoot.model.Weapon;
@@ -15,50 +17,86 @@ import org.cwi.shoot.model.Weapon.WeaponType;
 
 public class CaptureTheFlagMode extends GameMode {
 	private static final int capturesToWin = 3;
-	private Map<Integer, Integer> flagsCaptured;
+	private Map<Player, Integer> flagsCaptured;
+	private Map<Integer, Point> flagSpawnLocs;
 	private static final char[] FLAG_CHARS= {'L','M','N','O'};
 	public CaptureTheFlagMode(){
-		flagsCaptured = new HashMap<Integer,Integer>();
+		flagsCaptured = new HashMap<Player,Integer>();
+		flagSpawnLocs = new HashMap<Integer, Point>();
 	}
 	@Override
 	public String getModeName() {
 		return "Capture the Flag";
 	}
+	@Override
+	public void loadGameObjects(GameMap map) {
+		char[][] charMap = map.getMap();
+		Set<Character> myChars = new HashSet<Character>();
+		char[] myCharsArray = getAdditionalMapChars();
+		for (char c : myCharsArray){
+			myChars.add(c);
+		}
+		modeMap = new char[charMap.length][charMap[0].length];
+		for (int r = 0; r < charMap.length; r++){
+			for (int c = 0; c < charMap[r].length; c++){
+				if (myChars.contains(charMap[r][c])){
+					modeMap[r][c] = charMap[r][c];
+					flagSpawnLocs.put(modeMap[r][c]-75, new Point(r,c));
+					charMap[r][c] = '_';
+				}
+			}
+		}
+	}
 
 	@Override
 	public String getScoreForPlayer(Player player) {
-		//TODO
-		return null;
+		return player.getName()+": "+ (flagsCaptured.get(player)==null ? 0 : flagsCaptured.get(player));
 	}
 
 	@Override
 	public String getScoreForTeam(int team, List<Player> players) {
-		int score = flagsCaptured.get(team)==null ? 0 : flagsCaptured.get(team);
-		return GameMap.teamNames[team-1]+": "+score;
-	}
-
-	@Override
-	public void loadGameObjects(GameMap map) {
-		// TODO Auto-generated method stub
-
+		int score = 0;
+		for(Player p : players)
+			if(flagsCaptured.get(p)!=null &&  p.getTeam()==team){
+				score+=flagsCaptured.get(p);
+			}
+		return ""+score;
 	}
 
 	@Override
 	public void update(List<Player> players) {
 		for(Player p : players){
 			if(isFlag(p.getCurrWeapon())){
-				//Check if he's turning the flag in
+				if(flagSpawnLocs.get(p.getTeam()).equals(GameMap.getGridPoint(p.getLocation())) && modeMap[flagSpawnLocs.get(p.getTeam()).x][flagSpawnLocs.get(p.getTeam()).y]==(char)(p.getTeam()+75)) {
+					flagsCaptured.put(p, (flagsCaptured.get(p)!=null ? flagsCaptured.get(p)+1 : 1));
+					resetMode(players);
+				}
 			}
 			else{
 				Point gridPoint = GameMap.getGridPoint(p.getLocation());
 				char c = modeMap[gridPoint.x][gridPoint.y];
 				if(Arrays.binarySearch(FLAG_CHARS, c)>=0){
 					//the player is standing on a flag
-					p.addWeapon(new Weapon(c,gridPoint), this);
-					modeMap[gridPoint.x][gridPoint.y] = '_';
+					Weapon w = new Weapon(c,gridPoint);
+					if(canGetWeapon(p,w)) {
+						p.addWeapon(w, this);
+						p.switchToWeapon(p.getNumWeapons()-1);
+						modeMap[gridPoint.x][gridPoint.y] = GameOptions.BLANK_CHARACTER;
+					}
 				}
 			}
 		}
+	}
+	private void resetMode(List<Player> players)
+	{
+		for(Player p : players) {
+			p.getWeapons().clear(); p.addWeapon(new Weapon("Default"), this);
+		}
+		for(int i = 0; i < modeMap.length;i++)
+			for(int j = 0; j < modeMap[i].length;j++)
+				modeMap[i][j] = GameOptions.BLANK_CHARACTER;
+		for(int i:flagSpawnLocs.keySet())
+			modeMap[flagSpawnLocs.get(i).x][flagSpawnLocs.get(i).y] = (char)(i+75);
 	}
 	private boolean isFlag(Weapon w){
 		return w.getType()==WeaponType.OBJECTIVE;
@@ -70,15 +108,20 @@ public class CaptureTheFlagMode extends GameMode {
 
 	@Override
 	public int getWinningTeam(List<Player> players) {
-		for(int i : flagsCaptured.keySet())
-			if(flagsCaptured.get(i)>=capturesToWin)
-				return i;
+		int[] teamCaptures = new int[4];
+		for(Player p : players)
+			if(flagsCaptured.get(p)!=null){
+				teamCaptures[p.getTeam()-1]+=flagsCaptured.get(p);
+				if(teamCaptures[p.getTeam()-1]>=capturesToWin) {
+					flagsCaptured = new HashMap<Player,Integer>();
+					return p.getTeam();
+				}
+			}
 		return -1;
 	}
 
 	@Override
 	public boolean canGetWeapon(Player p, Weapon w) {
-		// TODO Auto-generated method stub
 		if(w.getType()!=WeaponType.OBJECTIVE)
 			return true;
 		//if it's a flag with your team's number, you can't pick it up
@@ -100,11 +143,11 @@ public class CaptureTheFlagMode extends GameMode {
 	@Override
 	public void addObjectives(GameMap map, Player p) {
 		// TODO: Needs optimization- there is no reason to go through the entire 30x30 grid to find 4 flags
-		for(int r = 0; r<modeMap.length;r++)
-			for(int c =0; c<modeMap[r].length;c++){
-				if(modeMap[r][c]!='_')
-					p.addObjective(new Objective(new Point(r,c), 1, 1));
-			}
+		//for(int r = 0; r<modeMap.length;r++)
+		//	for(int c =0; c<modeMap[r].length;c++){
+		//		if(modeMap[r][c]!=0)
+		//			p.addObjective(new Objective(new Point(r,c), 1, 1));
+		//	}
 	}
 
 	@Override
@@ -124,12 +167,24 @@ public class CaptureTheFlagMode extends GameMode {
 
 	@Override
 	public void drawModeMapPre(Graphics2D g) {
-		// TODO Auto-generated method stub
-
+		for(Integer i : flagSpawnLocs.keySet())
+			g.drawOval((int)flagSpawnLocs.get(i).getX()*GameMap.GRID_PIXELS-GameMap.GRID_PIXELS/2, (int)flagSpawnLocs.get(i).getY()*GameMap.GRID_PIXELS-GameMap.GRID_PIXELS/2, GameMap.GRID_PIXELS*2, GameMap.GRID_PIXELS*2);
+		for(int i = 0; i < modeMap.length;i++) {
+			for(int j = 0; j < modeMap[i].length;j++) {
+				if(Arrays.binarySearch(FLAG_CHARS, modeMap[i][j])>=0) {
+					Image img = Weapon.getWeaponImg(new Weapon(modeMap[i][j], new Point()).getImgLoc());
+					if(img!=null)
+						g.drawImage(img,i*GameMap.GRID_PIXELS, j*GameMap.GRID_PIXELS+GameMap.GRID_PIXELS/4, 30, 15, null);
+				}
+			}
+		}
 	}
 	
 	public void drawModeMapPost(Graphics2D g, List<Player> p) {
 		// TODO Auto-generated method stub
-
+		for(Player player : p) {
+			if(playerHasFlag(player))
+				g.drawImage(Weapon.getWeaponImg(player.getCurrWeapon().getImgLoc()), (int)player.getLocation().getX()+6, (int)player.getLocation().getY()-15,30,15, null);
+		}
 	}
 }
