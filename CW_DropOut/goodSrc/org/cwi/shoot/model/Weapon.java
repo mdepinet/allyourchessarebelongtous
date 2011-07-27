@@ -178,7 +178,7 @@ public class Weapon implements Updatable{
 			shotCounter=0;
 		}
 		else return false;
-		if(type.equals("Melee")) return true;
+		if(effRange==0) return true;
 		if(clipSize <= 0) return false;
 		if (clipSize == 1){
 			if(clipCount!=0) new ReloadThread(this,reloadMillis).start();
