@@ -63,10 +63,8 @@ public class TeamDeathmatch extends GameMode {
 	}
 
 	@Override
-	public char[] getMapChars() {
-		String chars = String.copyValueOf(Weapon.WEAPON_CHARS);
-		chars+=String.copyValueOf(Player.SPAWNLOC_CHARS)+"X";
-		return chars.toCharArray();
+	public char[] getIgnoredMapChars() {
+		return new char[0];
 	}
 
 	@Override
