@@ -1,4 +1,4 @@
-package productivity.todo.config;
+package org.cwi.shoot.config;
 
 import java.awt.Color;
 import java.awt.Image;

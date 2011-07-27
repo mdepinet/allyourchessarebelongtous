@@ -1,4 +1,4 @@
-package productivity.todo.config;
+package org.cwi.shoot.config;
 
 import java.io.IOException;
 import java.util.ArrayList;
