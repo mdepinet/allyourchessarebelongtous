@@ -88,7 +88,7 @@ public class CaptureTheFlagMode extends GameMode {
 	}
 
 	@Override
-	public char[] getIgnoredMapChars() {
+	public char[] getAdditionalMapChars() {
 		return FLAG_CHARS;
 	}
 

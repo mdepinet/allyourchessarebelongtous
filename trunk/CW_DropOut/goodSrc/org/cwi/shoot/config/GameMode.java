@@ -17,8 +17,8 @@ import org.cwi.shoot.model.Weapon;
 public abstract class GameMode {
 	public static final List<Class<? extends GameMode>> availableTypes = new LinkedList<Class<? extends GameMode>>();
 	static{
-		availableTypes.add(TeamDeathmatch.class);
-//		availableTypes.add(CaptureTheFlagMode.class);
+		availableTypes.add(TeamDeathmatchMode.class);
+		availableTypes.add(CaptureTheFlagMode.class);
 //		availableTypes.add(ZombiesWGuns.class);
 	}
 
