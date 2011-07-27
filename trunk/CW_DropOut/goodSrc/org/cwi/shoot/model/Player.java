@@ -12,7 +12,6 @@ import org.cwi.shoot.ai.Objective;
 import org.cwi.shoot.config.GameMode;
 import org.cwi.shoot.map.GameMap;
 import org.cwi.shoot.map.MapUpdatable;
-import org.cwi.shoot.util.VectorTools;
 
 
 public class Player implements Comparable<Player>, MapUpdatable {
@@ -29,7 +28,7 @@ public class Player implements Comparable<Player>, MapUpdatable {
 	
 	private Point2D.Double location;
 	private double orientation;
-	private boolean shouldMove;
+	private Point2D.Double direction; //Used for human movement
 	
 	private List<Weapon> weapons;
 	private int currWeapon;
@@ -44,7 +43,7 @@ public class Player implements Comparable<Player>, MapUpdatable {
 		team = 0;
 		location = new Point2D.Double(12,12);
 		orientation = 0;
-		shouldMove = false;
+		direction = new Point2D.Double(0,0);
 		weapons = Collections.synchronizedList(new ArrayList<Weapon>());
 		currWeapon = 0;
 		type = PlayerType.COMPUTER;
@@ -83,11 +82,11 @@ public class Player implements Comparable<Player>, MapUpdatable {
 	public void setOrientation(double orientation) {
 		this.orientation = orientation;
 	}
-	public boolean shouldMove() {
-		return shouldMove;
+	public Point2D.Double getDirection() {
+		return direction;
 	}
-	public void setShouldMove(boolean shouldMove) {
-		this.shouldMove = shouldMove;
+	public void setDirection(Point2D.Double direction) {
+		this.direction = direction;
 	}
 	public List<Weapon> getWeapons() {
 		return weapons;
@@ -141,8 +140,7 @@ public class Player implements Comparable<Player>, MapUpdatable {
 		health += REGEN_SPEED;
 		if(health > 100) health = 100;
 		getCurrWeapon().update();
-		if(type == PlayerType.HUMAN && shouldMove){
-			Point2D.Double direction = VectorTools.normalize(new Point2D.Double(Math.cos(orientation), Math.sin(orientation)));
+		if(type == PlayerType.HUMAN){
 			location = new Point2D.Double(location.getX()+(direction.getX()*2), location.getY()+(direction.getY()*2));
 		}
 	}

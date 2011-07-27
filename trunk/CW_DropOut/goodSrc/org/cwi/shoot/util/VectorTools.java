@@ -33,4 +33,11 @@ public class VectorTools {
 	public static Point2D.Double getVectorBetween(Point2D.Double p1, Point2D.Double p2){
 		return new Point2D.Double(p2.x-p1.x,p2.y-p1.y);
 	}
+	
+	public static double getOrientationToPoint(Point2D.Double from, Point2D.Double to) {
+//		Point2D.Double down = new Point2D.Double(0,1);
+//		Point2D.Double vectorTo = getVectorBetween(from, to);
+//		return getAngleBetweenVectors(down, vectorTo);
+		return Math.atan2(to.y-from.y,to.x-from.x) - Math.PI/2;
+	}
 }
