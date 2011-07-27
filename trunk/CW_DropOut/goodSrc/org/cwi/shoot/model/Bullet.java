@@ -1,10 +1,19 @@
 package org.cwi.shoot.model;
 
 import java.awt.geom.Point2D;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
+
+import javax.imageio.ImageIO;
 
 import org.cwi.shoot.map.Updatable;
 
 public class Bullet implements Updatable{
+	private static Map<String, BufferedImage> images = new HashMap<String, BufferedImage>();
+	
 	private String bulletImgLoc;
 	private Point2D.Double location;
 	private Point2D.Double velocity;
@@ -14,6 +23,8 @@ public class Bullet implements Updatable{
 	
 	public Bullet(Weapon weapon, Player p) {
 		this.weapon = weapon;
+		bulletImgLoc = weapon.getBulletImgLoc();
+		loadImage();
 		this.player = p;
 		setLocation(player.getGunLocation());
 		distanceTraveled = 0;
@@ -58,6 +69,19 @@ public class Bullet implements Updatable{
 	}
 	public double getDistanceTraveled() {
 		return distanceTraveled;
+	}
+	
+	private void loadImage(){
+		if (images.containsKey(bulletImgLoc)) return;
+		BufferedImage image = null;
+		try {
+			image = ImageIO.read(new File(bulletImgLoc));
+			images.put(bulletImgLoc,image);
+		} catch (IOException e) {}
+	}
+	
+	public static BufferedImage getBulletImg(String key){
+		return images.get(key);
 	}
 	
 }

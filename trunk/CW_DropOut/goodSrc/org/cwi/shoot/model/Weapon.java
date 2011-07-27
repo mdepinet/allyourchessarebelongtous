@@ -4,23 +4,23 @@ import java.awt.Point;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.imageio.ImageIO;
 
+import org.cwi.shoot.map.Updatable;
+import org.cwi.shoot.threads.ReloadThread;
 import org.cwi.shoot.util.WeaponDefinition;
 import org.cwi.shoot.util.WeaponLoader;
 
-import org.cwi.shoot.map.Updatable;
-import org.cwi.shoot.threads.ReloadThread;
-
 public class Weapon implements Updatable{
-	//Valid chars for the basic (non-objective) weapons
-	public static final char[] WEAPON_CHARS = {'P','R','B','S','H','G','A','F','C'};
 	private static final int reloadMillis = 3000; //3 seconds
 	private static final int updatesPerSec = 30;
 	public enum WeaponType{
-		OBJECTIVE, PISTOL, EXPOLSIVE, RIFLE, SNIPER, SHOTGUN, THROWN, SPECIAL, MELEE
+		OBJECTIVE, PISTOL, EXPLOSIVE, RIFLE, SNIPER, SHOTGUN, THROWN, SPECIAL, MELEE
 	}
+	private static Map<String, BufferedImage> images = new HashMap<String, BufferedImage>();
 	
 	private String name;
 	private WeaponType type;
@@ -35,7 +35,7 @@ public class Weapon implements Updatable{
 	private int bulletSpeed;
 	private String bulletImgLoc;
 	private char character;
-	private BufferedImage image;
+	private String imgLoc;
 	
 	private int shotCounter;
 	private Point spawnLoc;
@@ -131,11 +131,11 @@ public class Weapon implements Updatable{
 	public void setCharacter(char character) {
 		this.character = character;
 	}
-	public BufferedImage getImage() {
-		return image;
+	public String getImgLoc() {
+		return imgLoc;
 	}
-	public void setImage(BufferedImage image) {
-		this.image = image;
+	public void setImgLoc(String imgLoc) {
+		this.imgLoc = imgLoc;
 	}
 	public int getShotCounter() {
 		return shotCounter;
@@ -207,11 +207,22 @@ public class Weapon implements Updatable{
 		setMaxClipSize(wepDef.getMaxClipSize());
 		setSplash(wepDef.getSplash());
 		setBulletSpeed(wepDef.getBulletSpeed());
-		image = null;
-		try {
-			image = ImageIO.read(new File(wepDef.getImgLoc()));
-		} catch (IOException e) {}
+		setImgLoc(wepDef.getImgLoc());
 		setBulletImgLoc(wepDef.getBulletImgLoc());
 		setClipCount(wepDef.getMaxClipCount());
+		loadImage();
+	}
+	
+	private void loadImage(){
+		if (imgLoc == null || imgLoc.equals("") || imgLoc.equals("null")) return;
+		if (images.containsKey(imgLoc)) return;
+		BufferedImage image = null;
+		try {
+			image = ImageIO.read(new File(imgLoc));
+			images.put(imgLoc,image);
+		} catch (IOException e) {}
+	}
+	public static BufferedImage getWeaponImg(String key){
+		return images.get(key);
 	}
 }

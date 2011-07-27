@@ -1,5 +1,7 @@
 package productivity.todo.config;
 
+import java.awt.Color;
+import java.awt.Image;
 import java.awt.Point;
 import java.awt.geom.Point2D;
 import java.io.IOException;
@@ -124,6 +126,20 @@ public class CaptureTheFlagMode extends GameMode {
 	@Override
 	public String getScoreForTeam(int team) {
 		return "" + teamScores[team-1];
+	}
+	
+	
+	
+	else if(("" + gameMap.getMap()[i][j]).matches("[L-O]")) { 
+		backg.drawOval(i*GRID_PIXELS-GRID_PIXELS/2, j*GRID_PIXELS-GRID_PIXELS/2, GRID_PIXELS*2, GRID_PIXELS*2);
+		Image img;
+		if((img = new Weapon(gameMap.getMap()[i][j], new Point(i,j)).getImage())!=null)
+			backg.drawImage(img,i*GRID_PIXELS, j*GRID_PIXELS+GRID_PIXELS/4, 30, 15, this);
+	}
+	
+	backg.setColor(Color.BLACK);
+	if(p.getCurrWeapon() !=null && p.getCurrWeapon().getImage()!=null) {
+		backg.drawImage(p.getCurrWeapon().getImage(), (int)p.getLocation().x+6, (int)p.getLocation().y-15, 30, 15, this);
 	}
 
 }
