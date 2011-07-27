@@ -28,7 +28,7 @@ public abstract class GameMode {
 	public abstract void update(List<Player> players);
 	public abstract int getWinningTeam(List<Player> players);
 	public abstract boolean canGetWeapon(Player p, Weapon w);
-	public abstract char[] getMapChars();
+	public abstract char[] getIgnoredMapChars();
 	public abstract int getNumTeams();
 	public abstract void addObjectives(GameMap map, Player p);
 	public abstract void onPlayerDeath(Player p);
