@@ -17,9 +17,6 @@ public class TeamDeathmatchMode extends GameMode {
 	public String getModeName() {
 		return "Team Deathmatch";
 	}
-	public void drawModeMap(Graphics2D g){
-		
-	}
 	@Override
 	public String getScoreForPlayer(Player player) {
 		return player.getName() + ": " + player.getStats().getNumKills();

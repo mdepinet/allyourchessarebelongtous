@@ -40,4 +40,13 @@ public class VectorTools {
 //		return getAngleBetweenVectors(down, vectorTo);
 		return Math.atan2(to.y-from.y,to.x-from.x) - Math.PI/2;
 	}
+	public static String charMapToString(char[][] map){
+		String out = "";
+		for(int r=0; r <map.length; r++){
+			for(int c=0; c <map[r].length; c++)
+				out+=" "+map[c][r];
+			out+="\n";
+		}
+		return out;
+	}
 }

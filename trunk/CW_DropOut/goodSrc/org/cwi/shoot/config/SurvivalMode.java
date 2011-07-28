@@ -1,6 +1,11 @@
 package org.cwi.shoot.config;
 
 import java.awt.Graphics2D;
+import java.awt.Image;
+import java.awt.Point;
+import java.awt.geom.Point2D;
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -8,34 +13,48 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 
+import javax.imageio.ImageIO;
+
 import org.cwi.shoot.map.GameMap;
 import org.cwi.shoot.model.Player;
 import org.cwi.shoot.model.Weapon;
 
 public class SurvivalMode extends GameMode {
-	private static final float DAMAGE_MOD = .4f;
+	private static final float DAMAGE_MOD = .25f;
+	private static final String HEALTH_IMG = "resource/images/health.gif";
 	private List<Player> dead;
 	private Set<Weapon> weps;
+	private List<Point> healthPacks;
+	private Image health;
 	
 	public SurvivalMode(){
 		super();
 		dead = new ArrayList<Player>();
 		weps = new HashSet<Weapon>();
+		healthPacks = new ArrayList<Point>();
+		try {
+			health = ImageIO.read(new File(HEALTH_IMG));
+		} catch (IOException e) {}
 	}
 	@Override
 	public String getModeName() {
 		return "Survival";
 	}
-	public void drawModeMap(Graphics2D g){
-		
-	}
+
 	public void onStartup(GameMap map, GameOptions setup){
 		super.onStartup(map,setup);
 		Player.setRegenSpeed(0);
 	}
+	public void loadGameObjects(GameMap map){
+		super.loadGameObjects(map);
+		for(int r=0; r <modeMap.length; r++)
+			for(int c=0; c <modeMap[r].length; c++)
+				if(modeMap[r][c]=='+')
+					healthPacks.add(new Point(r,c));
+	}
 	@Override
 	public String getScoreForPlayer(Player player) {
-		return player.getName() + ": " + player.getStats().getNumKills();
+		return player.getName() + "'s Health: " + (int)(Math.ceil(player.getHealth()));
 	}
 
 	@Override
@@ -49,17 +68,17 @@ public class SurvivalMode extends GameMode {
 	}
 
 	@Override
-	public void loadGameObjects(GameMap map) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
 	public void update(List<Player> players) {
 		for(Player p : players){
 			Weapon wep = p.getCurrWeapon();
 			if(weps.add(wep))
 				wep.setPower((int)(wep.getPower()*DAMAGE_MOD));
+			Point point = GameMap.getGridPoint(p.getLocation());
+			if(modeMap[point.x][point.y]=='+' && p.getHealth()<100){
+				p.setHealth(p.getHealth()+30);
+				modeMap[point.x][point.y]= GameOptions.BLANK_CHARACTER;
+				healthPacks.remove(point);
+			}
 		}
 	}
 
@@ -92,6 +111,7 @@ public class SurvivalMode extends GameMode {
 		}
 		weps.clear();
 		dead.clear();
+		healthPacks.clear();
 	}
 	@Override
 	public boolean canGetWeapon(Player p, Weapon w) {
@@ -126,15 +146,19 @@ public class SurvivalMode extends GameMode {
 	}
 	@Override
 	public void drawModeMapPre(Graphics2D g) {
-		// TODO Auto-generated method stub
-		
+		for(Point p : healthPacks){
+			Point2D.Double converted = GameMap.fromGridPoint(p);
+			//g.drawImage(health, (int)converted.x, (int)converted.y,null);
+			g.drawImage(health,(int)converted.x,(int)converted.y, 15, 15, null);
+
+		}	
 	}
 	@Override
 	public void drawModeMapPost(Graphics2D g, List<Player> players) {
-		// TODO Auto-generated method stub
-		
+
 	}
 	public boolean handlesRespawn(){
 		return true;
 	}
+
 }
