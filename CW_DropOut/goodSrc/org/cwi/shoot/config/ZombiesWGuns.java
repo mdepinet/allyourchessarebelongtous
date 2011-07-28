@@ -9,11 +9,12 @@ import java.util.List;
 import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
 
+import org.cwi.shoot.ai.objective.Objective;
 import org.cwi.shoot.map.GameMap;
 import org.cwi.shoot.model.Player;
 import org.cwi.shoot.model.Player.PlayerType;
-import org.cwi.shoot.model.Weapon.WeaponType;
 import org.cwi.shoot.model.Weapon;
+import org.cwi.shoot.model.Weapon.WeaponType;
 import org.cwi.shoot.util.NameGenerator;
 
 public class ZombiesWGuns extends GameMode {
@@ -193,10 +194,9 @@ public class ZombiesWGuns extends GameMode {
 	}
 
 	@Override
-	public void addObjectives(org.cwi.shoot.map.GameMap map,
+	public List<Objective> getObjectives(org.cwi.shoot.map.GameMap map,
 			org.cwi.shoot.model.Player p) {
-		// TODO Auto-generated method stub
-		
+		return null;
 	}
 
 	@Override
