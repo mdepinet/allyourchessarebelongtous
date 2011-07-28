@@ -134,7 +134,9 @@ public class Player implements Comparable<Player>, MapUpdatable {
 		if(health<=0 || weapons.size()<=0) return;
 		health += regenSpeed;
 		if(health > 100) health = 100;
-		getCurrWeapon().update();
+		for (Weapon w : weapons){
+			w.update();
+		}
 		if(type == PlayerType.HUMAN){
 			location = new Point2D.Double(location.getX()+(direction.getX()*2), location.getY()+(direction.getY()*2));
 		}
