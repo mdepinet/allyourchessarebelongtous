@@ -59,7 +59,7 @@ public class SmartBrain extends AbstractBrain {
 		if (enemy == null) return -1;
 		double distToEnemy = p.getLocation().distance(enemy.getLocation());
 		int thrownIndex = -1;
-		int bestValue = 0, bestValueIndex = 0;
+		int bestValue = 0, bestValueIndex = -1;
 		List<Weapon> options = p.getWeapons();
 		for (int i = 0; i<options.size(); i++){
 			Weapon w = options.get(i);
@@ -76,7 +76,7 @@ public class SmartBrain extends AbstractBrain {
 				bestValueIndex = i;
 			}
 		}
-		if (canHit(p, map, enemy,options.get(bestValueIndex))){
+		if (bestValueIndex != -1 && canHit(p, map, enemy,options.get(bestValueIndex))){
 			//Direct
 			return bestValueIndex;
 		}

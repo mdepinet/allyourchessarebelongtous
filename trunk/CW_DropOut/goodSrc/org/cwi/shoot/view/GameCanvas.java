@@ -60,8 +60,8 @@ public class GameCanvas extends Canvas {
 	}
 	
 	public void updateGraphics(GameMap gameMap, GameMode mode) {
-		double HRZ_SCALE = GameFrame.WIDTH / gameMap.getPixelWidth();
-		double VERT_SCALE = GameFrame.HEIGHT / gameMap.getPixelHeight();
+		double HRZ_SCALE = (double)GameFrame.WIDTH / gameMap.getPixelWidth();
+		double VERT_SCALE = (double)GameFrame.HEIGHT / gameMap.getPixelHeight();
 		backg.setColor(Color.BLACK);
 		backg.clearRect(0, 0, GameFrame.WIDTH, GameFrame.HEIGHT);
 		
@@ -95,7 +95,7 @@ public class GameCanvas extends Canvas {
 					backg.setColor(Color.BLACK);
 					Rectangle gun2;
 					gun2 = new Rectangle((int)Math.round(HRZ_SCALE*(p.getLocation().getX()-8)),(int)Math.round(VERT_SCALE*p.getLocation().getY()), (int) Math.round(4*HRZ_SCALE), (int) Math.round(12*VERT_SCALE));
-					transform.rotate(p.getOrientation(), p.getLocation().x, p.getLocation().y);
+					transform.rotate(p.getOrientation(), (int)Math.round(HRZ_SCALE*(p.getLocation().getX())),(int)Math.round(VERT_SCALE*p.getLocation().getY()));
 					if (p.getCurrWeapon().getType() != Weapon.WeaponType.THROWN) backg.draw(transform.createTransformedShape(gun2));
 					
 				}
@@ -131,8 +131,8 @@ public class GameCanvas extends Canvas {
 			}
 			AffineTransform transformb = new AffineTransform();
 			if (bulletImg == null){
-				Rectangle bullet = new Rectangle((int)b.getLocation().x,(int)b.getLocation().y, 1, 6);
-				transformb.rotate(Math.atan2(b.getVelocity().y,b.getVelocity().x)+Math.PI/2, b.getLocation().x, b.getLocation().y);
+				Rectangle bullet = new Rectangle((int)Math.round(b.getLocation().x*HRZ_SCALE),(int) Math.round(b.getLocation().y*VERT_SCALE),(int) Math.max(Math.round(1*HRZ_SCALE),1), (int) Math.max(Math.round(6*VERT_SCALE),1));
+				transformb.rotate(Math.atan2(b.getVelocity().y,b.getVelocity().x)+Math.PI/2, (int)Math.round(b.getLocation().x*HRZ_SCALE),(int) Math.round(b.getLocation().y*VERT_SCALE));
 				backg.draw(transformb.createTransformedShape(bullet));
 			}
 			else{
