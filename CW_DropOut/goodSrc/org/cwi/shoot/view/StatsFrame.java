@@ -1,5 +1,6 @@
 package org.cwi.shoot.view;
 
+import java.awt.BasicStroke;
 import java.awt.Canvas;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -22,8 +23,8 @@ import org.cwi.shoot.config.ZombiesWGuns;
 import org.cwi.shoot.map.GameMap;
 import org.cwi.shoot.model.Player;
 import org.cwi.shoot.model.Player.PlayerType;
-import org.cwi.shoot.model.Weapon.WeaponType;
 import org.cwi.shoot.model.Weapon;
+import org.cwi.shoot.model.Weapon.WeaponType;
 
 
 public class StatsFrame extends JFrame {
@@ -38,6 +39,7 @@ public class StatsFrame extends JFrame {
 	public StatsFrame(GameMode mode, List<Player> p, char[] t) {
 		this.setBounds(new Rectangle(300,300,WIDTH,HEIGHT));
 		this.setUndecorated(true);
+		this.setFocusable(false);
 		this.setBackground(Color.WHITE);
 		this.setVisible(true);
 		this.playerInfoCanvas = new PlayerInfoCanvas(p.get(0));
@@ -100,15 +102,20 @@ public class StatsFrame extends JFrame {
 		if(gameMode instanceof ZombiesWGuns) labels.get(1).setText(gameMode.getScoreForPlayer(getPlayer()));
 		else for(int i = 0; i < players.size();i++) labels.get(i+teams.length).setText(gameMode.getScoreForPlayer(players.get(i)));
 		
+		if(players.get(0).getType()==PlayerType.HUMAN) playerInfoCanvas.setPlayer(players.get(0));
 		playerInfoCanvas.updateGraphics();
 	}
 }
 class PlayerInfoCanvas extends Canvas {
+	private static final long serialVersionUID = 1564713213101913746L;
 	private Image backbuffer;
 	private Graphics2D backg;
 	private Player player;
 	
 	public PlayerInfoCanvas(Player p) {
+		this.player = p;
+	}
+	public void setPlayer(Player p) {
 		this.player = p;
 	}
 	public void init() {
@@ -123,25 +130,27 @@ class PlayerInfoCanvas extends Canvas {
 		backg.setBackground(new Color(1f,1f,1f,1f));
 		backg.clearRect(0,0,getWidth(), getHeight());
 		backg.setColor(new Color(0f,0f,0f,1f));
+		backg.setStroke(new BasicStroke(3f));
+		backg.drawRoundRect(2, 2, getWidth()-4, getHeight()-4, 20, 20);
 		if(player!=null && player.getCurrWeapon()!=null)
 		{
 			backg.setColor(new Color((player.getHealth()>50) ? (float)(1-player.getHealth()/100) : 1.0f,(player.getHealth()<=50) ? (float)(player.getHealth()/50):1.0f,0f,1f));
-			backg.fillRect(getWidth()-105, getHeight()-35, (int)player.getHealth(), 10);
+			backg.fillRect(getWidth()-108, getHeight()-40, (int)player.getHealth(), 10);
 			backg.setColor(new Color(0f,0f,0f,1f));
-			backg.drawString("Health:", getWidth()-145, getHeight()-26);
-			backg.drawString(player.getCurrWeapon().getName(), getWidth()-115, getHeight()-38);
+			backg.drawString("Health:", getWidth()-150, getHeight()-31);
+			backg.drawString(player.getCurrWeapon().getName(), getWidth()-120, getHeight()-43);
 			if(player.getCurrWeapon().getClipCount()>=0)
-				backg.drawString(""+player.getCurrWeapon().getClipCount(), getWidth()-20, getHeight()-38);
+				backg.drawString(""+player.getCurrWeapon().getClipCount(), getWidth()-25, getHeight()-43);
 			if(player.getCurrWeapon().getClipSize()==0 && player.getCurrWeapon().getEffRange()>0)
-				backg.drawString("Reloading...", getWidth()-100, getHeight()-10);
+				backg.drawString("Reloading...", getWidth()-105, getHeight()-15);
 			else{
 				int clipSize = player.getCurrWeapon().getClipSize()*((player.getCurrWeapon().getType()==WeaponType.SHOTGUN)? 1 : player.getCurrWeapon().getRoundsPerShot());
 				for(int i=0; i < clipSize;i++)
 				{	
 					if(i<20 || i<clipSize/2)
-						backg.fillRect(getWidth()-7-(i*6),getHeight()-23, 4, 10);
+						backg.fillRect(getWidth()-12-(i*6),getHeight()-28, 4, 10);
 					else
-						backg.fillRect(getWidth()-7-((i-Math.max(20, clipSize/2)))*6,getHeight()-11, 4, 10);
+						backg.fillRect(getWidth()-12-((i-Math.max(20, clipSize/2)))*6,getHeight()-16, 4, 10);
 				}
 			}
 		}
