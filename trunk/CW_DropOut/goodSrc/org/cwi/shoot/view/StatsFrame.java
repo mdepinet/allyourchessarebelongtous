@@ -105,61 +105,63 @@ public class StatsFrame extends JFrame {
 		if(players.get(0).getType()==PlayerType.HUMAN) playerInfoCanvas.setPlayer(players.get(0));
 		playerInfoCanvas.updateGraphics();
 	}
-}
-class PlayerInfoCanvas extends Canvas {
-	private static final long serialVersionUID = 1564713213101913746L;
-	private Image backbuffer;
-	private Graphics2D backg;
-	private Player player;
 	
-	public PlayerInfoCanvas(Player p) {
-		this.player = p;
-	}
-	public void setPlayer(Player p) {
-		this.player = p;
-	}
-	public void init() {
-		backbuffer = createImage( GameFrame.WIDTH, GameFrame.HEIGHT );
-	    backg = (Graphics2D)backbuffer.getGraphics();
-	    backg.setBackground( Color.white );
-	    backg.clearRect(0, 0, WIDTH, HEIGHT);
-	    backg.setFont(backg.getFont().deriveFont(GameMap.GRID_PIXELS));
-	}
-	
-	public void updateGraphics() {
-		backg.setBackground(new Color(1f,1f,1f,1f));
-		backg.clearRect(0,0,getWidth(), getHeight());
-		backg.setColor(new Color(0f,0f,0f,1f));
-		backg.setStroke(new BasicStroke(3f));
-		backg.drawRoundRect(2, 2, getWidth()-4, getHeight()-4, 20, 20);
-		if(player!=null && player.getCurrWeapon()!=null)
-		{
-			backg.setColor(new Color((player.getHealth()>50) ? (float)(1-player.getHealth()/100) : 1.0f,(player.getHealth()<=50) ? (float)(player.getHealth()/50):1.0f,0f,1f));
-			backg.fillRect(getWidth()-108, getHeight()-40, (int)player.getHealth(), 10);
+	class PlayerInfoCanvas extends Canvas {
+		private static final long serialVersionUID = 1564713213101913746L;
+		private Image backbuffer;
+		private Graphics2D backg;
+		private Player player;
+		
+		public PlayerInfoCanvas(Player p) {
+			this.player = p;
+		}
+		public void setPlayer(Player p) {
+			this.player = p;
+		}
+		public void init() {
+			backbuffer = createImage( GameFrame.WIDTH, GameFrame.HEIGHT );
+		    backg = (Graphics2D)backbuffer.getGraphics();
+		    backg.setBackground( Color.white );
+		    backg.clearRect(0, 0, WIDTH, HEIGHT);
+		    backg.setFont(backg.getFont().deriveFont(GameMap.GRID_PIXELS));
+		}
+		
+		public void updateGraphics() {
+			if (player == null) player = getPlayer();
+			backg.setBackground(new Color(1f,1f,1f,1f));
+			backg.clearRect(0,0,getWidth(), getHeight());
 			backg.setColor(new Color(0f,0f,0f,1f));
-			backg.drawString("Health:", getWidth()-150, getHeight()-31);
-			backg.drawString(player.getCurrWeapon().getName(), getWidth()-120, getHeight()-43);
-			if(player.getCurrWeapon().getClipCount()>=0)
-				backg.drawString(""+player.getCurrWeapon().getClipCount(), getWidth()-25, getHeight()-43);
-			if(player.getCurrWeapon().getClipSize()==0 && player.getCurrWeapon().getEffRange()>0)
-				backg.drawString("Reloading...", getWidth()-105, getHeight()-15);
-			else{
-				int clipSize = player.getCurrWeapon().getClipSize()*((player.getCurrWeapon().getType()==WeaponType.SHOTGUN)? 1 : player.getCurrWeapon().getRoundsPerShot());
-				for(int i=0; i < clipSize;i++)
-				{	
-					if(i<20 || i<clipSize/2)
-						backg.fillRect(getWidth()-12-(i*6),getHeight()-28, 4, 10);
-					else
-						backg.fillRect(getWidth()-12-((i-Math.max(20, clipSize/2)))*6,getHeight()-16, 4, 10);
+			backg.setStroke(new BasicStroke(3f));
+			backg.drawRoundRect(2, 2, getWidth()-4, getHeight()-4, 20, 20);
+			if(player!=null && player.getCurrWeapon()!=null)
+			{
+				backg.setColor(new Color((player.getHealth()>50) ? (float)(1-player.getHealth()/100) : 1.0f,(player.getHealth()<=50) ? (float)(player.getHealth()/50):1.0f,0f,1f));
+				backg.fillRect(getWidth()-108, getHeight()-40, (int)player.getHealth(), 10);
+				backg.setColor(new Color(0f,0f,0f,1f));
+				backg.drawString("Health:", getWidth()-150, getHeight()-31);
+				backg.drawString(player.getCurrWeapon().getName(), getWidth()-120, getHeight()-43);
+				if(player.getCurrWeapon().getClipCount()>=0)
+					backg.drawString(""+player.getCurrWeapon().getClipCount(), getWidth()-25, getHeight()-43);
+				if(player.getCurrWeapon().getClipSize()==0 && player.getCurrWeapon().getEffRange()>0)
+					backg.drawString("Reloading...", getWidth()-105, getHeight()-15);
+				else{
+					int clipSize = player.getCurrWeapon().getClipSize()*((player.getCurrWeapon().getType()==WeaponType.SHOTGUN)? 1 : player.getCurrWeapon().getRoundsPerShot());
+					for(int i=0; i < clipSize;i++)
+					{	
+						if(i<20 || i<clipSize/2)
+							backg.fillRect(getWidth()-12-(i*6),getHeight()-28, 4, 10);
+						else
+							backg.fillRect(getWidth()-12-((i-Math.max(20, clipSize/2)))*6,getHeight()-16, 4, 10);
+					}
 				}
 			}
+			repaint();
 		}
-		repaint();
-	}
-	public void update(Graphics g) {
-		g.drawImage(backbuffer,0,0,this);
-	}
-	public void paint (Graphics g) {
-		update(g);
+		public void update(Graphics g) {
+			g.drawImage(backbuffer,0,0,this);
+		}
+		public void paint (Graphics g) {
+			update(g);
+		}
 	}
 }
