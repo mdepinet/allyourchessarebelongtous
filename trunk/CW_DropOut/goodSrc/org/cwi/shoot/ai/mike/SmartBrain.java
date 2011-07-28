@@ -25,6 +25,8 @@ public class SmartBrain extends AbstractBrain {
 	private static double splashWeight = 1.0;
 	private static double speedWeight = 1.0;
 	
+	private static double EPSILON_DISTANCE = 2;
+	
 	private Player[] enemies = null;
 	private Player[] allies = null;
 	Map<Player,Point2D.Double> prevLocs = new HashMap<Player,Point2D.Double>();
@@ -61,10 +63,10 @@ public class SmartBrain extends AbstractBrain {
 		List<Weapon> options = p.getWeapons();
 		for (int i = 0; i<options.size(); i++){
 			Weapon w = options.get(i);
-			if (w.getType().equals("Thrown")) thrownIndex = i;
+			if (w.getType() == Weapon.WeaponType.THROWN) thrownIndex = i;
 			int value = 0;
-			if (w.getEffRange()*2 >= distToEnemy && w.canShoot()){
-				value += w.getRoundsPerShot()/w.getSpread()*burstSpreadWeight;
+			if (w.getEffRange()*2 >= distToEnemy /*&& w.canShoot()*/){
+				value += ((double)w.getRoundsPerShot())/((double)w.getSpread())*burstSpreadWeight;
 				value += w.getPower()*powerWeight;
 				value += w.getSplash()*splashWeight;
 				value += w.getBulletSpeed()*speedWeight;
@@ -78,7 +80,11 @@ public class SmartBrain extends AbstractBrain {
 			//Direct
 			return bestValueIndex;
 		}
-		else return thrownIndex; //Over wall
+		else{
+			Weapon w = (thrownIndex == -1 ? null : p.getWeapons().get(thrownIndex));
+			if (w != null && p.getLocation().distance(enemy.getLocation()) <= w.getEffRange()*2) return thrownIndex; //Over wall
+			else return -1;
+		}
 		
 	}
 	
@@ -99,7 +105,7 @@ public class SmartBrain extends AbstractBrain {
 		move(dest, p);
 		if (w != null && canHit(p, map, nearestEnemy, w)){
 			switchWeapon(p, w);
-			turn(VectorTools.getOrientationToPoint(p.getLocation(),predictNextLoc(nearestEnemy)),p);
+			turn(VectorTools.getOrientationToPoint(p.getLocation(),predictNextLoc(p,nearestEnemy,w)),p);
 			if (canHit(p, map, nearestEnemy,w)) shoot(map,p);
 		}
 		updateLocations();
@@ -109,11 +115,15 @@ public class SmartBrain extends AbstractBrain {
 		Point2D.Double dest = getClosestWeaponLoc(map, p);
 		if (w == null || !canHit(p, map, target, w)) move(getSmartDirectionToLoc(p.getLocation(),dest, map), p);
 		else{
-			double numTurns = p.getLocation().distance(dest)/MAX_MOVE_DISTANCE;
-			Point2D.Double targetLoc = VectorTools.addVectors(target.getLocation(),VectorTools.scaleVector(VectorTools.getVectorBetween(target.getLocation(),predictNextLoc(target)),numTurns));
-			Point2D.Double straight = VectorTools.addVectors(p.getLocation(),VectorTools.scaleVector(getSmartDirectionToLoc(p.getLocation(),target.getLocation(),map),numTurns));
-			if (targetLoc.distance(dest) - targetLoc.distance(straight) >= w.getEffRange()){
-				dest = straight;
+			Point2D.Double straight = getSmartDirectionToLoc(p.getLocation(),target.getLocation(),map);
+			if (dest == null) dest = VectorTools.addVectors(p.getLocation(), straight);
+			else{
+				double numTurns = p.getLocation().distance(dest)/MAX_MOVE_DISTANCE;
+				Point2D.Double targetLoc = VectorTools.addVectors(target.getLocation(),VectorTools.scaleVector(VectorTools.getVectorBetween(target.getLocation(),predictNextLoc(p,target,w)),numTurns));
+				straight = VectorTools.addVectors(p.getLocation(),VectorTools.scaleVector(getSmartDirectionToLoc(p.getLocation(),target.getLocation(),map),numTurns));
+				if (targetLoc.distance(dest) - targetLoc.distance(straight) >= w.getEffRange()){
+					dest = straight;
+				}
 			}
 			
 			move(getSmartDirectionToLoc(p.getLocation(),dest, map), p);
@@ -127,14 +137,18 @@ public class SmartBrain extends AbstractBrain {
 	}
 	
 	private boolean canHit(Player p, GameMap map, Player enemy, Weapon wep){
-		boolean direct = wep.getType().equals("Thrown") || VectorTools.normalize(getDirectionToLoc(p.getLocation(),enemy.getLocation())).equals(VectorTools.normalize(getSmartDirectionToLoc(p.getLocation(),enemy.getLocation(), map)));
-		return direct && p.getLocation().distance(predictNextLoc(enemy)) <= wep.getEffRange()*(isApproaching(p, enemy) ? 2.1 : 1.9);
+		boolean thrown = wep.getType() == Weapon.WeaponType.THROWN;
+		Point2D.Double direct = VectorTools.normalize(getDirectionToLoc(p.getLocation(),enemy.getLocation()));
+		Point2D.Double smart = VectorTools.normalize(getSmartDirectionToLoc(p.getLocation(),enemy.getLocation(), map));
+		boolean result = thrown || direct.distance(smart) < EPSILON_DISTANCE;
+		result &= p.getLocation().distance(predictNextLoc(p,enemy,wep)) <= wep.getEffRange()*(thrown ? 1.+wep.getSplash() : 2)*(isApproaching(p, enemy) ? 1.025 : 0.975);
+		return result;
 	}
 	
-	private Point2D.Double predictNextLoc(Player enemy){
+	private Point2D.Double predictNextLoc(Player p, Player enemy, Weapon w){
 		Point2D.Double lastLoc = prevLocs.get(enemy);
 		if (lastLoc == null) return enemy.getLocation();
-		return VectorTools.addVectors(enemy.getLocation(),VectorTools.getVectorBetween(lastLoc,enemy.getLocation()));
+		return VectorTools.addVectors(enemy.getLocation(),VectorTools.scaleVector(VectorTools.getVectorBetween(lastLoc,enemy.getLocation()),p.getLocation().distance(enemy.getLocation())/w.getBulletSpeed()));
 	}
 	
 	private void updateLocations(){
