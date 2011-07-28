@@ -1,8 +1,10 @@
 package org.cwi.shoot.view;
 
 import java.awt.BasicStroke;
+import java.awt.BorderLayout;
 import java.awt.Canvas;
 import java.awt.Color;
+import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Graphics;
@@ -43,8 +45,10 @@ public class StatsFrame extends JFrame {
 		this.setVisible(true);
 		this.playerInfoCanvas = new PlayerInfoCanvas(p.get(0));
 		playerInfoCanvas.setPreferredSize(new Dimension(180,60));
-		
-		getContentPane().setLayout(new FlowLayout());
+		getContentPane().setLayout(new BorderLayout());
+		Container north = new Container(); north.setLayout(new FlowLayout());
+		Container center = new Container(); center.setLayout(new FlowLayout());
+		Container south = new Container(); south.setLayout(new FlowLayout());
 		gameMode = mode;
 		labels = new ArrayList<JLabel>();
 		players = new ArrayList<Player>();
@@ -55,17 +59,21 @@ public class StatsFrame extends JFrame {
 		{
 			Weapon w = new Weapon(teams[i], new Point());
 			label = new JLabel("0", new ImageIcon(Weapon.getWeaponImg(w.getImgLoc())), JLabel.CENTER);
-			label.setPreferredSize(new Dimension(100,40));
-			getContentPane().add(label);
+			label.setPreferredSize(new Dimension(100,25));
+			north.add(label);
 			labels.add(label);
 		}
+		north.setPreferredSize(new Dimension(200, 30*teams.length));
+		getContentPane().add(north, BorderLayout.NORTH);
 		for(Player x: players) {
 			label = new JLabel(x.getName() + ": " + x.getStats().getNumKills());
-			label.setPreferredSize(new Dimension(200, 30));
-			getContentPane().add(label);
+			label.setPreferredSize(new Dimension(200, 20));
+			center.add(label);
 			labels.add(label);
 		}
-		getContentPane().add(playerInfoCanvas);
+		getContentPane().add(center, BorderLayout.CENTER);
+		south.add(playerInfoCanvas);
+		getContentPane().add(south, BorderLayout.SOUTH);
 		playerInfoCanvas.init();
 	}
 	public Player getPlayer() {
