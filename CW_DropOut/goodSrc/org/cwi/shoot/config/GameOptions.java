@@ -51,7 +51,7 @@ public class GameOptions {
 		for (char c : mode.getAdditionalMapChars()){
 			validChars.add(c);
 		}
-		for (char c = '0'; c<='9'; c++){
+		for (char c = '1'; c<='9'; c++){
 			validChars.add(c);
 		}
 	}

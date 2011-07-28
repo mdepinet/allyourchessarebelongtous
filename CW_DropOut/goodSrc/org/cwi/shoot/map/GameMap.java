@@ -23,6 +23,7 @@ import org.cwi.shoot.model.Weapon;
 import org.cwi.shoot.model.Weapon.WeaponType;
 import org.cwi.shoot.threads.RespawnThread;
 import org.cwi.shoot.threads.WeaponAdderThread;
+import org.cwi.shoot.threads.WeaponRemoverThread;
 
 public class GameMap{
 	public static final String[] teamNames = { "America", "England", "Mexico", "Canada" };
@@ -57,8 +58,8 @@ public class GameMap{
 		player.setType(Player.PlayerType.HUMAN);
 		players.add(player);
 
-		setup.getMode().onStartup(this, setup);
 		setup.getMode().loadGameObjects(this);
+		setup.getMode().onStartup(this, setup);
 	}
 	public void resetGame()
 	{
@@ -71,16 +72,13 @@ public class GameMap{
 	}
 	private void setupSpawnLocs(){
 		spawnLocs = new HashMap<Integer, List<Point2D.Double>>();
-		int i;
-		if(setup.getMode().getMaxNumTeams()==1) i = 0;
-		else i = 1;
-		for (; i<=Math.min(setup.getNumTeams(),setup.getMode().getMaxNumTeams());){
+		for (int i = 1; i<=Math.min(setup.getNumTeams(),setup.getMode().getMaxNumTeams());){
 			spawnLocs.put(i++, new ArrayList<Point2D.Double>());
 		}
 		for (int r = 0; r<map.length; r++){
 			for (int c = 0; c<map[r].length; c++){
 				List<Point2D.Double> locs = null;
-				if (Character.isDigit(map[r][c])){
+				if (Character.isDigit(map[r][c]) && map[r][c]!='0'){
 					locs = spawnLocs.get(Character.getNumericValue(map[r][c]));
 					map[r][c] = GameOptions.BLANK_CHARACTER;
 				}
@@ -170,7 +168,7 @@ public class GameMap{
 		Point2D.Double ret = null;
 		for(int i =0;i<map.length;i++) {
 			for(int j = 0;j < map[i].length; j++)
-				if(map[i][j] != GameOptions.BLANK_CHARACTER && map[i][j]!=GameOptions.WALL_CHARACTER && !setup.getMode().getAdditionalMapChars().contains(map[i][j])) {
+				if(map[i][j] != GameOptions.BLANK_CHARACTER && map[i][j]!=GameOptions.WALL_CHARACTER && !setup.getMode().getAdditionalMapChars().contains(map[i][j]) && map[i][j]!='0') {
 					if(!p.canGetWeapon(new Weapon(map[i][j], new Point(i,j)), setup.getMode())) continue;
 					if(p.getLocation().distance(new Point2D.Double(12.5+(i*25),12.5+(j*25)))<dist) { dist = p.getLocation().distance(new Point2D.Double(12.5+(i*25),12.5+(j*25))); ret = new Point2D.Double(12.5+(i*25),12.5+(j*25)); }
 				}
@@ -233,13 +231,6 @@ public class GameMap{
 			setup.getMode().showGameEndDialog(this, winner);
 			resetGame();
 		}
-//		List<Player> addPlayers = setup.getMode().getPlayersToAdd();
-//		if(addPlayers != null) {
-//			for(int i = 0; i < addPlayers.size(); i++) {
-//				players.add(addPlayers.get(i));
-//				spawn(addPlayers.get(i));
-//			}
-//		}
 		OUTTER: for(int i=0;i<bullets.size();i++) {
 			
 			Bullet b = bullets.get(i);
@@ -467,6 +458,13 @@ public class GameMap{
 		return new Point2D.Double(p.x*GRID_PIXELS+(GRID_PIXELS/2),p.y*GRID_PIXELS+(GRID_PIXELS/2));
 	}
 	
+	public void removeWeapon(Point2D.Double loc, char weapon) {
+		if(map[getGridPoint(loc).x][getGridPoint(loc).y]==weapon) {
+			map[getGridPoint(loc).x][getGridPoint(loc).y] = GameOptions.BLANK_CHARACTER;
+			droppedWeps.remove(loc);
+		}
+	}
+	
 	private boolean explode(Bullet b){
 		int splash = b.getWeapon().getSplash();
 		if(splash<=1) return false;
@@ -492,6 +490,7 @@ public class GameMap{
 		if(p.getCurrWeapon()!=null && p.getCurrWeapon().getType() != Weapon.WeaponType.PISTOL &&p.getCurrWeapon().getType()!= WeaponType.OBJECTIVE) {
 			map[getPlayerGridX(p)][getPlayerGridY(p)]=p.getCurrWeapon().getCharacter();
 			droppedWeps.add(new Point2D.Double(getPlayerGridX(p),getPlayerGridY(p)));
+			new WeaponRemoverThread(p.getCurrWeapon(), new Point2D.Double(getPlayerGridX(p),getPlayerGridY(p)), this).start();
 		} 
 		p.die(setup.getMode());
 		int i;

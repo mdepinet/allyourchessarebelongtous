@@ -52,7 +52,7 @@ public class StatsFrame extends JFrame {
 		players.addAll(p);
 		teams = t;
 		JLabel label;
-		for(int i = 0; i < (gameMode instanceof ZombiesWGuns ? 1 : teams.length);i++)
+		for(int i = 1; i < teams.length;i++)
 		{
 			Weapon w = new Weapon(teams[i], new Point());
 			label = new JLabel("0", new ImageIcon(Weapon.getWeaponImg(w.getImgLoc())), JLabel.CENTER);
@@ -60,16 +60,7 @@ public class StatsFrame extends JFrame {
 			getContentPane().add(label);
 			labels.add(label);
 		}
-		if(!(gameMode instanceof ZombiesWGuns)) {
-			for(Player x: players) {
-				label = new JLabel(x.getName() + ": " + x.getStats().getNumKills());
-				label.setPreferredSize(new Dimension(200, 30));
-				getContentPane().add(label);
-				labels.add(label);
-			}
-		}
-		else {
-			Player x = players.get(0);
+		for(Player x: players) {
 			label = new JLabel(x.getName() + ": " + x.getStats().getNumKills());
 			label.setPreferredSize(new Dimension(200, 30));
 			getContentPane().add(label);
@@ -99,8 +90,7 @@ public class StatsFrame extends JFrame {
 		for(int i = 0; i < teams.length;i++) {
 			labels.get(i).setText(gameMode.getScoreForTeam(teams[i]-75, players));
 		}
-		if(gameMode instanceof ZombiesWGuns) labels.get(1).setText(gameMode.getScoreForPlayer(getPlayer()));
-		else for(int i = 0; i < players.size();i++) labels.get(i+teams.length).setText(gameMode.getScoreForPlayer(players.get(i)));
+		for(int i = 0; i < players.size();i++) labels.get(i+teams.length-1).setText(gameMode.getScoreForPlayer(players.get(i)));
 		
 		if(players.get(0).getType()==PlayerType.HUMAN) playerInfoCanvas.setPlayer(players.get(0));
 		playerInfoCanvas.updateGraphics();

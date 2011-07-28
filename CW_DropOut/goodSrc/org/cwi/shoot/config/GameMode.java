@@ -97,6 +97,7 @@ public abstract class GameMode {
 					modeMap[r][c] = charMap[r][c];
 					//charMap[r][c] = '_';  //Don't remove from map or reset won't work.
 				}
+				else modeMap[r][c] = '_';
 			}
 		}
 	}
