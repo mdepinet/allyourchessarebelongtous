@@ -127,10 +127,10 @@ public class GameMap{
 			ret.add(p.getStats());
 		return ret;
 	}
-	public int getPixelWidth(){
+	public double getPixelWidth(){
 		return map.length*GRID_PIXELS;
 	}
-	public int getPixelHeight(){
+	public double getPixelHeight(){
 		return map[0].length*GRID_PIXELS;
 	}
 	

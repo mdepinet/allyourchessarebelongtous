@@ -85,11 +85,14 @@ public class Shoot implements KeyListener, MouseListener, MouseMotionListener, C
 		while (true) {
 			beginTime = System.nanoTime();
 			if(map.getPlayer()!=null){
-		        map.getPlayer().setOrientation(VectorTools.getOrientationToPoint(map.getPlayer().getLocation(),new Point2D.Double(mouseLoc.x,mouseLoc.y)));
+				double HRZ_SCALE = (double)GameFrame.WIDTH / map.getPixelWidth();
+				double VERT_SCALE = (double)GameFrame.HEIGHT / map.getPixelHeight();
+				Point2D.Double playLoc = new Point2D.Double(map.getPlayer().getLocation().x*HRZ_SCALE,map.getPlayer().getLocation().y*VERT_SCALE);
+		        map.getPlayer().setOrientation(VectorTools.getOrientationToPoint(playLoc,new Point2D.Double(mouseLoc.x*HRZ_SCALE,mouseLoc.y*VERT_SCALE)));
 		        if(holdCounter>=0) {
 		        	holdCounter++;
 		        	Weapon w = map.getPlayer().getCurrWeapon();
-		        	if(holdCounter>40 && w != null && w.canShoot()) map.shoot(map.getPlayer());
+		        	if(holdCounter>15 && w != null && w.canShoot()) map.shoot(map.getPlayer());
 		        }
 	        }
 	        else holdCounter = -1;
