@@ -84,7 +84,10 @@ public class GameMap{
 	}
 	private void setupSpawnLocs(){
 		spawnLocs = new HashMap<Integer, List<Point2D.Double>>();
-		for (int i = 0; i<=Math.min(setup.getNumTeams(),setup.getMode().getMaxNumTeams());){
+		int i;
+		if(setup.getMode().getMaxNumTeams()==1) i = 0;
+		else i = 1;
+		for (; i<=Math.min(setup.getNumTeams(),setup.getMode().getMaxNumTeams());){
 			spawnLocs.put(i++, new ArrayList<Point2D.Double>());
 		}
 		for (int r = 0; r<map.length; r++){
@@ -242,6 +245,13 @@ public class GameMap{
 		if((winner = setup.getMode().getWinningTeam(players)) != -1) {
 			setup.getMode().showGameEndDialog(this, winner);
 			resetGame();
+		}
+		List<Player> addPlayers = setup.getMode().getPlayersToAdd();
+		if(addPlayers != null) {
+			for(int i = 0; i < addPlayers.size(); i++) {
+				players.add(addPlayers.get(i));
+				spawn(addPlayers.get(i));
+			}
 		}
 		OUTTER: for(int i=0;i<bullets.size();i++) {
 			
