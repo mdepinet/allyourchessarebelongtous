@@ -2,10 +2,9 @@ package org.cwi.shoot.config;
 
 import java.awt.Graphics2D;
 import java.awt.Point;
-import java.util.HashSet;
+import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Set;
 
 import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
@@ -38,7 +37,7 @@ public abstract class GameMode {
 	public abstract void update(List<Player> players);
 	public abstract int getWinningTeam(List<Player> players);
 	public abstract boolean canGetWeapon(Player p, Weapon w);
-	public abstract char[] getAdditionalMapChars();
+	public abstract List<Character> getAdditionalMapChars();
 	public abstract int getMaxNumTeams();
 	public abstract List<Objective> getObjectives(GameMap map, Player p);
 	public abstract void onPlayerDeath(Player p);
@@ -90,17 +89,13 @@ public abstract class GameMode {
 	
 	public void loadGameObjects(GameMap map){
 		char[][] charMap = map.getMap();
-		Set<Character> myChars = new HashSet<Character>();
-		char[] myCharsArray = getAdditionalMapChars();
-		for (char c : myCharsArray){
-			myChars.add(c);
-		}
+		Collection<Character> myChars = getAdditionalMapChars();
 		modeMap = new char[charMap.length][charMap[0].length];
 		for (int r = 0; r < charMap.length; r++){
 			for (int c = 0; c < charMap[r].length; c++){
 				if (myChars.contains(charMap[r][c])){
 					modeMap[r][c] = charMap[r][c];
-					charMap[r][c] = '_';
+					//charMap[r][c] = '_';  //Don't remove from map or reset won't work.
 				}
 			}
 		}

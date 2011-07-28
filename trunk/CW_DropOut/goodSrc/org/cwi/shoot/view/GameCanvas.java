@@ -76,7 +76,7 @@ public class GameCanvas extends Canvas {
 							(int) Math.round(j*GRID_PIXELS*VERT_SCALE),
 							(int) Math.round(GRID_PIXELS*HRZ_SCALE),
 							(int) Math.round(GRID_PIXELS*VERT_SCALE));
-				else if(gameMap.getMap()[i][j] != GameOptions.BLANK_CHARACTER) {
+				else if(gameMap.getMap()[i][j] != GameOptions.BLANK_CHARACTER && !mode.getAdditionalMapChars().contains(gameMap.getMap()[i][j])) {
 					backg.drawRect((int) Math.round(i*GRID_PIXELS*HRZ_SCALE),
 							(int) Math.round(j*GRID_PIXELS*VERT_SCALE),
 							(int) Math.round(GRID_PIXELS*HRZ_SCALE),

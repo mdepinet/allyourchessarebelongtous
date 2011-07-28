@@ -4,12 +4,11 @@ import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.Point;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import org.cwi.shoot.ai.objective.Objective;
 import org.cwi.shoot.map.GameMap;
@@ -23,7 +22,7 @@ public class CaptureTheFlagMode extends GameMode {
 	private Map<Integer, Point> flagSpawnLocs;
 	//indices of the longs are the teams which those flags belong to
 	private long[] flagRespawnTimes;
-	private static final char[] FLAG_CHARS= {'L','M','N','O'};
+	private static final Character[] FLAG_CHARS= {'L','M','N','O'};
 	
 	public CaptureTheFlagMode(){
 		flagsCaptured = new HashMap<Player,Integer>();
@@ -38,11 +37,7 @@ public class CaptureTheFlagMode extends GameMode {
 	public void loadGameObjects(GameMap map) {
 		if(flagSpawnLocs.keySet().isEmpty()) {
 			char[][] charMap = map.getMap();
-			Set<Character> myChars = new HashSet<Character>();
-			char[] myCharsArray = getAdditionalMapChars();
-			for (char c : myCharsArray){
-				myChars.add(c);
-			}
+			Collection<Character> myChars = getAdditionalMapChars();
 			modeMap = new char[charMap.length][charMap[0].length];
 			for (int r = 0; r < charMap.length; r++){
 				for (int c = 0; c < charMap[r].length; c++){
@@ -159,8 +154,8 @@ public class CaptureTheFlagMode extends GameMode {
 	}
 
 	@Override
-	public char[] getAdditionalMapChars() {
-		return FLAG_CHARS;
+	public List<Character> getAdditionalMapChars() {
+		return Arrays.asList(FLAG_CHARS);
 	}
 
 	@Override

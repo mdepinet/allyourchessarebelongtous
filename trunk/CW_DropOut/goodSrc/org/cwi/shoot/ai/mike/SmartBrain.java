@@ -11,6 +11,7 @@ import org.cwi.shoot.config.GameMode;
 import org.cwi.shoot.map.GameMap;
 import org.cwi.shoot.model.Player;
 import org.cwi.shoot.model.Weapon;
+import org.cwi.shoot.util.VectorTools;
 
 public class SmartBrain extends AbstractBrain {
 //	private static int pursueWeight = 100;
@@ -93,12 +94,12 @@ public class SmartBrain extends AbstractBrain {
 	private void run(Player p, GameMap map, Player nearestEnemy, Weapon w){
 		Point2D.Double dest = getClosestWeaponLoc(map,p);
 		if (dest == null){
-			dest = getSmartDirectionToLoc(p.getLocation(),addVectors(p.getLocation(),scaleVector(getDirectionToLoc(p.getLocation(),nearestEnemy.getLocation()),-10)),map);
+			dest = getSmartDirectionToLoc(p.getLocation(),VectorTools.addVectors(p.getLocation(),VectorTools.scaleVector(getDirectionToLoc(p.getLocation(),nearestEnemy.getLocation()),-10)),map);
 		}
 		move(dest, p);
 		if (w != null && canHit(p, map, nearestEnemy, w)){
 			switchWeapon(p, w);
-			turn(getSlopeBetweenPoints(p.getLocation(),predictNextLoc(nearestEnemy)),p);
+			turn(VectorTools.getOrientationToPoint(p.getLocation(),predictNextLoc(nearestEnemy)),p);
 			if (canHit(p, map, nearestEnemy,w)) shoot(map,p);
 		}
 		updateLocations();
@@ -109,8 +110,8 @@ public class SmartBrain extends AbstractBrain {
 		if (w == null || !canHit(p, map, target, w)) move(getSmartDirectionToLoc(p.getLocation(),dest, map), p);
 		else{
 			double numTurns = p.getLocation().distance(dest)/MAX_MOVE_DISTANCE;
-			Point2D.Double targetLoc = addVectors(target.getLocation(),scaleVector(getVectorBetween(target.getLocation(),predictNextLoc(target)),numTurns));
-			Point2D.Double straight = addVectors(p.getLocation(),scaleVector(getSmartDirectionToLoc(p.getLocation(),target.getLocation(),map),numTurns));
+			Point2D.Double targetLoc = VectorTools.addVectors(target.getLocation(),VectorTools.scaleVector(VectorTools.getVectorBetween(target.getLocation(),predictNextLoc(target)),numTurns));
+			Point2D.Double straight = VectorTools.addVectors(p.getLocation(),VectorTools.scaleVector(getSmartDirectionToLoc(p.getLocation(),target.getLocation(),map),numTurns));
 			if (targetLoc.distance(dest) - targetLoc.distance(straight) >= w.getEffRange()){
 				dest = straight;
 			}
@@ -118,7 +119,7 @@ public class SmartBrain extends AbstractBrain {
 			move(getSmartDirectionToLoc(p.getLocation(),dest, map), p);
 			switchWeapon(p,w);
 			if (canHit(p, map, target, p.getCurrWeapon())){
-				turn(getOrientationToPoint(p.getLocation(),target.getLocation()), p);
+				turn(VectorTools.getOrientationToPoint(p.getLocation(),target.getLocation()), p);
 				shoot(map, p);
 			}
 		}
@@ -126,14 +127,14 @@ public class SmartBrain extends AbstractBrain {
 	}
 	
 	private boolean canHit(Player p, GameMap map, Player enemy, Weapon wep){
-		boolean direct = true;//wep.getType().equals("Thrown") || normalize(getDirectionToLoc(p.getLocation(),enemy.getLocation())).equals(normalize(getSmartDirectionToLoc(p.getLocation(),enemy.getLocation(), map)));
+		boolean direct = wep.getType().equals("Thrown") || VectorTools.normalize(getDirectionToLoc(p.getLocation(),enemy.getLocation())).equals(VectorTools.normalize(getSmartDirectionToLoc(p.getLocation(),enemy.getLocation(), map)));
 		return direct && p.getLocation().distance(predictNextLoc(enemy)) <= wep.getEffRange()*(isApproaching(p, enemy) ? 2.1 : 1.9);
 	}
 	
 	private Point2D.Double predictNextLoc(Player enemy){
 		Point2D.Double lastLoc = prevLocs.get(enemy);
 		if (lastLoc == null) return enemy.getLocation();
-		return addVectors(enemy.getLocation(),getDirectionToLoc(lastLoc,enemy.getLocation()));
+		return VectorTools.addVectors(enemy.getLocation(),VectorTools.getVectorBetween(lastLoc,enemy.getLocation()));
 	}
 	
 	private void updateLocations(){
