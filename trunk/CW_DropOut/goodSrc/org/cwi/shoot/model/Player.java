@@ -15,12 +15,12 @@ import org.cwi.shoot.map.MapUpdatable;
 
 
 public class Player implements Comparable<Player>, MapUpdatable {
-	private static final double REGEN_SPEED = 1/15.;
 	public static final double radius = 8;
 	public static final char[] SPAWNLOC_CHARS ={'1','2','3','4'};
 	public enum PlayerType {
 		HUMAN, COMPUTER
 	}
+	private static double regenSpeed = 1/15.;
 	
 	private String name;
 	private double health;
@@ -137,7 +137,7 @@ public class Player implements Comparable<Player>, MapUpdatable {
 	
 	public void update(){
 		if(health<=0 || weapons.size()<=0) return;
-		health += REGEN_SPEED;
+		health += regenSpeed;
 		if(health > 100) health = 100;
 		getCurrWeapon().update();
 		if(type == PlayerType.HUMAN){
@@ -221,5 +221,11 @@ public class Player implements Comparable<Player>, MapUpdatable {
 		orientation = 0;
 		location = loc;
 		mode.onPlayerRespawn(this);
+	}
+	public static double getRegenSpeed() {
+		return regenSpeed;
+	}
+	public static void setRegenSpeed(double regen) {
+		regenSpeed = regen;
 	}
 }
