@@ -95,4 +95,9 @@ public abstract class GameMode {
 	public boolean handlesRespawn(){
 		return false;
 	}
+
+	public List<Player> getPlayersToAdd() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }
