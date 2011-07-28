@@ -7,6 +7,7 @@ import java.awt.geom.Point2D;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -119,8 +120,8 @@ public class SurvivalMode extends GameMode {
 	}
 
 	@Override
-	public char[] getAdditionalMapChars() {
-		return new char[]{'+'};
+	public List<Character> getAdditionalMapChars() {
+		return Arrays.asList(new Character[]{'+'});
 	}
 
 	@Override

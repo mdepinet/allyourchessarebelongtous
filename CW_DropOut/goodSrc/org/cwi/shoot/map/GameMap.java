@@ -170,7 +170,7 @@ public class GameMap{
 		Point2D.Double ret = null;
 		for(int i =0;i<map.length;i++) {
 			for(int j = 0;j < map[i].length; j++)
-				if(map[i][j] != GameOptions.BLANK_CHARACTER && map[i][j]!=GameOptions.WALL_CHARACTER) {
+				if(map[i][j] != GameOptions.BLANK_CHARACTER && map[i][j]!=GameOptions.WALL_CHARACTER && !setup.getMode().getAdditionalMapChars().contains(map[i][j])) {
 					if(!p.canGetWeapon(new Weapon(map[i][j], new Point(i,j)), setup.getMode())) continue;
 					if(p.getLocation().distance(new Point2D.Double(12.5+(i*25),12.5+(j*25)))<dist) { dist = p.getLocation().distance(new Point2D.Double(12.5+(i*25),12.5+(j*25))); ret = new Point2D.Double(12.5+(i*25),12.5+(j*25)); }
 				}

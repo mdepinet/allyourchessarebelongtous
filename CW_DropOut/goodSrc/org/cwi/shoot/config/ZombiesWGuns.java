@@ -183,9 +183,8 @@ public class ZombiesWGuns extends GameMode {
 	}
 
 	@Override
-	public char[] getAdditionalMapChars() {
-		// TODO Auto-generated method stub
-		return new char[0];
+	public List<Character> getAdditionalMapChars() {
+		return new ArrayList<Character>();
 	}
 
 	@Override

@@ -1,6 +1,7 @@
 package org.cwi.shoot.config;
 
 import java.awt.Graphics2D;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -64,8 +65,8 @@ public class TeamDeathmatchMode extends GameMode {
 	}
 
 	@Override
-	public char[] getAdditionalMapChars() {
-		return new char[0];
+	public List<Character> getAdditionalMapChars() {
+		return new ArrayList<Character>();
 	}
 
 	@Override
