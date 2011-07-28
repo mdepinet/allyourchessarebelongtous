@@ -416,10 +416,27 @@ public class GameMap{
 		if(loc.x>(map[0].length*GRID_PIXELS)-radius || loc.x<radius || loc.y <radius || loc.y>(map.length*GRID_PIXELS)-radius) return false;
 		for(int i = 0; i < map.length; i++) {
 			for(int j = 0; j < map[0].length;j++)
-				if(map[i][j] == GameOptions.WALL_CHARACTER && new Rectangle(i*GRID_PIXELS,j*GRID_PIXELS,GRID_PIXELS,GRID_PIXELS).intersects(new Rectangle((int)loc.x-radius,(int)loc.y-radius,radius*2,radius*2)))
+				if(map[i][j] == GameOptions.WALL_CHARACTER && circleIntersectsRect(loc, radius,new Rectangle(i*GRID_PIXELS,j*GRID_PIXELS,GRID_PIXELS,GRID_PIXELS)))
 						return false;
 		}
 		return true;
+	}
+	
+	private boolean circleIntersectsRect(Point2D.Double loc, int radius, Rectangle rect)
+	{
+		Point2D.Double circleDistance = new Point2D.Double();
+	    circleDistance.x = Math.abs(loc.x - rect.x - rect.width/2);
+	    circleDistance.y = Math.abs(loc.y - rect.y - rect.height/2);
+
+	    if (circleDistance.x > (rect.width/2 + radius)) { return false; }
+	    if (circleDistance.y > (rect.height/2 + radius)) { return false; }
+
+	    if (circleDistance.x <= (rect.width/2)) { return true; } 
+	    if (circleDistance.y <= (rect.height/2)) { return true; }
+	    double cornerDistance_sq = Math.pow((circleDistance.x - rect.width/2), 2.0) +
+	    	Math.pow((circleDistance.y - rect.height/2),2.0);
+
+	    return (cornerDistance_sq <= Math.pow(radius, 2.0));
 	}
 	
 	public Player getPlayerByName(String name) {
