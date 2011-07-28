@@ -19,7 +19,6 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 
 import org.cwi.shoot.config.GameMode;
-import org.cwi.shoot.config.ZombiesWGuns;
 import org.cwi.shoot.map.GameMap;
 import org.cwi.shoot.model.Player;
 import org.cwi.shoot.model.Player.PlayerType;
@@ -52,7 +51,7 @@ public class StatsFrame extends JFrame {
 		players.addAll(p);
 		teams = t;
 		JLabel label;
-		for(int i = 1; i < teams.length;i++)
+		for(int i = 0; i < teams.length;i++)
 		{
 			Weapon w = new Weapon(teams[i], new Point());
 			label = new JLabel("0", new ImageIcon(Weapon.getWeaponImg(w.getImgLoc())), JLabel.CENTER);
@@ -90,7 +89,7 @@ public class StatsFrame extends JFrame {
 		for(int i = 0; i < teams.length;i++) {
 			labels.get(i).setText(gameMode.getScoreForTeam(teams[i]-75, players));
 		}
-		for(int i = 0; i < players.size();i++) labels.get(i+teams.length-1).setText(gameMode.getScoreForPlayer(players.get(i)));
+		for(int i = 0; i < players.size();i++) labels.get(i+teams.length).setText(gameMode.getScoreForPlayer(players.get(i)));
 		
 		if(players.get(0).getType()==PlayerType.HUMAN) playerInfoCanvas.setPlayer(players.get(0));
 		playerInfoCanvas.updateGraphics();
