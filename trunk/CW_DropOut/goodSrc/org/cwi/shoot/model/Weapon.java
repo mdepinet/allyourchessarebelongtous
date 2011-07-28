@@ -226,4 +226,8 @@ public class Weapon implements Updatable{
 	public static BufferedImage getWeaponImg(String key){
 		return images.get(key);
 	}
+	
+	public String toString(){
+		return name;
+	}
 }

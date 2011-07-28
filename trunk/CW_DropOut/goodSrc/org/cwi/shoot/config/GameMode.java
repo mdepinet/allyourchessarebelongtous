@@ -10,6 +10,7 @@ import java.util.Set;
 import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
 
+import org.cwi.shoot.ai.objective.Objective;
 import org.cwi.shoot.map.GameMap;
 import org.cwi.shoot.model.Player;
 import org.cwi.shoot.model.Weapon;
@@ -37,7 +38,7 @@ public abstract class GameMode {
 	public abstract boolean canGetWeapon(Player p, Weapon w);
 	public abstract char[] getAdditionalMapChars();
 	public abstract int getMaxNumTeams();
-	public abstract void addObjectives(GameMap map, Player p);
+	public abstract List<Objective> getObjectives(GameMap map, Player p);
 	public abstract void onPlayerDeath(Player p);
 	public abstract void onPlayerRespawn(Player p);
 	public abstract void drawModeMapPre(Graphics2D g);
@@ -94,10 +95,5 @@ public abstract class GameMode {
 	
 	public boolean handlesRespawn(){
 		return false;
-	}
-
-	public List<Player> getPlayersToAdd() {
-		// TODO Auto-generated method stub
-		return null;
 	}
 }

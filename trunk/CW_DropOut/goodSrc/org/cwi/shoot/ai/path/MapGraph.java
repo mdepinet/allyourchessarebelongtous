@@ -85,6 +85,7 @@ public class MapGraph {
 	}
 	
 	public Point getNextLocation(Point curr, Point goal){
+		if (goal == null) return curr;
 		if (vertices.isEmpty()) return null;
 		Vertex startV = getVertexByLocation(curr.x,curr.y);
 		Vertex endV = getVertexByLocation(goal.x,goal.y);
@@ -137,6 +138,10 @@ public class MapGraph {
 	
 	public List<Vertex> getShortestPath(Vertex start, Vertex target) {
 		List<Vertex> path = new ArrayList<Vertex>();
+		if (target == null){
+			path.add(start);
+			return path;
+		}
 		for (Vertex vertex = target; vertex != null; vertex = vertex.prev)
 			path.add(vertex);
 		

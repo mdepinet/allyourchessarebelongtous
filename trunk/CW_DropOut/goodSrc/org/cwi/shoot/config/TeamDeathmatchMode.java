@@ -5,11 +5,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
+import org.cwi.shoot.ai.objective.Objective;
 import org.cwi.shoot.map.GameMap;
 import org.cwi.shoot.model.Player;
 import org.cwi.shoot.model.Weapon;
-import org.cwi.shoot.model.Player.PlayerType;
-import org.cwi.shoot.threads.RespawnThread;
 
 public class TeamDeathmatchMode extends GameMode {
 	public static final int KILLS_TO_WIN = 10;
@@ -46,7 +45,8 @@ public class TeamDeathmatchMode extends GameMode {
 	@Override
 	public int getWinningTeam(List<Player> players) {
 		Map<Integer, Integer> teamKills = new TreeMap<Integer, Integer>();
-		for(Player p : players){
+		for(int i = 0; i<players.size(); i++){
+			Player p = players.get(i);
 			int team = p.getTeam();
 			if (teamKills.containsKey(team)) teamKills.put(team, teamKills.get(team)+p.getStats().getKillsMinusSuicides());
 			else teamKills.put(team, p.getStats().getKillsMinusSuicides());
@@ -74,9 +74,8 @@ public class TeamDeathmatchMode extends GameMode {
 	}
 
 	@Override
-	public void addObjectives(GameMap map, Player p) {
-		// TODO Auto-generated method stub
-
+	public List<Objective> getObjectives(GameMap map, Player p) {
+		return null;
 	}
 
 	@Override

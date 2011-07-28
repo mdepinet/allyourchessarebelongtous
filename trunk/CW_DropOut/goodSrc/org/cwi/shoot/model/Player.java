@@ -8,7 +8,6 @@ import java.util.regex.Pattern;
 
 import org.cwi.shoot.ai.Controller;
 import org.cwi.shoot.ai.DefaultBrain;
-import org.cwi.shoot.ai.Objective;
 import org.cwi.shoot.config.GameMode;
 import org.cwi.shoot.map.GameMap;
 import org.cwi.shoot.map.MapUpdatable;
@@ -120,10 +119,6 @@ public class Player implements Comparable<Player>, MapUpdatable {
 		this.brain = brain;
 	}
 	
-	public void addObjective(Objective o) {
-		brain.addObjective(o);
-	}
-	
 	public boolean hasFlag() {
 		for(Weapon w : weapons)
 			if(Pattern.compile(Pattern.quote("flag"), Pattern.CASE_INSENSITIVE).matcher(w.getName()).find()) return true;
@@ -192,7 +187,7 @@ public class Player implements Comparable<Player>, MapUpdatable {
 	}
 	
 	public String toString(){
-		return name+": ("+health+")"+" @ "+location;
+		return name+": ("+health+")"+" @ ("+location.x+","+location.y+") with "+getCurrWeapon();
 	}
 	
 	public Point2D.Double getGunLocation() {
@@ -216,6 +211,7 @@ public class Player implements Comparable<Player>, MapUpdatable {
 	}
 	public void respawn(Point2D.Double loc, GameMode mode){
 		currWeapon = 0;
+		weapons.clear();
 		addWeapon(new Weapon("Default"), mode);
 		health = 100;
 		orientation = 0;
