@@ -5,17 +5,20 @@ import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.geom.Point2D;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import org.cwi.shoot.ai.Objective;
+import org.cwi.shoot.ai.objective.KillObjective;
+import org.cwi.shoot.ai.objective.LocationObjective;
+import org.cwi.shoot.ai.objective.Objective;
 import org.cwi.shoot.map.GameMap;
 import org.cwi.shoot.model.Player;
 import org.cwi.shoot.model.Weapon;
 import org.cwi.shoot.util.VectorTools;
 
 public class OddBallMode extends GameMode{
-	public static final int POINTS_TO_WIN = 150;
+	public static final int POINTS_TO_WIN = 151;
 	private static final int BALL_RADIUS = 3;
 	private Map<Integer, Integer> teamPoints = new HashMap<Integer, Integer>();
 	private Player lastBallHolder = null;
@@ -122,8 +125,23 @@ public class OddBallMode extends GameMode{
 	}
 
 	@Override
-	public void addObjectives(GameMap map, Player p) {
-		if (oddLoc != null) p.addObjective(new Objective(oddLoc,100,p.getLocation().distance(GameMap.fromGridPoint(oddLoc))));
+	public List<Objective> getObjectives(GameMap map, Player p) {
+		LinkedList<Objective> objectives = new LinkedList<Objective>();
+		if (lastBallHolder == null){
+			if (oddLoc != null) objectives.add(new LocationObjective(100,p.getLocation().distance(GameMap.fromGridPoint(oddLoc)),GameMap.fromGridPoint(oddLoc)));
+		}
+		else{
+			if (p == lastBallHolder){
+				//Run away somehow
+			}
+			else if (p.getTeam() == lastBallHolder.getTeam()){
+				if (oddLoc != null) objectives.add(new LocationObjective(100,p.getLocation().distance(GameMap.fromGridPoint(oddLoc)),GameMap.fromGridPoint(oddLoc)));
+			}
+			else{
+				objectives.add(new KillObjective(100,p.getLocation().distance(GameMap.fromGridPoint(oddLoc)),lastBallHolder));
+			}
+		}
+		return objectives;
 	}
 
 	@Override

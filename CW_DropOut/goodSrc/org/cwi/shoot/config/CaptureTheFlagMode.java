@@ -6,10 +6,12 @@ import java.awt.Point;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.cwi.shoot.ai.objective.Objective;
 import org.cwi.shoot.map.GameMap;
 import org.cwi.shoot.model.Player;
 import org.cwi.shoot.model.Weapon;
@@ -167,13 +169,14 @@ public class CaptureTheFlagMode extends GameMode {
 	}
 
 	@Override
-	public void addObjectives(GameMap map, Player p) {
+	public List<Objective> getObjectives(GameMap map, Player p) {
 		// TODO: Needs optimization- there is no reason to go through the entire 30x30 grid to find 4 flags
 		//for(int r = 0; r<modeMap.length;r++)
 		//	for(int c =0; c<modeMap[r].length;c++){
 		//		if(modeMap[r][c]!=0)
 		//			p.addObjective(new Objective(new Point(r,c), 1, 1));
 		//	}
+		return new LinkedList<Objective>();
 	}
 
 	@Override

@@ -7,5 +7,4 @@ import org.cwi.shoot.model.Player;
 
 public interface Controller {
 	void makeMove(GameMode mode, GameMap gm, Player player);
-	void addObjective(Objective o);
 }
