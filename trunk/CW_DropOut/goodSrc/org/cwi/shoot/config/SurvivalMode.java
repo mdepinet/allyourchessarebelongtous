@@ -63,7 +63,7 @@ public class SurvivalMode extends GameMode {
 		for(int i = 0; i < players.size();i++)
 			if(players.get(i).getTeam()==team && players.get(i).getHealth()>0)
 				alive++;
-		return ""+alive;
+		return alive+" left";
 				
 	}
 
@@ -75,7 +75,7 @@ public class SurvivalMode extends GameMode {
 				wep.setPower((int)(wep.getPower()*DAMAGE_MOD));
 			Point point = GameMap.getGridPoint(p.getLocation());
 			if(modeMap[point.x][point.y]=='+' && p.getHealth()<100){
-				p.setHealth(p.getHealth()+30);
+				p.setHealth(p.getHealth()+50);
 				modeMap[point.x][point.y]= GameOptions.BLANK_CHARACTER;
 				healthPacks.remove(point);
 			}
@@ -104,7 +104,8 @@ public class SurvivalMode extends GameMode {
 		return winTeam;
 	}
 	public void onReset(GameMap map, GameOptions setup){
-		//gameOver = false;
+		for(Player p : map.getPlayers())
+			p.die(this);
 		for(Player p : dead){
 			map.getPlayers().add(p);
 			map.spawn(p);
@@ -148,7 +149,6 @@ public class SurvivalMode extends GameMode {
 	public void drawModeMapPre(Graphics2D g) {
 		for(Point p : healthPacks){
 			Point2D.Double converted = GameMap.fromGridPoint(p);
-			//g.drawImage(health, (int)converted.x, (int)converted.y,null);
 			g.drawImage(health,(int)converted.x,(int)converted.y, 15, 15, null);
 
 		}	
