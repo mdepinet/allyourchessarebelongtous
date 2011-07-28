@@ -31,7 +31,7 @@ public class TeamDeathmatchMode extends GameMode {
 		for(int i = 0; i < players.size();i++)
 			if(players.get(i).getTeam()==team)
 				kills += players.get(i).getStats().getNumKills() - players.get(i).getStats().getNumSuicides();
-		return GameMap.teamNames[team-1]+": "+kills;
+		return ""+kills;
 	}
 
 	@Override

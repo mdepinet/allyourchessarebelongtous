@@ -34,20 +34,27 @@ public class CaptureTheFlagMode extends GameMode {
 	}
 	@Override
 	public void loadGameObjects(GameMap map) {
-		char[][] charMap = map.getMap();
-		Set<Character> myChars = new HashSet<Character>();
-		char[] myCharsArray = getAdditionalMapChars();
-		for (char c : myCharsArray){
-			myChars.add(c);
-		}
-		modeMap = new char[charMap.length][charMap[0].length];
-		for (int r = 0; r < charMap.length; r++){
-			for (int c = 0; c < charMap[r].length; c++){
-				if (myChars.contains(charMap[r][c])){
-					modeMap[r][c] = charMap[r][c];
-					flagSpawnLocs.put(modeMap[r][c]-75, new Point(r,c));
-					charMap[r][c] = '_';
+		if(flagSpawnLocs.keySet().isEmpty()) {
+			char[][] charMap = map.getMap();
+			Set<Character> myChars = new HashSet<Character>();
+			char[] myCharsArray = getAdditionalMapChars();
+			for (char c : myCharsArray){
+				myChars.add(c);
+			}
+			modeMap = new char[charMap.length][charMap[0].length];
+			for (int r = 0; r < charMap.length; r++){
+				for (int c = 0; c < charMap[r].length; c++){
+					if (myChars.contains(charMap[r][c])){
+						modeMap[r][c] = charMap[r][c];
+						flagSpawnLocs.put(modeMap[r][c]-75, new Point(r,c));
+						charMap[r][c] = '_';
+					}
 				}
+			}
+		}
+		else {
+			for(int i : flagSpawnLocs.keySet()) {
+				modeMap[flagSpawnLocs.get(i).x][flagSpawnLocs.get(i).y] = (char)(i+75);
 			}
 		}
 	}
@@ -122,7 +129,7 @@ public class CaptureTheFlagMode extends GameMode {
 	}
 	
 	private boolean playerHasFlag(Player p) {
-		return p.getCurrWeapon().getType().equals(WeaponType.OBJECTIVE);
+		return p.getCurrWeapon()!=null && p.getCurrWeapon().getType().equals(WeaponType.OBJECTIVE);
 	}
 
 	@Override

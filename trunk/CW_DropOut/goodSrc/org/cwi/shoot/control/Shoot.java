@@ -4,6 +4,8 @@ import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
@@ -23,7 +25,7 @@ import org.cwi.shoot.util.VectorTools;
 import org.cwi.shoot.view.GameFrame;
 import org.cwi.shoot.view.StatsFrame;
 
-public class Shoot implements KeyListener, MouseListener, MouseMotionListener, ComponentListener {
+public class Shoot implements KeyListener, MouseListener, MouseMotionListener, ComponentListener, FocusListener {
 	static final int UPDATE_RATE = 30;  // number of game update per second
 	static final long UPDATE_PERIOD = 1000000000L / UPDATE_RATE;  // nanoseconds
 	GameFrame frame;
@@ -51,6 +53,8 @@ public class Shoot implements KeyListener, MouseListener, MouseMotionListener, C
 		frame.getCanvas().requestFocusInWindow();
 		
 		statsFrame = new StatsFrame(mode, map.getPlayers(), teams);
+		statsFrame.setFocusable(true);
+		statsFrame.addFocusListener(this);
 		frame.addComponentListener(this);
 		frame.addWindowListener(new WindowAdapter(){
 	          public void windowIconified(WindowEvent e){
@@ -241,5 +245,16 @@ public class Shoot implements KeyListener, MouseListener, MouseMotionListener, C
 	
 	public static void main(String[] args) {
 		new Shoot();
+	}
+
+	@Override
+	public void focusGained(FocusEvent arg0) {
+		frame.setVisible(true);
+	}
+
+	@Override
+	public void focusLost(FocusEvent arg0) {
+		
+		
 	}
 }

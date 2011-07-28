@@ -65,6 +65,11 @@ public class GameMap{
 		bullets.clear();
 		explosions.clear();
 		droppedWeps.clear();
+		
+		for(Player p : players) {
+			p.setStats(new PlayerStats());
+			spawn(p);
+		}
 		if (!setup.getMode().handlesRespawn()){
 			for(int i = 0; i < threads.size(); i++) { 
 				RespawnThread t = threads.get(i); 
@@ -74,12 +79,6 @@ public class GameMap{
 			threads.clear();
 		}
 		
-		Player p = new Player(setup.getPlayerName());
-		p.setTeam(setup.getPlayerTeam());
-		p.setType(Player.PlayerType.HUMAN);
-		
-		players.clear();
-		players.add(p);
 		setup.getMode().onReset(this, setup);
 		setup.getMode().loadGameObjects(this);
 	}
