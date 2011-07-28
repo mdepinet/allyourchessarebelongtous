@@ -66,19 +66,6 @@ public class GameMap{
 		explosions.clear();
 		droppedWeps.clear();
 		
-		for(Player p : players) {
-			p.setStats(new PlayerStats());
-			spawn(p);
-		}
-		if (!setup.getMode().handlesRespawn()){
-			for(int i = 0; i < threads.size(); i++) { 
-				RespawnThread t = threads.get(i); 
-				t.respawn(); 
-				t.kill(); 
-			}
-			threads.clear();
-		}
-		
 		setup.getMode().onReset(this, setup);
 		setup.getMode().loadGameObjects(this);
 	}
@@ -246,13 +233,13 @@ public class GameMap{
 			setup.getMode().showGameEndDialog(this, winner);
 			resetGame();
 		}
-		List<Player> addPlayers = setup.getMode().getPlayersToAdd();
-		if(addPlayers != null) {
-			for(int i = 0; i < addPlayers.size(); i++) {
-				players.add(addPlayers.get(i));
-				spawn(addPlayers.get(i));
-			}
-		}
+//		List<Player> addPlayers = setup.getMode().getPlayersToAdd();
+//		if(addPlayers != null) {
+//			for(int i = 0; i < addPlayers.size(); i++) {
+//				players.add(addPlayers.get(i));
+//				spawn(addPlayers.get(i));
+//			}
+//		}
 		OUTTER: for(int i=0;i<bullets.size();i++) {
 			
 			Bullet b = bullets.get(i);

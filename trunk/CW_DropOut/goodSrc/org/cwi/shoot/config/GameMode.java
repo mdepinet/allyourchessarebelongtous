@@ -13,7 +13,9 @@ import javax.swing.JOptionPane;
 import org.cwi.shoot.ai.objective.Objective;
 import org.cwi.shoot.map.GameMap;
 import org.cwi.shoot.model.Player;
+import org.cwi.shoot.model.PlayerStats;
 import org.cwi.shoot.model.Weapon;
+import org.cwi.shoot.threads.RespawnThread;
 
 public abstract class GameMode {
 	public static final List<Class<? extends GameMode>> availableTypes = new LinkedList<Class<? extends GameMode>>();
@@ -59,7 +61,18 @@ public abstract class GameMode {
 		}
 	}
 	public void onReset(GameMap map, GameOptions setup){
-		
+		for(Player p : map.getPlayers()) {
+			p.setStats(new PlayerStats());
+			map.spawn(p);
+		}
+		if (!handlesRespawn()){
+			for(int i = 0; i < map.getThreads().size(); i++) { 
+				RespawnThread t = map.getThreads().get(i); 
+				t.respawn(); 
+				t.kill(); 
+			}
+			map.getThreads().clear();
+		}
 	}
 	
 	public void showGameEndDialog(GameMap map, int winner){

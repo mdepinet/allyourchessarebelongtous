@@ -15,6 +15,7 @@ import java.util.TreeMap;
 
 import javax.imageio.ImageIO;
 
+import org.cwi.shoot.ai.objective.Objective;
 import org.cwi.shoot.map.GameMap;
 import org.cwi.shoot.model.Player;
 import org.cwi.shoot.model.Weapon;
@@ -104,12 +105,10 @@ public class SurvivalMode extends GameMode {
 		return winTeam;
 	}
 	public void onReset(GameMap map, GameOptions setup){
-		for(Player p : map.getPlayers())
-			p.die(this);
 		for(Player p : dead){
 			map.getPlayers().add(p);
-			map.spawn(p);
 		}
+		super.onReset(map, setup);
 		weps.clear();
 		dead.clear();
 		healthPacks.clear();
@@ -130,9 +129,8 @@ public class SurvivalMode extends GameMode {
 	}
 
 	@Override
-	public void addObjectives(GameMap map, Player p) {
-		// TODO Auto-generated method stub
-
+	public List<Objective> getObjectives(GameMap map, Player p) {
+		return null;
 	}
 	@Override
 	public void onPlayerDeath(Player p) {
