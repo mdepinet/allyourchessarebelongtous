@@ -476,7 +476,7 @@ public class GameMap{
 			if(p.getTeam()==b.getPlayer().getTeam() && p != b.getPlayer()) continue;
 			double distance = p.getLocation().distance(b.getLocation()) - Player.radius;
 			if(distance<splash) {
-				p.takeDamage(b.getWeapon().getPower()*((splash-distance)/splash));
+				p.takeDamage(Explosion.explosionDamage*((splash-distance)/splash));
 				if (p.getHealth() <= 0){ 
 					if(p!=b.getPlayer()) b.getPlayer().getStats().incNumKills();
 					else b.getPlayer().getStats().incNumSuicides();
