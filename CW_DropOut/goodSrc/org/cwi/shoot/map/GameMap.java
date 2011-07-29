@@ -506,7 +506,7 @@ public class GameMap{
 	}
 	
 	private void kill(Player p){
-		if(p.getCurrWeapon()!=null && p.getCurrWeapon().getClipCount() != -1 && !p.getCurrWeapon().getTypes().contains(WeaponType.OBJECTIVE)) {
+		if(p.getCurrWeapon()!=null && p.getCurrWeapon().getClipCount() >=0 && !p.getCurrWeapon().getTypes().contains(WeaponType.OBJECTIVE)) {
 			map[getPlayerGridX(p)][getPlayerGridY(p)]=p.getCurrWeapon().getCharacter();
 			droppedWeps.add(new Point2D.Double(getPlayerGridX(p),getPlayerGridY(p)));
 			new WeaponRemoverThread(p.getCurrWeapon(), new Point2D.Double(getPlayerGridX(p),getPlayerGridY(p)), this).start();
