@@ -19,3 +19,4 @@ Team 4 Flag,	OBJECTIVE+MELEE,			75,		0,					0,		0,		1,				0,				-1,				0,		0,		r
 OddBall,		OBJECTIVE+MELEE,			75,		0,					0,		0,		1,				0,				-1,				0,		0,		null,							null,				I
 ZombieClaw,		OBJECTIVE+MELEE,			5,		0,					0,		0,		1.5,			0,				-1,				0,		0,		null,							null,				Z
 Nuke,			THROWN+SPECIAL+EXPLOSIVE,	1000,	375,				1,		1,		1,				1,				1,				700,	1,		resource/nuke,					resource/nuke,		K
+Flamethrower,	SPECIAL+EXPLOSIVE,			2,		75,					30,		5,		30,				1000,			1,				3,		4,		resource/Flamethrower,			resource/images/explosion.gif,	T

@@ -22,7 +22,7 @@ public class Weapon implements Updatable{
 		OBJECTIVE, PISTOL, EXPLOSIVE, RIFLE, SNIPER, SHOTGUN, THROWN, SPECIAL, MELEE
 	}
 	private static Map<String, BufferedImage> images = new HashMap<String, BufferedImage>();
-	public static char[] DEFAULT_WEAPONS = new char[]{'P','R','S','B','F','G','H','C','F','D','E','J','Q','K'};
+	public static char[] DEFAULT_WEAPONS = new char[]{'P','R','S','B','F','G','H','C','F','D','E','J','Q','K','T'};
 	
 	private String name;
 	private List<WeaponType> types;
@@ -51,7 +51,6 @@ public class Weapon implements Updatable{
 	}
 	public Weapon(char c, Point spawnLoc) {
 		if(!WeaponLoader.load(this,c)) throw new IllegalArgumentException("This weapon doesn't exist");
-		character = c;
 		this.spawnLoc = spawnLoc;
 		shotCounter = 0;
 	}
@@ -212,6 +211,7 @@ public class Weapon implements Updatable{
 		setImgLoc(wepDef.getImgLoc());
 		setBulletImgLoc(wepDef.getBulletImgLoc());
 		setClipCount(wepDef.getMaxClipCount());
+		setCharacter(wepDef.getRepresentativeChar());
 		loadImage();
 	}
 	
