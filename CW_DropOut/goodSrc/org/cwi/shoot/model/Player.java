@@ -175,12 +175,12 @@ public class Player implements Comparable<Player>, MapUpdatable {
 		return true;
 	}
 	public void nextWeapon() {
-		if(getCurrWeapon()!=null && getCurrWeapon().getType() == Weapon.WeaponType.OBJECTIVE) return;
+		if(getCurrWeapon()!=null && getCurrWeapon().getTypes().contains(Weapon.WeaponType.OBJECTIVE)) return;
 		if(weapons.size() > currWeapon+1) { currWeapon++; return; }
 		currWeapon=0;
 	}
 	public void switchToWeapon(int num) {
-		if(getCurrWeapon()!=null && getCurrWeapon().getType() == Weapon.WeaponType.OBJECTIVE) return;
+		if(getCurrWeapon()!=null && getCurrWeapon().getTypes().contains(Weapon.WeaponType.OBJECTIVE)) return;
 		if(weapons.size()>num) currWeapon = num;
 	}
 	

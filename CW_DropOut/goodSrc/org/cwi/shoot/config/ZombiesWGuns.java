@@ -189,7 +189,7 @@ public class ZombiesWGuns extends GameMode {
 	@Override
 	public boolean canGetWeapon(org.cwi.shoot.model.Player p, Weapon w) {
 		if(p.getType()==PlayerType.HUMAN && w.getName().equals("Minigun") && p.getWeapons().contains(w)) return false;
-		return p.getType() == PlayerType.COMPUTER && w.getType() != WeaponType.PISTOL ? false : true;
+		return p.getType() == PlayerType.COMPUTER && !w.getTypes().contains(WeaponType.PISTOL) ? false : true;
 	}
 
 	@Override

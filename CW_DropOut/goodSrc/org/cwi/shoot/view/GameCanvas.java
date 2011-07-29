@@ -12,7 +12,6 @@ import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.util.Arrays;
 
 import javax.imageio.ImageIO;
 
@@ -23,7 +22,6 @@ import org.cwi.shoot.model.Bullet;
 import org.cwi.shoot.model.Explosion;
 import org.cwi.shoot.model.Player;
 import org.cwi.shoot.model.Weapon;
-import org.cwi.shoot.model.Weapon.WeaponType;
 
 public class GameCanvas extends Canvas {
 	private static final long serialVersionUID = 4179148853338726809L;
@@ -96,7 +94,7 @@ public class GameCanvas extends Canvas {
 					Rectangle gun2;
 					gun2 = new Rectangle((int)Math.round(HRZ_SCALE*(p.getLocation().getX()-8)),(int)Math.round(VERT_SCALE*p.getLocation().getY()), (int) Math.round(4*HRZ_SCALE), (int) Math.round(12*VERT_SCALE));
 					transform.rotate(p.getOrientation(), (int)Math.round(HRZ_SCALE*(p.getLocation().getX())),(int)Math.round(VERT_SCALE*p.getLocation().getY()));
-					if (p.getCurrWeapon().getType() != Weapon.WeaponType.THROWN) backg.draw(transform.createTransformedShape(gun2));
+					if (!p.getCurrWeapon().getTypes().contains(Weapon.WeaponType.THROWN)) backg.draw(transform.createTransformedShape(gun2));
 					
 				}
 
