@@ -124,10 +124,10 @@ public class Player implements Comparable<Player>, MapUpdatable {
 			if(Pattern.compile(Pattern.quote("flag"), Pattern.CASE_INSENSITIVE).matcher(w.getName()).find()) return true;
 		return false;
 	}
-	public Weapon getFlag() {
-		for(Weapon w: weapons)
-			if(Pattern.compile(Pattern.quote("flag"), Pattern.CASE_INSENSITIVE).matcher(w.getName()).find()) return w;
-		return null;
+	public boolean hasTeamFlag(int team) {
+		for(Weapon w : weapons)
+			if(Pattern.compile(Pattern.quote(""+team+" flag"), Pattern.CASE_INSENSITIVE).matcher(w.getName()).find()) return true;
+		return false;
 	}
 	
 	public void update(){
