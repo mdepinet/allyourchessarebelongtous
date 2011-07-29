@@ -46,6 +46,8 @@ public class Shoot implements KeyListener, MouseListener, MouseMotionListener, C
 		
 		mouseLoc = new Point();
 		frame = new GameFrame("Shoot", map);
+		frame.setFocusable(true);
+		frame.addFocusListener(this);
 		frame.getCanvas().addKeyListener(this);
 		frame.getCanvas().setFocusable(true);
 		frame.getCanvas().addMouseListener(this);
@@ -252,6 +254,7 @@ public class Shoot implements KeyListener, MouseListener, MouseMotionListener, C
 
 	@Override
 	public void focusGained(FocusEvent arg0) {
+		statsFrame.setVisible(true);
 		frame.setVisible(true);
 	}
 
