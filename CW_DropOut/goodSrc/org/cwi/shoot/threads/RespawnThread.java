@@ -2,6 +2,7 @@ package org.cwi.shoot.threads;
 
 import org.cwi.shoot.map.GameMap;
 import org.cwi.shoot.model.Player;
+import org.cwi.shoot.model.PlayerStats;
 
 
 public class RespawnThread extends Thread {
@@ -27,7 +28,7 @@ public class RespawnThread extends Thread {
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
-		if(dead) { gm.getThreads().remove(this); return; }
+		if(dead) { p.setStats(new PlayerStats()); gm.getThreads().remove(this); return; }
 		respawn();
 	}
 	public void respawn() {
