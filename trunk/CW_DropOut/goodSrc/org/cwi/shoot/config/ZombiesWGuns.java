@@ -9,7 +9,7 @@ import java.util.List;
 import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
 
-import org.cwi.shoot.ai.DefaultBrain;
+import org.cwi.shoot.ai.ZombieBrain;
 import org.cwi.shoot.ai.objective.Objective;
 import org.cwi.shoot.map.GameMap;
 import org.cwi.shoot.model.Player;
@@ -27,8 +27,8 @@ public class ZombiesWGuns extends GameMode {
 	private long startTime;
 	private int wave;
 	private long waveStartTime;
-	private List<Player> deadZombies;
-	private List<Point> spawnLocs;
+	protected List<Player> deadZombies;
+	protected List<Point> spawnLocs;
 	
 	public ZombiesWGuns() {
 		startTime = System.currentTimeMillis();
@@ -98,7 +98,7 @@ public class ZombiesWGuns extends GameMode {
 			foe.setType(PlayerType.COMPUTER);
 			foe.setLocation(GameMap.fromGridPoint(spawnLocs.get((int)(spawnLocs.size()*Math.random()))));
 			foe.addWeapon(new Weapon("Default"), this);
-			foe.setStats(new DefaultBrain());
+			foe.setBrain(new ZombieBrain());
 			zombiesToAdd.add(foe);
 			
 		}

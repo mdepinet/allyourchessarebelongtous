@@ -24,7 +24,6 @@ public abstract class AbstractBrain implements Controller {
 	public static final int KILL_OBJECTIVE_WEIGHT = 5;
 	public static final int WEAPON_OBJECTIVE_WEIGHT = 2;
 	protected static final double MAX_MOVE_DISTANCE = 2.;
-	protected static final double MIN_MOVE_DISTANCE = 1.5;
 	protected static MapGraph graph = new MapGraph();
 	protected List<Objective> objectives = new ArrayList<Objective>();
 	protected Objective activeObjective = null;
@@ -72,9 +71,6 @@ public abstract class AbstractBrain implements Controller {
 			vector = VectorTools.scaleVector(VectorTools.normalize(vector), MAX_MOVE_DISTANCE);
 			p.setLocation(VectorTools.addVectors(currLoc,vector));
 		}
-		else if (currLoc.distance(newLoc) < MIN_MOVE_DISTANCE){
-			//Do nothing (Don't fidget!)
-		}
 		else p.setLocation(newLoc);
 	}
 	public final void turn(double orientation, Player p){
@@ -112,5 +108,4 @@ public abstract class AbstractBrain implements Controller {
 			return -(o1.compareTo(o2) + (o1 == activeObjective ? ACTIVE_WEIGHT : o2 == activeObjective ? -ACTIVE_WEIGHT : 0));
 		}
 	}
-	
 }

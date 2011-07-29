@@ -43,14 +43,18 @@ public class ZombieBrain extends AbstractBrain {
 //					if(enemy.getCurrWeapon() != null && location.distance(enemy.getLocation())<=enemy.getCurrWeapon().getEffRange()) {
 //							newLoc = scaleVector(getDirectionToLoc(location,enemy.getLocation()),-1);
 //					}
-					if(p.getCurrWeapon() != null && location.distance(enemy.getLocation())<=p.getCurrWeapon().getEffRange()*1.5) {
+					if(p.getCurrWeapon() != null && (p.getCurrWeapon().getEffRange()==0 || location.distance(enemy.getLocation())<=p.getCurrWeapon().getEffRange()*1.5)) {
 							shoot(map,p);
 					}
 				}
 			}
-			move(newLoc,p);
+			Point2D.Double vector = VectorTools.getVectorBetween(location, newLoc);
+			vector = VectorTools.normalize(vector);
+			
+			move(VectorTools.addVectors(location,vector),p);
 		}
 	}
+
 	private void getObjectives(GameMode mode, GameMap map, Player p) {
 		objectives = mode.getObjectives(map, p);
 		if (objectives == null) objectives = new LinkedList<Objective>();
