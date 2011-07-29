@@ -62,13 +62,14 @@ public abstract class GameMode {
 	}
 	public void onReset(GameMap map, GameOptions setup){
 		for(Player p : map.getPlayers()) {
-			p.setStats(new PlayerStats());
+			p.reset();
 			map.spawn(p);
 		}
 		if (!handlesRespawn()){
 			for(int i = 0; i < map.getThreads().size(); i++) { 
 				RespawnThread t = map.getThreads().get(i); 
 				t.respawn(); 
+				t.resetPlayer();
 				t.kill(); 
 			}
 			map.getThreads().clear();

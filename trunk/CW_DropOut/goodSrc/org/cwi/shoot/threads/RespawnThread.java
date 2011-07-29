@@ -22,13 +22,14 @@ public class RespawnThread extends Thread {
 	{
 		dead = true;
 	}
+	public void resetPlayer() { p.reset(); }
 	public void run(){
 		try {
 			Thread.sleep(millis);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
-		if(dead) { p.setStats(new PlayerStats()); gm.getThreads().remove(this); return; }
+		if(dead) { gm.getThreads().remove(this); return; }
 		respawn();
 	}
 	public void respawn() {
