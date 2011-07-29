@@ -5,7 +5,7 @@ Battle Rifle,	RIFLE,	16,		300,				5,		3,		2,				12,				1,				1,		10,		resource/b
 Barret .50Cal,	SNIPER,	100,	600,				1,		1,		1,				4,				3,				1,		50,		resource/barret,	resource/bullet,	S
 12 Gauge,		SHOTGUN,20,		100,				25,		10,		1,				6,				3,				1,		10,		resource/12G,		resource/bullet,	H
 Double Barrel,	SHOTGUN,20,		100,				25,		10,		2,				2,				5,				1,		10,		resource/doubleBarrel,resource/bullet,	E
-Auto Shotgun,	SHOTGUN,15,		90,					38,		10,		3,				6,				3,				1,		10,		resource/autoShotty,	resource/bullet,	Q
+Auto Shotgun,	SHOTGUN,15,		90,					38,		10,		3,				6,				3,				1,		10,		resource/autoShotty,	resource/bullet,Q
 Semtex,			THROWN,	25,		100,				1,		1,		0.5,			2,				0,				75,		3,		null,				resource/grenade,	G
 Javelin,		THROWN,	150,	200,				1,		1,		0.5,			6,				0,				1,		3,		null,				resource/javelin,	J
 Assault Rifle,	RIFLE,	10,		150,				12,		1,		10,				40,				3,				1,		10,		resource/ar,		resource/bullet,	A
@@ -17,3 +17,4 @@ Team 2 Flag,	OBJECTIVE,0,	0,					0,		0,		1,				0,				-1,				0,		0,		resource/ima
 Team 3 Flag,	OBJECTIVE,0,	0,					0,		0,		1,				0,				-1,				0,		0,		resource/images/MexicoFlag.jpg,null,	N
 Team 4 Flag,	OBJECTIVE,0,	0,					0,		0,		1,				0,				-1,				0,		0,		resource/images/CanadaFlag.png,null,	O
 OddBall,		OBJECTIVE,0,	0,					0,		0,		1,				0,				-1,				0,		0,		null,				null,				I
+Nuke,			THROWN,	1000,	375,				1,		1,		1,				1,				1,				700,	1,		resource/nuke,		resource/nuke,		K
