@@ -2,6 +2,7 @@ package org.cwi.shoot.ai.objective;
 
 import java.awt.geom.Point2D;
 
+import org.cwi.shoot.map.GameMap;
 import org.cwi.shoot.model.Player;
 
 public class LocationObjective extends Objective {
@@ -25,6 +26,10 @@ public class LocationObjective extends Objective {
 	@Override
 	public boolean isAccomplished(Player owner) {
 		return owner.getLocation().distance(location) <= EPSILON;
+	}
+	
+	public String toString(){
+		return "LocationObjective to "+GameMap.getGridPoint(location);
 	}
 
 }

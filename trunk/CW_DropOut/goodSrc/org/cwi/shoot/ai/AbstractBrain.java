@@ -3,12 +3,16 @@ package org.cwi.shoot.ai;
 import java.awt.Point;
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.LinkedList;
 import java.util.List;
 
 import org.cwi.shoot.ai.objective.KillObjective;
 import org.cwi.shoot.ai.objective.LocationObjective;
 import org.cwi.shoot.ai.objective.Objective;
 import org.cwi.shoot.ai.path.MapGraph;
+import org.cwi.shoot.config.GameMode;
 import org.cwi.shoot.map.GameMap;
 import org.cwi.shoot.model.Player;
 import org.cwi.shoot.model.Weapon;
@@ -17,11 +21,15 @@ import org.cwi.shoot.util.VectorTools;
 
 
 public abstract class AbstractBrain implements Controller {
+	public static final int KILL_OBJECTIVE_WEIGHT = 5;
+	public static final int WEAPON_OBJECTIVE_WEIGHT = 2;
 	protected static final double MAX_MOVE_DISTANCE = 2.;
 	protected static final double MIN_MOVE_DISTANCE = 1.5;
 	protected static MapGraph graph = new MapGraph();
 	protected List<Objective> objectives = new ArrayList<Objective>();
+	protected Objective activeObjective = null;
 	private static boolean graphCreated = false;
+	private static final int ACTIVE_WEIGHT = 50;
 	
 	public static Point2D.Double getSmartDirectionToLoc(Point2D.Double from, Point2D.Double to, GameMap m) {
 		if (m!= null && !graphCreated){
@@ -84,8 +92,25 @@ public abstract class AbstractBrain implements Controller {
 		Point2D.Double location = p.getLocation();
 		Point2D.Double wepLoc = getClosestWeaponLoc(map,p);
 		
-		if (getClosestEnemy(map,p)!= null) objectives.add(new KillObjective(5,location.distance(enemy.getLocation()),enemy));
-		if (wepLoc != null) objectives.add(new LocationObjective(2,location.distance(wepLoc),wepLoc));
+		if (getClosestEnemy(map,p)!= null) objectives.add(new KillObjective(KILL_OBJECTIVE_WEIGHT,GameMap.getGridPoint(location).distance(GameMap.getGridPoint(enemy.getLocation())),enemy));
+		if (wepLoc != null) objectives.add(new LocationObjective(WEAPON_OBJECTIVE_WEIGHT,GameMap.getGridPoint(location).distance(GameMap.getGridPoint(wepLoc)),wepLoc));
+	}
+	
+	protected Objective getDefaultObjective(GameMap map, Player p, GameMode mode){
+		objectives = mode.getObjectives(map, p);
+		if (objectives == null) objectives = new LinkedList<Objective>();
+		addDefaultObjectives(map, p);
+		Collections.sort(objectives, new ObjectiveComparator());
+		activeObjective = objectives.get(0);
+		return activeObjective;
+	}
+	
+	
+	private class ObjectiveComparator implements Comparator<Objective>{
+		@Override
+		public int compare(Objective o1, Objective o2) {
+			return -(o1.compareTo(o2) + (o1 == activeObjective ? ACTIVE_WEIGHT : o2 == activeObjective ? -ACTIVE_WEIGHT : 0));
+		}
 	}
 	
 }

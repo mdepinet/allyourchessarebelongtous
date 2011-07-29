@@ -2,6 +2,8 @@ package org.cwi.shoot.ai.objective;
 
 import java.awt.geom.Point2D;
 
+import org.cwi.shoot.ai.AbstractBrain;
+import org.cwi.shoot.map.GameMap;
 import org.cwi.shoot.model.Player;
 
 public abstract class Objective implements Comparable<Objective> {
@@ -36,4 +38,11 @@ public abstract class Objective implements Comparable<Objective> {
 	
 	public abstract Point2D.Double getTargetPoint(Player owner);
 	public abstract boolean isAccomplished(Player owner);
+	public void execute(AbstractBrain brain, Player p, GameMap map){
+		brain.move(getTargetPoint(p),p);
+	}
+	
+	public String toString(){
+		return "Unknown objective";
+	}
 }
