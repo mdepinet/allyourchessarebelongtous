@@ -13,6 +13,7 @@ import java.util.PriorityQueue;
 public class MapGraph {
 	private Collection<Vertex> vertices;
 	private HashMap<Pair<Vertex,Vertex>,Vertex> answers;
+	private Vertex lastSource = null;
 	public MapGraph()
 	{
 		vertices = new LinkedList<Vertex>();
@@ -109,6 +110,9 @@ public class MapGraph {
 	}
 	
 	public void computePaths(Vertex source) {
+		if(source == null) return;
+		if (lastSource!=null && source.equals(lastSource)) return;
+		else lastSource = source;
 		for (Vertex v : vertices){
 			v.distance = Integer.MAX_VALUE;
 			v.prev = null;

@@ -41,7 +41,7 @@ public class ZombiesWGuns extends GameMode {
 	public void onStartup(GameMap map, GameOptions setup){
 		for(int r = 0; r < modeMap.length; r++) 
 			for(int c = 0; c < modeMap[r].length; c++)
-				if(modeMap[r][c]!='X' && map.getGridPoint(map.getPlayer().getLocation()).x!=c && map.getGridPoint(map.getPlayer().getLocation()).y !=r)
+				if(modeMap[r][c]!='X' && GameMap.getGridPoint(map.getPlayer().getLocation()).x!=c && GameMap.getGridPoint(map.getPlayer().getLocation()).y !=r)
 					spawnLocs.add(new Point(r,c));
 		map.spawn(map.getPlayer());
 		map.getPlayer().removeWeapon(new Weapon("Default"));
@@ -114,6 +114,7 @@ public class ZombiesWGuns extends GameMode {
 			foe.setType(PlayerType.COMPUTER);
 			foe.setLocation(GameMap.fromGridPoint(spawnLocs.get((int)(spawnLocs.size()*Math.random()))));
 			foe.addWeapon(new Weapon("Default"), this);
+			foe.getCurrWeapon().setPower((int)Math.ceil(foe.getCurrWeapon().getPower()*.4));
 			foe.setBrain(new ZombieBrain());
 			zombiesToAdd.add(foe);
 			
@@ -191,9 +192,10 @@ public class ZombiesWGuns extends GameMode {
 		JOptionPane.showMessageDialog(null, "You're dead. You lasted " + (System.currentTimeMillis() - getStartTime())/1000. + " seconds.", "Game over!", 0, new ImageIcon(Weapon.getWeaponImg(w.getImgLoc())));
 	}
 	@Override
-	public boolean canGetWeapon(org.cwi.shoot.model.Player p, Weapon w) {
-		if(p.getType()==PlayerType.HUMAN && w.getName().equals("Minigun") && p.getWeapons().contains(w)) return false;
-		return p.getType() == PlayerType.COMPUTER && !w.getTypes().contains(WeaponType.PISTOL) ? false : true;
+	public boolean canGetWeapon(Player p, Weapon w) {
+		if(p.getBrain() instanceof ZombieBrain)
+			return false;
+		return true;
 	}
 
 	@Override

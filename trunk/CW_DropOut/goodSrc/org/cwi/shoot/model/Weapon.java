@@ -50,7 +50,7 @@ public class Weapon implements Updatable{
 		shotCounter = 0;
 	}
 	public Weapon(char c, Point spawnLoc) {
-		if(!WeaponLoader.load(this,c)) throw new IllegalArgumentException("This weapon doesn't exist");
+		if(!WeaponLoader.load(this,c)) throw new IllegalArgumentException("This weapon doesn't exist ("+c+")");
 		this.spawnLoc = spawnLoc;
 		shotCounter = 0;
 	}
