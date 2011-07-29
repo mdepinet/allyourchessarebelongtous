@@ -115,7 +115,7 @@ public class Player implements Comparable<Player>, MapUpdatable {
 	public Controller getBrain() {
 		return brain;
 	}
-	public void setStats(Controller brain) {
+	public void setBrain(Controller brain) {
 		this.brain = brain;
 	}
 	

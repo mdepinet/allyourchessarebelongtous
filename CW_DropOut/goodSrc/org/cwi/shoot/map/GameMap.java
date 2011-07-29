@@ -289,10 +289,11 @@ public class GameMap{
 			if(p.getCurrWeapon()!=null && p.getCurrWeapon().isSwung()) {
 				Player hit = melee(p);
 				if(hit!=null) {
-					hit.setHealth(0);
-					p.getStats().incNumKills();
-					kill(hit);
-					players.remove(hit);
+					hit.takeDamage(p.getCurrWeapon().getPower());
+					if (hit.getHealth()<=0) {
+						p.getStats().incNumKills();
+						kill(hit);
+					}
 				}
 				p.getCurrWeapon().setSwung(false);
 			}
