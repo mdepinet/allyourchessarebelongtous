@@ -2,6 +2,8 @@ package org.cwi.shoot.ai.objective;
 
 import java.awt.geom.Point2D;
 
+import org.cwi.shoot.ai.AbstractBrain;
+import org.cwi.shoot.map.GameMap;
 import org.cwi.shoot.model.Player;
 import org.cwi.shoot.util.VectorTools;
 
@@ -38,8 +40,17 @@ public class KillObjective extends Objective {
 	}
 	
 	@Override
+	public void execute(AbstractBrain brain, Player p, GameMap map){
+		
+	}
+	
+	@Override
 	public boolean isAccomplished(Player assassin){
 		return target.getHealth() <= 0;
+	}
+	
+	public String toString(){
+		return "KillObjective for "+target;
 	}
 
 }

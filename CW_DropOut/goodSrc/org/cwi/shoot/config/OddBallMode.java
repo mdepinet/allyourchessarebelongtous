@@ -129,17 +129,17 @@ public class OddBallMode extends GameMode{
 	public List<Objective> getObjectives(GameMap map, Player p) {
 		LinkedList<Objective> objectives = new LinkedList<Objective>();
 		if (lastBallHolder == null){
-			if (oddLoc != null) objectives.add(new LocationObjective(100,p.getLocation().distance(GameMap.fromGridPoint(oddLoc)),GameMap.fromGridPoint(oddLoc)));
+			if (oddLoc != null) objectives.add(new LocationObjective(500,GameMap.getGridPoint(p.getLocation()).distance(oddLoc),GameMap.fromGridPoint(oddLoc)));
 		}
 		else{
 			if (p == lastBallHolder){
 				//Run away somehow
 			}
 			else if (p.getTeam() == lastBallHolder.getTeam()){
-				if (oddLoc != null) objectives.add(new LocationObjective(100,p.getLocation().distance(GameMap.fromGridPoint(oddLoc)),GameMap.fromGridPoint(oddLoc)));
+				if (oddLoc != null) objectives.add(new LocationObjective(500,GameMap.getGridPoint(p.getLocation()).distance(oddLoc),GameMap.fromGridPoint(oddLoc)));
 			}
 			else{
-				objectives.add(new KillObjective(100,p.getLocation().distance(GameMap.fromGridPoint(oddLoc)),lastBallHolder));
+				objectives.add(new KillObjective(500,GameMap.getGridPoint(p.getLocation()).distance(oddLoc),lastBallHolder));
 			}
 		}
 		return objectives;

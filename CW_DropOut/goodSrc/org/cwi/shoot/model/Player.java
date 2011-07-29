@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.regex.Pattern;
 
 import org.cwi.shoot.ai.Controller;
-import org.cwi.shoot.ai.mike.SmartBrain;
+import org.cwi.shoot.ai.DefaultBrain;
 import org.cwi.shoot.config.GameMode;
 import org.cwi.shoot.map.GameMap;
 import org.cwi.shoot.map.MapUpdatable;
@@ -46,7 +46,7 @@ public class Player implements Comparable<Player>, MapUpdatable {
 		weapons = Collections.synchronizedList(new ArrayList<Weapon>());
 		currWeapon = 0;
 		type = PlayerType.COMPUTER;
-		brain = new SmartBrain();
+		brain = new DefaultBrain();
 		stats = new PlayerStats();
 	}
 	
