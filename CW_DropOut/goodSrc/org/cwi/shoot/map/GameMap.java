@@ -485,8 +485,8 @@ public class GameMap{
 	}
 	
 	private boolean explode(Bullet b){
+		if(b.getWeapon().getTypes().contains(WeaponType.EXPLOSIVE)) return false;
 		int splash = b.getWeapon().getSplash();
-		if(splash<=1) return false;
 		explosions.add(new Explosion(b.getLocation(), b.getWeapon().getSplash()*2));
 		for (int i = 0; i<players.size(); i++){
 			Player p = players.get(i);
