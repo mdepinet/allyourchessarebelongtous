@@ -51,12 +51,12 @@ public class ClassicZombiesMode extends ZombiesWGuns {
 //	}
 
 	@Override
-	public boolean canGetWeapon(Player p, Weapon w) {
-		// TODO Auto-generated method stub
-		if(p.getBrain() instanceof ZombieBrain)
-			return false;
-		return true;
-	}
+//	public boolean canGetWeapon(Player p, Weapon w) {
+//		// TODO Auto-generated method stub
+//		if(p.getBrain() instanceof ZombieBrain)
+//			return false;
+//		return true;
+//	}
 	public List<Player> addZombies(int num) {
 		ArrayList<Player> zombiesToAdd = new ArrayList<Player>();
 		NameGenerator gen = null;
@@ -80,7 +80,7 @@ public class ClassicZombiesMode extends ZombiesWGuns {
 	@Override
 	public List<Character> getAdditionalMapChars() {
 		List<Character> specChars = new ArrayList<Character>();
-		specChars.add('0');
+		specChars.add('X');
 		specChars.add('Z');
 		return specChars;
 	}
