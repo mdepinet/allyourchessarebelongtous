@@ -142,7 +142,7 @@ public class StatsFrame extends JFrame {
 				if(player.getCurrWeapon().getClipSize()==0 && player.getCurrWeapon().getEffRange()>0)
 					backg.drawString("Reloading...", getWidth()-105, getHeight()-15);
 				else{
-					int clipSize = player.getCurrWeapon().getClipSize()*((player.getCurrWeapon().getType()==WeaponType.SHOTGUN)? 1 : player.getCurrWeapon().getRoundsPerShot());
+					int clipSize = player.getCurrWeapon().getClipSize()*((player.getCurrWeapon().getTypes().contains(WeaponType.SHOTGUN))? 1 : player.getCurrWeapon().getRoundsPerShot());
 					for(int i=0; i < clipSize;i++)
 					{	
 						if(i<20 || i<clipSize/2)

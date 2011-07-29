@@ -18,7 +18,6 @@ import javax.imageio.ImageIO;
 
 import org.cwi.shoot.ai.objective.Objective;
 import org.cwi.shoot.map.GameMap;
-import org.cwi.shoot.model.Explosion;
 import org.cwi.shoot.model.Player;
 import org.cwi.shoot.model.Weapon;
 
@@ -32,7 +31,6 @@ public class SurvivalMode extends GameMode {
 	
 	public SurvivalMode(){
 		super();
-		Explosion.explosionDamage = 25;
 		dead = new ArrayList<Player>();
 		weps = new HashSet<Weapon>();
 		healthPacks = new ArrayList<Point>();

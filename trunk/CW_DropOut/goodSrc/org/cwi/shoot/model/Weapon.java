@@ -5,6 +5,7 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.imageio.ImageIO;
@@ -24,7 +25,7 @@ public class Weapon implements Updatable{
 	public static char[] DEFAULT_WEAPONS = new char[]{'P','R','S','B','F','G','H','C','F','D','E','J','Q','K'};
 	
 	private String name;
-	private WeaponType type;
+	private List<WeaponType> types;
 	private int power;
 	private int effRange;
 	private double spread;
@@ -60,11 +61,11 @@ public class Weapon implements Updatable{
 	public void setName(String name) {
 		this.name = name;
 	}
-	public WeaponType getType() {
-		return type;
+	public List<WeaponType> getTypes() {
+		return types;
 	}
-	public void setType(WeaponType type) {
-		this.type = type;
+	public void setTypes(List<WeaponType> types) {
+		this.types = types;
 	}
 	public int getPower() {
 		return power;
@@ -198,7 +199,7 @@ public class Weapon implements Updatable{
 		if (wepDef == null) return;
 		setName(wepDef.getName());
 		setMaxClipCount(wepDef.getMaxClipCount());
-		setType(wepDef.getType());
+		setTypes(wepDef.getTypes());
 		setPower(wepDef.getPower());
 		setEffRange(wepDef.getEffRange());
 		setSpread(wepDef.getSpread());

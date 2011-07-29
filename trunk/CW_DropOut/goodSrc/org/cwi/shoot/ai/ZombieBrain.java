@@ -38,7 +38,7 @@ public class ZombieBrain extends AbstractBrain {
 			newLoc = getSmartDirectionToLoc(location,destLoc,map);
 			if(enemy!=null) {
 				turn(VectorTools.getOrientationToPoint(location,enemy.getLocation()),p);
-				if(p.getNumWeapons()>1 && p.getCurrWeapon().getType() == Weapon.WeaponType.PISTOL) p.nextWeapon();
+				if(p.getNumWeapons()>1 && p.getCurrWeapon().getTypes().contains(Weapon.WeaponType.PISTOL)) p.nextWeapon();
 				if(enemy.getHealth()>0) {
 //					if(enemy.getCurrWeapon() != null && location.distance(enemy.getLocation())<=enemy.getCurrWeapon().getEffRange()) {
 //							newLoc = scaleVector(getDirectionToLoc(location,enemy.getLocation()),-1);
@@ -49,7 +49,7 @@ public class ZombieBrain extends AbstractBrain {
 				}
 			}
 			Point2D.Double vector = VectorTools.getVectorBetween(location, newLoc);
-			vector = VectorTools.normalize(vector);
+			vector = VectorTools.scaleVector(VectorTools.normalize(vector), 1.75);
 			
 			move(VectorTools.addVectors(location,vector),p);
 		}

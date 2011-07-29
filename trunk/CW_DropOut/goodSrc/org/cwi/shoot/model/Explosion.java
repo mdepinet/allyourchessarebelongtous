@@ -6,7 +6,6 @@ import java.awt.geom.Point2D;
 import org.cwi.shoot.map.Updatable;
 
 public class Explosion implements Updatable{
-	public static int explosionDamage = 150;
 	private double alpha;
 	private double scale;
 	private double maxSize;

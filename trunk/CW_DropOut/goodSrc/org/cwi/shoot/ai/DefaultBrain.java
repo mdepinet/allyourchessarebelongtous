@@ -24,7 +24,7 @@ public class DefaultBrain extends AbstractBrain {
 			newLoc = getSmartDirectionToLoc(location,destLoc,map);
 			if(enemy!=null) {
 				turn(VectorTools.getOrientationToPoint(location,enemy.getLocation()),p);
-				if(p.getNumWeapons()>1 && p.getCurrWeapon().getType() == Weapon.WeaponType.PISTOL) p.nextWeapon();
+				if(p.getNumWeapons()>1 && p.getCurrWeapon().getTypes().contains(Weapon.WeaponType.PISTOL)) p.nextWeapon();
 				if(enemy.getHealth()>0) {
 					if(p.getCurrWeapon() != null && location.distance(enemy.getLocation())<=p.getCurrWeapon().getEffRange()*1.5) {
 							shoot(map,p);

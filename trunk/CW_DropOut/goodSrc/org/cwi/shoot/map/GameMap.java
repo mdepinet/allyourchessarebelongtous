@@ -148,7 +148,7 @@ public class GameMap{
 			tempAngle=p.getOrientation();
 		}
 		p.getCurrWeapon().setClipSize(p.getCurrWeapon().getClipSize()-1);
-		if(p.getCurrWeapon().getClipSize()<=0 && p.getCurrWeapon().getClipCount()==0) {
+		if(p.getCurrWeapon().getClipSize()<=0 && p.getCurrWeapon().getClipCount()==1) {
 			p.removeWeapon(p.getCurrWeapon());
 			p.nextWeapon();
 		}
@@ -235,7 +235,7 @@ public class GameMap{
 			
 			Bullet b = bullets.get(i);
 			if(!isValid(b.getLocation(),1)) 
-				if(b.getWeapon().getType() != Weapon.WeaponType.THROWN){
+				if(!b.getWeapon().getTypes().contains(Weapon.WeaponType.THROWN)){
 					explode(b); 
 					bullets.remove(i--); 
 					continue OUTTER;
@@ -245,7 +245,7 @@ public class GameMap{
 				for(int k = 0; k < map[j].length;k++)
 					if(map[j][k] == GameOptions.WALL_CHARACTER){
 						Point2D.Double intersection = bulletColDetect(b,new Rectangle(j*GRID_PIXELS,k*GRID_PIXELS,GRID_PIXELS,GRID_PIXELS));
-						if(intersection!=null && b.getWeapon().getType() != Weapon.WeaponType.THROWN){
+						if(intersection!=null && !b.getWeapon().getTypes().contains(Weapon.WeaponType.THROWN)){
 							b.setLocation(intersection);
 							explode(b);
 							bullets.remove(i--); 
@@ -493,7 +493,7 @@ public class GameMap{
 			if(p.getTeam()==b.getPlayer().getTeam() && p != b.getPlayer()) continue;
 			double distance = p.getLocation().distance(b.getLocation()) - Player.radius;
 			if(distance<splash) {
-				p.takeDamage(Explosion.explosionDamage*((splash-distance)/splash));
+				p.takeDamage(b.getWeapon().getPower()*((splash-distance)/splash));
 				if (p.getHealth() <= 0){ 
 					if(p!=b.getPlayer()) b.getPlayer().getStats().incNumKills();
 					else b.getPlayer().getStats().incNumSuicides();
@@ -506,7 +506,7 @@ public class GameMap{
 	}
 	
 	private void kill(Player p){
-		if(p.getCurrWeapon()!=null && p.getCurrWeapon().getClipCount() != -1 && p.getCurrWeapon().getType()!= WeaponType.OBJECTIVE) {
+		if(p.getCurrWeapon()!=null && !p.getCurrWeapon().getTypes().contains(Weapon.WeaponType.PISTOL) && !p.getCurrWeapon().getTypes().contains(WeaponType.OBJECTIVE)) {
 			map[getPlayerGridX(p)][getPlayerGridY(p)]=p.getCurrWeapon().getCharacter();
 			droppedWeps.add(new Point2D.Double(getPlayerGridX(p),getPlayerGridY(p)));
 			new WeaponRemoverThread(p.getCurrWeapon(), new Point2D.Double(getPlayerGridX(p),getPlayerGridY(p)), this).start();

@@ -1,11 +1,14 @@
 package org.cwi.shoot.util;
 
+import java.util.LinkedList;
+import java.util.List;
+
 import org.cwi.shoot.model.Weapon;
 
 public class WeaponDefinition {
 	
 	private String name;
-	private Weapon.WeaponType type;
+	private List<Weapon.WeaponType> types;
 	private int power;
 	private int effRange;
 	private double spread;
@@ -23,7 +26,12 @@ public class WeaponDefinition {
 		String[] info = line.split(",");
 		int i = 0;
 		name = info[i++];
-		type = Weapon.WeaponType.valueOf(info[i++].trim());
+		String typeList = info[i++].trim();
+		types = new LinkedList<Weapon.WeaponType>();
+		String[] typeSet = typeList.split("+");
+		for (String type : typeSet){
+			types.add(Weapon.WeaponType.valueOf(type.trim()));
+		}
 		power = Integer.parseInt(info[i++].trim());
 		effRange = Integer.parseInt(info[i++].trim());
 		spread = Double.parseDouble(info[i++].trim());
@@ -41,8 +49,8 @@ public class WeaponDefinition {
 	public String getName() {
 		return name;
 	}
-	public Weapon.WeaponType getType() {
-		return type;
+	public List<Weapon.WeaponType> getTypes() {
+		return types;
 	}
 	public int getPower() {
 		return power;

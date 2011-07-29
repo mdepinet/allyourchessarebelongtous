@@ -122,11 +122,11 @@ public class CaptureTheFlagMode extends GameMode {
 			modeMap[flagSpawnLocs.get(i).x][flagSpawnLocs.get(i).y] = (char)(i+75);
 	}
 	private boolean isFlag(Weapon w){
-		return w.getType()==WeaponType.OBJECTIVE;
+		return w.getTypes().contains(WeaponType.OBJECTIVE);
 	}
 	
 	private boolean playerHasFlag(Player p) {
-		return p.getCurrWeapon()!=null && p.getCurrWeapon().getType().equals(WeaponType.OBJECTIVE);
+		return p.getCurrWeapon()!=null && p.getCurrWeapon().getTypes().contains(WeaponType.OBJECTIVE);
 	}
 
 	@Override
@@ -145,7 +145,7 @@ public class CaptureTheFlagMode extends GameMode {
 
 	@Override
 	public boolean canGetWeapon(Player p, Weapon w) {
-		if(w.getType()!=WeaponType.OBJECTIVE)
+		if(!w.getTypes().contains(WeaponType.OBJECTIVE))
 			return true;
 		//if it's a flag with your team's number, you can't pick it up
 		if(w.getName().contains(""+p.getTeam()))

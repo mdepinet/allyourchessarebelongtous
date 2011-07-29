@@ -63,7 +63,7 @@ public class SmartBrain extends AbstractBrain {
 		List<Weapon> options = p.getWeapons();
 		for (int i = 0; i<options.size(); i++){
 			Weapon w = options.get(i);
-			if (w.getType() == Weapon.WeaponType.THROWN) thrownIndex = i;
+			if (w.getTypes().contains(Weapon.WeaponType.THROWN)) thrownIndex = i;
 			int value = 0;
 			if (w.getEffRange()*2 >= distToEnemy /*&& w.canShoot()*/){
 				value += ((double)w.getRoundsPerShot())/((double)w.getSpread())*burstSpreadWeight;
@@ -137,7 +137,7 @@ public class SmartBrain extends AbstractBrain {
 	}
 	
 	private boolean canHit(Player p, GameMap map, Player enemy, Weapon wep){
-		boolean thrown = wep.getType() == Weapon.WeaponType.THROWN;
+		boolean thrown = wep.getTypes().contains(Weapon.WeaponType.THROWN);
 		Point2D.Double direct = VectorTools.normalize(getDirectionToLoc(p.getLocation(),enemy.getLocation()));
 		Point2D.Double smart = VectorTools.normalize(getSmartDirectionToLoc(p.getLocation(),enemy.getLocation(), map));
 		boolean result = thrown || direct.distance(smart) < EPSILON_DISTANCE;
