@@ -28,7 +28,7 @@ public class WeaponDefinition {
 		name = info[i++];
 		String typeList = info[i++].trim();
 		types = new LinkedList<Weapon.WeaponType>();
-		String[] typeSet = typeList.split("+");
+		String[] typeSet = typeList.split("\\+");
 		for (String type : typeSet){
 			types.add(Weapon.WeaponType.valueOf(type.trim()));
 		}

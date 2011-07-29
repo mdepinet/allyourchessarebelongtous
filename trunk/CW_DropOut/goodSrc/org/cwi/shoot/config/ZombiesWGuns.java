@@ -45,10 +45,12 @@ public class ZombiesWGuns extends GameMode {
 					spawnLocs.add(new Point(r,c));
 		map.spawn(map.getPlayer());
 		map.getPlayer().removeWeapon(new Weapon("Default"));
-		map.getPlayer().addWeapon(new Weapon("Minigun"), this);
+		/*map.getPlayer().addWeapon(new Weapon("Minigun"), this);
 		map.getPlayer().setCurrWeapon(new Weapon("Minigun"));
 		map.getPlayer().getCurrWeapon().setClipCount(-1);
-		map.getPlayer().getCurrWeapon().setClipSize(1000);
+		map.getPlayer().getCurrWeapon().setClipSize(1000);*/
+		map.getPlayer().addWeapon(new Weapon("Flamethrower"), this);
+		map.getPlayer().setCurrWeapon(new Weapon("Flamethrower"));
 		
 		/*List<Player> z = addZombies(NUM_ENEMIES);
 		map.getPlayers().addAll(z);*/
@@ -70,10 +72,12 @@ public class ZombiesWGuns extends GameMode {
 		map.spawn(player);
 
 		map.getPlayer().removeWeapon(new Weapon("Default"));
-		map.getPlayer().addWeapon(new Weapon("Minigun"), this);
+		/*map.getPlayer().addWeapon(new Weapon("Minigun"), this);
 		map.getPlayer().setCurrWeapon(new Weapon("Minigun"));
 		map.getPlayer().getCurrWeapon().setClipCount(-1);
-		map.getPlayer().getCurrWeapon().setClipSize(1000);
+		map.getPlayer().getCurrWeapon().setClipSize(1000);*/
+		map.getPlayer().addWeapon(new Weapon("Flamethrower"), this);
+		map.getPlayer().setCurrWeapon(new Weapon("Flamethrower"));
 		
 		/*List<Player> z = addZombies(NUM_ENEMIES);
 		map.getPlayers().addAll(z);*/

@@ -134,7 +134,7 @@ public class GameCanvas extends Canvas {
 				backg.draw(transformb.createTransformedShape(bullet));
 			}
 			else{
-				backg.drawImage(bulletImg, transformb, this);
+				backg.drawImage(bulletImg, (int)b.getLocation().x, (int)b.getLocation().y, 6, 6, this);
 			}
 		}
 		
