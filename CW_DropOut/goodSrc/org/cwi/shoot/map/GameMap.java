@@ -309,8 +309,9 @@ public class GameMap{
 			Weapon w;
 			if((w = getWeapon(p))!=null){
 				if(p.addWeapon(w,setup.getMode())) {
-					if(w.getName().indexOf("Flag")==-1 && !droppedWeps.remove(new Point2D.Double(getPlayerGridX(p), getPlayerGridY(p))))
+					if(w.getName().indexOf("Flag")==-1 && !droppedWeps.contains(new Point2D.Double(getPlayerGridX(p), getPlayerGridY(p))))
 						new WeaponAdderThread(map[getPlayerGridX(p)][getPlayerGridY(p)], new Point(getPlayerGridX(p), getPlayerGridY(p)), this).start();
+					else droppedWeps.remove(new Point2D.Double(getPlayerGridX(p), getPlayerGridY(p)));
 					map[getPlayerGridX(p)][getPlayerGridY(p)] = GameOptions.BLANK_CHARACTER;
 				}
 			}
@@ -505,7 +506,7 @@ public class GameMap{
 	}
 	
 	private void kill(Player p){
-		if(p.getCurrWeapon()!=null && p.getCurrWeapon().getType() != Weapon.WeaponType.PISTOL &&p.getCurrWeapon().getType()!= WeaponType.OBJECTIVE) {
+		if(p.getCurrWeapon()!=null && p.getCurrWeapon().getClipCount() != -1 && p.getCurrWeapon().getType()!= WeaponType.OBJECTIVE) {
 			map[getPlayerGridX(p)][getPlayerGridY(p)]=p.getCurrWeapon().getCharacter();
 			droppedWeps.add(new Point2D.Double(getPlayerGridX(p),getPlayerGridY(p)));
 			new WeaponRemoverThread(p.getCurrWeapon(), new Point2D.Double(getPlayerGridX(p),getPlayerGridY(p)), this).start();
