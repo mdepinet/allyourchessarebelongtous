@@ -41,9 +41,15 @@ public class ZombiesWGuns extends GameMode {
 	public void onStartup(GameMap map, GameOptions setup){
 		for(int r = 0; r < modeMap.length; r++) 
 			for(int c = 0; c < modeMap[r].length; c++)
-				if(modeMap[r][c]=='0')
+				if(modeMap[r][c]!='X' && map.getGridPoint(map.getPlayer().getLocation()).x!=c && map.getGridPoint(map.getPlayer().getLocation()).y !=r)
 					spawnLocs.add(new Point(r,c));
 		map.spawn(map.getPlayer());
+		map.getPlayer().removeWeapon(new Weapon("Default"));
+		map.getPlayer().addWeapon(new Weapon("Minigun"), this);
+		map.getPlayer().setCurrWeapon(new Weapon("Minigun"));
+		map.getPlayer().getCurrWeapon().setClipCount(-1);
+		map.getPlayer().getCurrWeapon().setClipSize(1000);
+		
 		/*List<Player> z = addZombies(NUM_ENEMIES);
 		map.getPlayers().addAll(z);*/
 			
@@ -62,6 +68,12 @@ public class ZombiesWGuns extends GameMode {
 		player.setType(Player.PlayerType.HUMAN);
 		map.getPlayers().add(0,player);
 		map.spawn(player);
+
+		map.getPlayer().removeWeapon(new Weapon("Default"));
+		map.getPlayer().addWeapon(new Weapon("Minigun"), this);
+		map.getPlayer().setCurrWeapon(new Weapon("Minigun"));
+		map.getPlayer().getCurrWeapon().setClipCount(-1);
+		map.getPlayer().getCurrWeapon().setClipSize(1000);
 		
 		/*List<Player> z = addZombies(NUM_ENEMIES);
 		map.getPlayers().addAll(z);*/
@@ -152,6 +164,7 @@ public class ZombiesWGuns extends GameMode {
 			if(deadZombies.size()>0) {
 				for(int i = 0; i < deadZombies.size(); i++)
 					if(deadZombies.get(i).getHealth()<=0) {
+						deadZombies.get(i).setLocation(GameMap.fromGridPoint(spawnLocs.get((int)(spawnLocs.size()*Math.random()))));
 						addZombies.add(deadZombies.get(i));
 						deadZombies.remove(i--);
 					}
@@ -175,13 +188,14 @@ public class ZombiesWGuns extends GameMode {
 	}
 	@Override
 	public boolean canGetWeapon(org.cwi.shoot.model.Player p, Weapon w) {
+		if(p.getType()==PlayerType.HUMAN && w.getName().equals("Minigun") && p.getWeapons().contains(w)) return false;
 		return p.getType() == PlayerType.COMPUTER && w.getType() != WeaponType.PISTOL ? false : true;
 	}
 
 	@Override
 	public List<Character> getAdditionalMapChars() {
 		List<Character> specChars = new ArrayList<Character>();
-		specChars.add('0');
+		specChars.add('X');
 		return specChars;
 	}
 
