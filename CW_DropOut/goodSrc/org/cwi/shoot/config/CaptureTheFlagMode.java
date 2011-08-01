@@ -113,6 +113,7 @@ public class CaptureTheFlagMode extends GameMode {
 						p.addWeapon(w, this);
 						teamStates[p.getTeam()-1] = CaptureState.RETURN;
 						flagRespawnTimes[w.getCharacter()-76] = 0;
+						currentFlagLocs.remove(new Integer(w.getCharacter()-75));
 						p.switchToWeapon(p.getNumWeapons()-1);
 						modeMap[gridPoint.x][gridPoint.y] = GameOptions.BLANK_CHARACTER;
 					}
