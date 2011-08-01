@@ -11,7 +11,7 @@ import org.cwi.shoot.util.NameGenerator;
 
 
 public class GameOptions {
-	public static final String NAME_RESOURCE = "resource/namePartsArab.txt";
+	public static final String NAME_RESOURCE = "resource/namePartsGreek.txt";
 	public static final String MAP_RESOURCE = "resource/maps/default.map";
 	private static final int DEFAULT_MAP_HEIGHT = 30;
 	private static final int DEFAULT_MAP_WIDTH = 30;

@@ -84,6 +84,7 @@ public abstract class AbstractBrain implements Controller {
 	}
 	
 	protected void addDefaultObjectives(GameMap map, Player p){
+		if (objectives == null) objectives = new LinkedList<Objective>();
 		Player enemy = getClosestEnemy(map,p);
 		Point2D.Double location = p.getLocation();
 		Point2D.Double wepLoc = getClosestWeaponLoc(map,p);

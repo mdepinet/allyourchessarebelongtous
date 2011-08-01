@@ -88,11 +88,14 @@ public class MapGraph {
 	public Point getNextLocation(Point curr, Point goal){
 		if (goal == null) return curr;
 		if (vertices.isEmpty()) return null;
+		if(curr.equals(goal)) return curr;
 		Vertex startV = getVertexByLocation(curr.x,curr.y);
 		Vertex endV = getVertexByLocation(goal.x,goal.y);
 		Pair<Vertex,Vertex> key = new Pair<Vertex, Vertex>(startV,endV);
-		if(answers.containsKey(key)) 
-			return answers.get(key).getPoint();
+		if(answers.containsKey(key)) {
+			if(answers.get(key).getPoint().distance(curr)>1.5 || answers.get(key).getPoint().distance(curr) < 0.5) answers.remove(key);
+			else return answers.get(key).getPoint();
+		}
 		computePaths(startV);
 		List<Vertex> path = getShortestPath(startV, endV);
 		Vertex last = path.size() > 1 ? path.get(1) : path.get(0);

@@ -30,6 +30,7 @@ qu -v +v
 +pé
 +ño
 +do
++dro
 +go
 +a
 +o

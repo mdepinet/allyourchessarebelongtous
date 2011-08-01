@@ -170,7 +170,7 @@ public class GameMap{
 			for(int j = 0;j < map[i].length; j++)
 				if(map[i][j] != GameOptions.BLANK_CHARACTER && map[i][j]!=GameOptions.WALL_CHARACTER && !setup.getMode().getAdditionalMapChars().contains(map[i][j]) && map[i][j]!='0') {
 					if(!p.canGetWeapon(new Weapon(map[i][j], new Point(i,j)), setup.getMode())) continue;
-					if(p.getLocation().distance(new Point2D.Double(12.5+(i*25),12.5+(j*25)))<dist) { dist = p.getLocation().distance(new Point2D.Double(12.5+(i*25),12.5+(j*25))); ret = new Point2D.Double(12.5+(i*25),12.5+(j*25)); }
+					if(p.getLocation().distance(new Point2D.Double(GRID_PIXELS/2.+(i*GRID_PIXELS),GRID_PIXELS/2.+(j*GRID_PIXELS)))<dist) { dist = p.getLocation().distance(new Point2D.Double(GRID_PIXELS/2.+(i*GRID_PIXELS),GRID_PIXELS/2.+(j*GRID_PIXELS))); ret = new Point2D.Double(GRID_PIXELS/2.+(i*GRID_PIXELS),GRID_PIXELS/2.+(j*GRID_PIXELS)); }
 				}
 		}
 		return ret;
@@ -311,7 +311,8 @@ public class GameMap{
 				if(p.addWeapon(w,setup.getMode())) {
 					if(w.getName().indexOf("Flag")==-1 && !droppedWeps.contains(new Point2D.Double(getPlayerGridX(p), getPlayerGridY(p))))
 						new WeaponAdderThread(map[getPlayerGridX(p)][getPlayerGridY(p)], new Point(getPlayerGridX(p), getPlayerGridY(p)), this).start();
-					else droppedWeps.remove(new Point2D.Double(getPlayerGridX(p), getPlayerGridY(p)));
+					else 
+						droppedWeps.remove(new Point2D.Double(getPlayerGridX(p), getPlayerGridY(p)));
 					map[getPlayerGridX(p)][getPlayerGridY(p)] = GameOptions.BLANK_CHARACTER;
 				}
 			}
