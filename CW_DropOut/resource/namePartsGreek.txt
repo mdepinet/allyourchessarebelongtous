@@ -1,10 +1,10 @@
 -per
 -z +V
--po
+-po +c
 -eas
 -bac
 -her
--so
+-so +c
 -cre
 -ha +c
 pho

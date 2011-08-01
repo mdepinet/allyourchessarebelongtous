@@ -19,7 +19,7 @@ public class LocationObjective extends Objective {
 	}
 	
 	@Override
-	public Point2D.Double getTargetPoint(Player owner) {
+	public Point2D.Double getTargetPoint(Player owner, GameMap map) {
 		return location == null ? owner.getLocation() : location;
 	}
 	

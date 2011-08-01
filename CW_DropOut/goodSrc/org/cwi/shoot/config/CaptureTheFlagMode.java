@@ -20,8 +20,8 @@ import org.cwi.shoot.model.Weapon.WeaponType;
 
 public class CaptureTheFlagMode extends GameMode {
 	private static final int capturesToWin = 3;
-	private static final double OBJECTIVE_WEIGHT = 6;
-	private static final double DEFEND_OBJECTIVE_WEIGHT = 8;
+	private static final double OBJECTIVE_WEIGHT = 11;
+	private static final double DEFEND_OBJECTIVE_WEIGHT = 12;
 	private Map<Player, Integer> flagsCaptured;
 	private Map<Integer, Point> currentFlagLocs;
 	private Map<Integer, Point> flagSpawnLocs;
@@ -100,7 +100,9 @@ public class CaptureTheFlagMode extends GameMode {
 			if(p.getCurrWeapon()!=null && isFlag(p.getCurrWeapon())){
 				if(flagSpawnLocs.get(p.getTeam()).equals(GameMap.getGridPoint(p.getLocation())) && modeMap[flagSpawnLocs.get(p.getTeam()).x][flagSpawnLocs.get(p.getTeam()).y]==(char)(p.getTeam()+75)) {
 					flagsCaptured.put(p, (flagsCaptured.get(p)!=null ? flagsCaptured.get(p)+1 : 1));
-					resetMode(players);
+					modeMap[flagSpawnLocs.get(p.getCurrWeapon().getCharacter()-75).x][flagSpawnLocs.get(p.getCurrWeapon().getCharacter()-75).y] = p.getCurrWeapon().getCharacter();
+					currentFlagLocs.put(p.getCurrWeapon().getCharacter()-75, flagSpawnLocs.get(p.getCurrWeapon().getCharacter()-75));
+					p.removeWeapon(p.getCurrWeapon());
 				}
 			}
 			else{

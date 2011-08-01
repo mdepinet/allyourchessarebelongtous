@@ -32,7 +32,7 @@ public class ZombieBrain extends AbstractBrain {
 		Point2D.Double destLoc = null;
 		
 		//Pick location.  Objective -> Enemy or Weapon -> Weapon
-		if(!objectives.isEmpty()) destLoc = objectives.get(0).getTargetPoint(p);
+		if(!objectives.isEmpty()) destLoc = objectives.get(0).getTargetPoint(p, map);
 		
 		if(destLoc!=null){
 			newLoc = getSmartDirectionToLoc(location,destLoc,map);
