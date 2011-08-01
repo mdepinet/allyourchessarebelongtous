@@ -21,8 +21,8 @@ import org.cwi.shoot.util.VectorTools;
 
 
 public abstract class AbstractBrain implements Controller {
-	public static final int KILL_OBJECTIVE_WEIGHT = 5;
-	public static final int WEAPON_OBJECTIVE_WEIGHT = 2;
+	public static final int KILL_OBJECTIVE_WEIGHT = 10;
+	public static final int WEAPON_OBJECTIVE_WEIGHT = 4;
 	protected static final double MAX_MOVE_DISTANCE = 2.;
 	protected static MapGraph graph = new MapGraph();
 	protected List<Objective> objectives = new ArrayList<Objective>();
@@ -89,7 +89,7 @@ public abstract class AbstractBrain implements Controller {
 		Point2D.Double location = p.getLocation();
 		Point2D.Double wepLoc = getClosestWeaponLoc(map,p);
 		
-		if (getClosestEnemy(map,p)!= null) objectives.add(new KillObjective(KILL_OBJECTIVE_WEIGHT,GameMap.getGridPoint(location).distance(GameMap.getGridPoint(enemy.getLocation())),enemy));
+		if (enemy!= null) objectives.add(new KillObjective(KILL_OBJECTIVE_WEIGHT,GameMap.getGridPoint(location).distance(GameMap.getGridPoint(enemy.getLocation())),enemy));
 		if (wepLoc != null) objectives.add(new LocationObjective(WEAPON_OBJECTIVE_WEIGHT,GameMap.getGridPoint(location).distance(GameMap.getGridPoint(wepLoc)),wepLoc));
 	}
 	

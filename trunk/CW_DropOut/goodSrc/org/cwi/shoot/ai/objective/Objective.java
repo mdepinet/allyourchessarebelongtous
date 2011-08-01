@@ -7,7 +7,7 @@ import org.cwi.shoot.map.GameMap;
 import org.cwi.shoot.model.Player;
 
 public abstract class Objective implements Comparable<Objective> {
-	private static final double WEIGHT_SCALE = 50;
+	private static final double WEIGHT_SCALE = 25;
 	
 	protected double weight;
 	protected double cost;
@@ -36,10 +36,10 @@ public abstract class Objective implements Comparable<Objective> {
 		return (int)((weight*WEIGHT_SCALE-cost) - (other.getWeight()*WEIGHT_SCALE-other.getCost()));
 	}
 	
-	public abstract Point2D.Double getTargetPoint(Player owner);
+	public abstract Point2D.Double getTargetPoint(Player owner, GameMap map);
 	public abstract boolean isAccomplished(Player owner);
 	public void execute(AbstractBrain brain, Player p, GameMap map){
-		brain.move(getTargetPoint(p),p);
+		brain.move(getTargetPoint(p, map),p);
 	}
 	
 	public String toString(){

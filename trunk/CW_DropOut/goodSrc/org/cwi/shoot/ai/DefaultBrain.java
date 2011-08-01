@@ -18,7 +18,7 @@ public class DefaultBrain extends AbstractBrain {
 		
 		//Pick objective
 		Objective objective = getDefaultObjective(map, p, mode);
-		destLoc = objective.getTargetPoint(p);
+		destLoc = objective.getTargetPoint(p, map);
 		
 		if(destLoc!=null){
 			newLoc = getSmartDirectionToLoc(location,destLoc,map);

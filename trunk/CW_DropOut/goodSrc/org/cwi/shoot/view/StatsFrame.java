@@ -139,7 +139,7 @@ public class StatsFrame extends JFrame {
 				backg.drawString(player.getCurrWeapon().getName(), getWidth()-120, getHeight()-43);
 				if(player.getCurrWeapon().getClipCount()>=0)
 					backg.drawString(""+player.getCurrWeapon().getClipCount(), getWidth()-25, getHeight()-43);
-				if(player.getCurrWeapon().getClipSize()==0 && player.getCurrWeapon().getEffRange()>0)
+				if(player.getCurrWeapon().getClipSize()==0 && !player.getCurrWeapon().getTypes().contains(WeaponType.MELEE))
 					backg.drawString("Reloading...", getWidth()-105, getHeight()-15);
 				else{
 					int clipSize = player.getCurrWeapon().getClipSize()*((player.getCurrWeapon().getTypes().contains(WeaponType.SHOTGUN))? 1 : player.getCurrWeapon().getRoundsPerShot());
