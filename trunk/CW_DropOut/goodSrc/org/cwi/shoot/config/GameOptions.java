@@ -8,10 +8,11 @@ import java.util.Scanner;
 
 import org.cwi.shoot.model.Weapon;
 import org.cwi.shoot.util.NameGenerator;
+import org.cwi.shoot.util.NativeAmericanNameGenerator;
 
 
 public class GameOptions {
-	public static final String NAME_RESOURCE = "resource/namePartsGreek.txt";
+	public static final String NAME_RESOURCE = "resource/namePartsNativeAmericanEnglishTranslation.txt";
 	public static final String MAP_RESOURCE = "resource/maps/default.map";
 	private static final int DEFAULT_MAP_HEIGHT = 30;
 	private static final int DEFAULT_MAP_WIDTH = 30;
@@ -38,7 +39,9 @@ public class GameOptions {
 		if (mapFile == null || !mapFile.exists()) mapFile = new File(MAP_RESOURCE);
 		if (this.nameGen == null)
 			try {
-				this.nameGen = new NameGenerator(NAME_RESOURCE);
+				if(NAME_RESOURCE.equals("resource/namePartsNativeAmericanEnglishTranslation.txt"))
+					this.nameGen = new NativeAmericanNameGenerator(NAME_RESOURCE);
+				else this.nameGen = new NameGenerator(NAME_RESOURCE);
 			} catch (IOException e) {
 				e.printStackTrace();
 			}

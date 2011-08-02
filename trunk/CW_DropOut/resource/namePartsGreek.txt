@@ -1,24 +1,38 @@
--per
--z +V
--po +c
--eas
--bac
--her
--so +c
+-a
 -cre
+-di
+-eas
 -ha +c
-pho
+-her
+-hy
+-mi +c
+-o +c
+-per
+-po +c
+-so +c
+-z +V
+chil
+chy +v -c
+cra
 cu
+dys
+ic +v -c
+i +c -c
+on
+pho
 s -v
 si -v
-ic
-i +c -c
-chy +v -c
-+lus
+pol
+y
++das
 +des
-+chus
 +don
-+les
 +eus
++les
++lus
++mes
 +on
++pes
 +pus
++sus
++tes
