@@ -65,7 +65,7 @@ public class GameCanvas extends Canvas {
 		
 		//Draw mode specific stuff
 		mode.drawModeMapPre(backg);
-		
+		backg.setColor(Color.black);
 		//Draw map
 		for(int i = 0; i < gameMap.getMap().length;i++) {
 			for(int j = 0; j < gameMap.getMap()[i].length; j++)
