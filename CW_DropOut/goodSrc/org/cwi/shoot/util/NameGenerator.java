@@ -61,6 +61,9 @@ public class NameGenerator {
      * @param fileName insert file name, where syllables are located
      * @throws IOException
      */
+    public NameGenerator() {
+    	
+    }
     public NameGenerator(String fileName) throws IOException{
         this.fileName = fileName;
         refresh();
@@ -158,6 +161,10 @@ public class NameGenerator {
         if(s.substring(1).contains("-v")) return true;
         else return false;        
     }    
+    private boolean specialCharFollowing(String s) {
+    	if(s.substring(1).contains("-s")) return true;
+    	return false;
+    }
     
     private String pureSyl(String s){
         s = s.trim();
@@ -201,8 +208,11 @@ public class NameGenerator {
         
         if(VowelLast(pureSyl(pre.get(a)))) last = 1;
         else last = 2;
-        
+        boolean aSpace = false;
         if(syls > 2){
+        	if(specialCharFollowing(mid.get(a))) {
+            	aSpace = true;
+            }
             if(expectsVowel(pre.get(a))){ 
                 expecting = 1;                
                 if(containsVocFirst(mid) == false) throw new RuntimeException("Expecting \"middle\" part starting with Vowel, " +
@@ -235,6 +245,7 @@ public class NameGenerator {
         "means there should be a part available, that has \"-c\" requirement or no requirements for previous syllables at all.");
         
         int b[] = new int[syls];
+        boolean bSpace = false;
         for(int i = 0; i<b.length-2; i++){
                         
             do{
@@ -245,6 +256,9 @@ public class NameGenerator {
                     || last == 1 && hatesPreviousVowels(mid.get(b[i])) || last == 2 && hatesPreviousConsonants(mid.get(b[i])));
             
             expecting = 0;
+            if(specialCharFollowing(mid.get(b[i]))) {
+            	bSpace = true;
+            }
             if(expectsVowel(mid.get(b[i]))){ 
                 expecting = 1;                
                 if(i < b.length-3 && containsVocFirst(mid) == false) throw new RuntimeException("Expecting \"middle\" part starting with Vowel, " +
@@ -286,9 +300,11 @@ public class NameGenerator {
         while(expecting == 1 && VowelFirst(pureSyl(sur.get(c))) == false || expecting == 2 && consonantFirst(pureSyl(sur.get(c))) == false 
                 || last == 1 && hatesPreviousVowels(sur.get(c)) || last == 2 && hatesPreviousConsonants(sur.get(c)));
         
-        name = upper(pureSyl(pre.get(a).toLowerCase()));        
+        name = upper(pureSyl(pre.get(a).toLowerCase()));
+        if(aSpace) name = name.concat(" ");
         for(int i = 0; i<b.length-2; i++){
-            name = name.concat(pureSyl(mid.get(b[i]).toLowerCase()));            
+        	if(bSpace) name = name.concat(upper(pureSyl(pre.get(b[i]).toLowerCase()))+" ");
+        	else name = name.concat(pureSyl(mid.get(b[i]).toLowerCase()));
         }
         if(syls > 1)
             name = name.concat(pureSyl(sur.get(c).toLowerCase()));

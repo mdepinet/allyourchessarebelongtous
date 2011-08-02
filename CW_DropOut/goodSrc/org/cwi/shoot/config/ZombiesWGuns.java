@@ -18,6 +18,7 @@ import org.cwi.shoot.model.Weapon;
 import org.cwi.shoot.model.Weapon.WeaponType;
 import org.cwi.shoot.threads.RespawnThread;
 import org.cwi.shoot.util.NameGenerator;
+import org.cwi.shoot.util.NativeAmericanNameGenerator;
 
 public class ZombiesWGuns extends GameMode {
 	public static final int NUM_ENEMIES = 10;
@@ -104,7 +105,9 @@ public class ZombiesWGuns extends GameMode {
 		ArrayList<Player> zombiesToAdd = new ArrayList<Player>();
 		NameGenerator gen = null;
 		try {
-			gen = new NameGenerator(GameOptions.NAME_RESOURCE);
+			if(GameOptions.NAME_RESOURCE.equals("resource/namePartsNativeAmericanEnglishTranslation.txt"))
+				gen = new NativeAmericanNameGenerator(GameOptions.NAME_RESOURCE);
+			else gen = new NameGenerator(GameOptions.NAME_RESOURCE);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
