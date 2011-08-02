@@ -148,7 +148,7 @@ public class GameMap{
 			tempAngle=p.getOrientation();
 		}
 		p.getCurrWeapon().setClipSize(p.getCurrWeapon().getClipSize()-1);
-		if(p.getCurrWeapon().getClipSize()<=0 && p.getCurrWeapon().getClipCount()==1) {
+		if(p.getCurrWeapon().getClipSize()<=0 && (p.getCurrWeapon().getClipCount()==1 || p.getCurrWeapon().getClipCount()==0)) {
 			p.removeWeapon(p.getCurrWeapon());
 			p.nextWeapon();
 		}
