@@ -8,8 +8,8 @@ import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -20,6 +20,7 @@ import java.util.ArrayList;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -52,9 +53,11 @@ public class MainMenuFrame extends JFrame implements ActionListener, ListSelecti
 	private GameMode gameMode;
 	private JTable table;
 	private GameMode[] modes;
+	private boolean compPlayersOnly;
 	
 	public MainMenuFrame(Shoot control) {
 		super("Shoot Menu");
+		compPlayersOnly = false;
 		team = 1;
 		this.control = control;
 		buttonGroup = new ArrayList<JButton>();
@@ -99,7 +102,7 @@ public class MainMenuFrame extends JFrame implements ActionListener, ListSelecti
 		optionsPanel.add(optionsSubPanel);
 		
 		optionsSubPanel = new JPanel();
-		optionsSubPanel.setPreferredSize(new Dimension(400, 60));
+		optionsSubPanel.setPreferredSize(new Dimension(400, 80));
 		optionsSubPanel.setLayout(new FlowLayout());
 		optionsSubPanel.setAlignmentY(JPanel.CENTER_ALIGNMENT);
 		label = new JLabel("Pick a Name Set", SwingConstants.CENTER);
@@ -112,6 +115,15 @@ public class MainMenuFrame extends JFrame implements ActionListener, ListSelecti
 		button.addActionListener(this);
 		optionsSubPanel.add(nameSetTextField);
 		optionsSubPanel.add(button);
+		JCheckBox compOnly = new JCheckBox("Computer Players only");
+		compOnly.setSelected(false);
+		compOnly.setActionCommand("computerplayersonly");
+		compOnly.addItemListener(new ItemListener() {
+			public void itemStateChanged(ItemEvent ie) {
+				compPlayersOnly = ((JCheckBox)ie.getSource()).isSelected();
+			}
+		});
+		optionsSubPanel.add(compOnly);
 		optionsPanel.add(optionsSubPanel);
 		
 		String[] columnNames = {"Select a Mode"};
@@ -262,7 +274,7 @@ public class MainMenuFrame extends JFrame implements ActionListener, ListSelecti
 		        char[] teams = new char[list.size()];
 		        for(int i =0; i < teams.length;i++)
 		        	teams[i]=list.get(i);
-	        control.startGame(nameTextField.getText(), mapChosen, nameSetChosen, gameMode, teams, team);
+	        control.startGame(nameTextField.getText(), mapChosen, nameSetChosen, gameMode, teams, (compPlayersOnly ? -1 : team));
 			this.dispose();
 		}
 		else
@@ -294,4 +306,5 @@ public class MainMenuFrame extends JFrame implements ActionListener, ListSelecti
 	public void valueChanged(ListSelectionEvent e) {
 		gameMode = modes[table.getSelectedRow()];
 	}
+
 }

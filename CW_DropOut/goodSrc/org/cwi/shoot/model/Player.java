@@ -36,6 +36,8 @@ public class Player implements Comparable<Player>, MapUpdatable {
 	private Controller brain;
 	private PlayerStats stats;
 	
+	private boolean friendlyFire;
+	
 	public Player(String pname){
 		name = pname;
 		health = 100;
@@ -48,9 +50,20 @@ public class Player implements Comparable<Player>, MapUpdatable {
 		type = PlayerType.COMPUTER;
 		brain = new DefaultBrain();
 		stats = new PlayerStats();
+		friendlyFire = false;
 	}
 	
 	
+	public boolean isFriendlyFire() {
+		return friendlyFire;
+	}
+
+
+	public void setFriendlyFire(boolean friendlyFire) {
+		this.friendlyFire = friendlyFire;
+	}
+
+
 	public String getName() {
 		return name;
 	}
@@ -189,7 +202,7 @@ public class Player implements Comparable<Player>, MapUpdatable {
 	}
 	
 	public String toString(){
-		return name+": ("+health+")"+" @ ("+location.x+","+location.y+") with "+getCurrWeapon();
+		return name+": " + getTeam() + " ("+health+")"+" @ ("+location.x+","+location.y+") with "+getCurrWeapon();
 	}
 	
 	public Point2D.Double getGunLocation() {

@@ -26,6 +26,7 @@ public abstract class GameMode {
 		availableTypes.add(ZombiesWGuns.class);
 		availableTypes.add(ClassicZombiesMode.class);
 		availableTypes.add(KotHMode.class);
+		availableTypes.add(ComputerPlayersOnlyMode.class);
 	}
 
 	protected char[][] modeMap;
@@ -48,6 +49,8 @@ public abstract class GameMode {
 	public abstract void drawModeMapPost(Graphics2D g, List<Player> players);
 	
 	public void onStartup(GameMap map, GameOptions setup){
+		if(setup.getPlayerTeam()==-1)
+			map.getPlayers().remove(map.getPlayer());
 		for(int i = 1; i<=Math.min(setup.getNumTeams(), getMaxNumTeams()); i++) {
 			for(int j = 0; j < setup.getPlayersPerTeam(); j++) {
 				if(i == setup.getPlayerTeam() && j == 0) continue;
@@ -106,6 +109,9 @@ public abstract class GameMode {
 	}
 	
 	public boolean handlesRespawn(){
+		return false;
+	}
+	public boolean friendlyFire() {
 		return false;
 	}
 }

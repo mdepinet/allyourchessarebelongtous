@@ -87,6 +87,7 @@ public class KotHMode extends GameMode {
 	
 	
 	public void onStartup(GameMap map, GameOptions setup){
+		if(setup.getPlayerTeam()==-1) map.getPlayers().remove(map.getPlayer());
 		for(int i = 1; i<=Math.min(setup.getNumTeams(), getMaxNumTeams()); i++) {
 			for(int j = 0; j < setup.getPlayersPerTeam(); j++) {
 				if(i == setup.getPlayerTeam() && j == 0) continue;
