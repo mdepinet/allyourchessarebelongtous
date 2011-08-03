@@ -8,6 +8,8 @@ import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -40,7 +42,10 @@ import org.cwi.shoot.model.Weapon;
 public class MainMenuFrame extends JFrame implements ActionListener, ListSelectionListener {
 	private static final long serialVersionUID = -6659414234158999706L;
 	private File mapChosen;
-	private JTextField textField;
+	private JTextField mapTextField;
+	private File nameSetChosen;
+	private JTextField nameSetTextField;
+	private JTextField nameTextField;
 	private ArrayList<JButton> buttonGroup;
 	private Shoot control;
 	private int team;
@@ -55,25 +60,59 @@ public class MainMenuFrame extends JFrame implements ActionListener, ListSelecti
 		buttonGroup = new ArrayList<JButton>();
 		gameMode = null;
 		mapChosen = new File(GameOptions.MAP_RESOURCE);
-		setBounds(new Rectangle(400,300,400,400));
+		nameSetChosen = new File(GameOptions.NAME_RESOURCE);
+		setBounds(new Rectangle(400,300,400,600));
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		getContentPane().setLayout(new BorderLayout());
 		
-		JPanel filePane = new JPanel();
-		filePane.setPreferredSize(new Dimension(400, 60));
-		filePane.setLayout(new FlowLayout());
-		filePane.setAlignmentY(JPanel.CENTER_ALIGNMENT);
-		JLabel label = new JLabel("Pick a Map", SwingConstants.CENTER);
+		JPanel optionsPanel = new JPanel();
+		optionsPanel.setPreferredSize(new Dimension(400,200));
+		optionsPanel.setLayout(new FlowLayout());
+		getContentPane().add(optionsPanel, BorderLayout.NORTH);
+		
+		JPanel optionsSubPanel = new JPanel();
+		optionsSubPanel.setPreferredSize(new Dimension(400,30));
+		optionsSubPanel.setLayout(new FlowLayout());
+		optionsSubPanel.setAlignmentY(JPanel.CENTER_ALIGNMENT);
+		JLabel label = new JLabel("What is your name?", SwingConstants.LEFT);
+		label.setPreferredSize(new Dimension(150,20));
+		optionsSubPanel.add(label);
+		nameTextField = new JTextField("Player 1");
+		nameTextField.setPreferredSize(new Dimension(200,20));
+		optionsSubPanel.add(nameTextField);
+		optionsPanel.add(optionsSubPanel);
+		
+		optionsSubPanel = new JPanel();
+		optionsSubPanel.setPreferredSize(new Dimension(400, 60));
+		optionsSubPanel.setLayout(new FlowLayout());
+		optionsSubPanel.setAlignmentY(JPanel.CENTER_ALIGNMENT);
+		label = new JLabel("Pick a Map", SwingConstants.CENTER);
 		label.setPreferredSize(new Dimension(300,20));
-		filePane.add(label);
-		textField = new JTextField(mapChosen.getName());
-		textField.setPreferredSize(new Dimension(250, 25));
+		optionsSubPanel.add(label);
+		mapTextField = new JTextField(mapChosen.getName());
+		mapTextField.setPreferredSize(new Dimension(250, 25));
 		JButton button = new JButton("Browse...");
 		button.setActionCommand("mapchooser");
 		button.addActionListener(this);
-		filePane.add(textField);
-		filePane.add(button);
-		getContentPane().add(filePane, BorderLayout.NORTH);
+		optionsSubPanel.add(mapTextField);
+		optionsSubPanel.add(button);
+		optionsPanel.add(optionsSubPanel);
+		
+		optionsSubPanel = new JPanel();
+		optionsSubPanel.setPreferredSize(new Dimension(400, 60));
+		optionsSubPanel.setLayout(new FlowLayout());
+		optionsSubPanel.setAlignmentY(JPanel.CENTER_ALIGNMENT);
+		label = new JLabel("Pick a Name Set", SwingConstants.CENTER);
+		label.setPreferredSize(new Dimension(300,20));
+		optionsSubPanel.add(label);
+		nameSetTextField = new JTextField(nameSetChosen.getName());
+		nameSetTextField.setPreferredSize(new Dimension(250, 25));
+		button = new JButton("Browse...");
+		button.setActionCommand("namesetchooser");
+		button.addActionListener(this);
+		optionsSubPanel.add(nameSetTextField);
+		optionsSubPanel.add(button);
+		optionsPanel.add(optionsSubPanel);
 		
 		String[] columnNames = {"Select a Mode"};
 		String[][] modeNames = new String[GameMode.availableTypes.size()][1];
@@ -175,7 +214,7 @@ public class MainMenuFrame extends JFrame implements ActionListener, ListSelecti
 			int returnVal = chooser.showOpenDialog(null);
 	        if (returnVal == JFileChooser.APPROVE_OPTION) mapChosen = chooser.getSelectedFile();
 	        else mapChosen = new File(GameOptions.MAP_RESOURCE);
-	        textField.setText(mapChosen.getName());
+	        mapTextField.setText(mapChosen.getName());
 	        String mapString = "";
 	        try {
 	        	 mapString = readFile(mapChosen);
@@ -192,6 +231,23 @@ public class MainMenuFrame extends JFrame implements ActionListener, ListSelecti
 	        for(int i = 0; i < buttonGroup.size();i++)
 	        	if(buttonGroup.get(i).isVisible()) { buttonGroup.get(i).setForeground(Color.BLACK); buttonGroup.get(i).setBackground(Color.GREEN); team = i+1; break; }
 		}
+		else if (e.getActionCommand().equals("namesetchooser")){
+			JFileChooser chooser = new JFileChooser("resource/names");
+			chooser.setFileFilter(new FileFilter(){
+				@Override
+				public boolean accept(File f) {
+					return f.isDirectory() || f.getName().endsWith(".txt");
+				}
+				@Override
+				public String getDescription() {
+					return "Name Gen files";
+				}
+			});
+			nameSetChosen = null;
+	        if (chooser.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) nameSetChosen = chooser.getSelectedFile();
+	        else nameSetChosen = new File(GameOptions.NAME_RESOURCE);
+	        nameSetTextField.setText(nameSetChosen.getName());
+		}
 		else if(e.getActionCommand().equals("startgame")) {
 			ArrayList<Character> list = new ArrayList<Character>();
 			 String mapString = "";
@@ -206,7 +262,7 @@ public class MainMenuFrame extends JFrame implements ActionListener, ListSelecti
 		        char[] teams = new char[list.size()];
 		        for(int i =0; i < teams.length;i++)
 		        	teams[i]=list.get(i);
-	        control.startGame(mapChosen, gameMode, teams, team);
+	        control.startGame(nameTextField.getText(), mapChosen, nameSetChosen, gameMode, teams, team);
 			this.dispose();
 		}
 		else
