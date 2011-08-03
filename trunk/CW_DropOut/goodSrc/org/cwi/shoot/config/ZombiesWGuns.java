@@ -10,12 +10,12 @@ import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
 
 import org.cwi.shoot.ai.ZombieBrain;
+import org.cwi.shoot.ai.mike.SmartBrain;
 import org.cwi.shoot.ai.objective.Objective;
 import org.cwi.shoot.map.GameMap;
 import org.cwi.shoot.model.Player;
 import org.cwi.shoot.model.Player.PlayerType;
 import org.cwi.shoot.model.Weapon;
-import org.cwi.shoot.model.Weapon.WeaponType;
 import org.cwi.shoot.threads.RespawnThread;
 import org.cwi.shoot.util.NameGenerator;
 import org.cwi.shoot.util.OtherNameGenerator;
@@ -30,6 +30,8 @@ public class ZombiesWGuns extends GameMode {
 	private long waveStartTime;
 	protected List<Player> deadZombies;
 	protected List<Point> spawnLocs;
+	protected boolean humanPlaying;
+	protected Player originalPlayer;
 	
 	public ZombiesWGuns() {
 		startTime = System.currentTimeMillis();
@@ -44,14 +46,31 @@ public class ZombiesWGuns extends GameMode {
 			for(int c = 0; c < modeMap[r].length; c++)
 				if(modeMap[r][c]!='X' && GameMap.getGridPoint(map.getPlayer().getLocation()).x!=c && GameMap.getGridPoint(map.getPlayer().getLocation()).y !=r)
 					spawnLocs.add(new Point(r,c));
-		map.spawn(map.getPlayer());
-		map.getPlayer().removeWeapon(new Weapon("Default"));
-		/*map.getPlayer().addWeapon(new Weapon("Minigun"), this);
-		map.getPlayer().setCurrWeapon(new Weapon("Minigun"));
-		map.getPlayer().getCurrWeapon().setClipCount(-1);
-		map.getPlayer().getCurrWeapon().setClipSize(1000);*/
-		map.getPlayer().addWeapon(new Weapon("Flamethrower"), this);
-		map.getPlayer().setCurrWeapon(new Weapon("Flamethrower"));
+		if(setup.getPlayerTeam()!=-1) {
+			map.spawn(map.getPlayer());
+			map.getPlayer().removeWeapon(new Weapon("Default"));
+			/*map.getPlayer().addWeapon(new Weapon("Minigun"), this);
+			map.getPlayer().setCurrWeapon(new Weapon("Minigun"));
+			map.getPlayer().getCurrWeapon().setClipCount(-1);
+			map.getPlayer().getCurrWeapon().setClipSize(1000);*/
+			map.getPlayer().addWeapon(new Weapon("Flamethrower"), this);
+			map.getPlayer().setCurrWeapon(new Weapon("Flamethrower"));
+			humanPlaying = true;
+			originalPlayer = map.getPlayer();
+		}
+		else {
+			map.getPlayers().clear();
+			Player p = new Player(setup.getNameGen().compose((int)(Math.random()*3)+2));
+			p.setTeam(1);
+			p.setBrain(new SmartBrain());
+			map.getPlayers().add(p);
+			map.spawn(p);
+			map.getPlayers().get(0).removeWeapon(new Weapon("Default"));
+			map.getPlayers().get(0).addWeapon(new Weapon("Flamethrower"), this);
+			map.getPlayers().get(0).setCurrWeapon(new Weapon("Flamethrower"));
+			humanPlaying = false;
+			originalPlayer = map.getPlayers().get(0);
+		}
 		
 		/*List<Player> z = addZombies(NUM_ENEMIES);
 		map.getPlayers().addAll(z);*/
@@ -61,24 +80,38 @@ public class ZombiesWGuns extends GameMode {
 		map.getPlayers().clear();
 		for(int i = 0; i < map.getThreads().size(); i++) { 
 			RespawnThread t = map.getThreads().get(i); 
-			t.respawn(); 
+			//t.respawn(); 
 			t.kill(); 
 		}
 		map.getThreads().clear();
 		
-		Player player = new Player(setup.getPlayerName());
-		player.setTeam(setup.getPlayerTeam());
-		player.setType(Player.PlayerType.HUMAN);
-		map.getPlayers().add(0,player);
-		map.spawn(player);
-
-		map.getPlayer().removeWeapon(new Weapon("Default"));
-		/*map.getPlayer().addWeapon(new Weapon("Minigun"), this);
-		map.getPlayer().setCurrWeapon(new Weapon("Minigun"));
-		map.getPlayer().getCurrWeapon().setClipCount(-1);
-		map.getPlayer().getCurrWeapon().setClipSize(1000);*/
-		map.getPlayer().addWeapon(new Weapon("Flamethrower"), this);
-		map.getPlayer().setCurrWeapon(new Weapon("Flamethrower"));
+		if(humanPlaying) {
+			Player player = new Player(setup.getPlayerName());
+			player.setTeam(setup.getPlayerTeam());
+			player.setType(Player.PlayerType.HUMAN);
+			map.getPlayers().add(0,player);
+			map.spawn(player);
+			map.getPlayer().removeWeapon(new Weapon("Default"));
+			/*map.getPlayer().addWeapon(new Weapon("Minigun"), this);
+			map.getPlayer().setCurrWeapon(new Weapon("Minigun"));
+			map.getPlayer().getCurrWeapon().setClipCount(-1);
+			map.getPlayer().getCurrWeapon().setClipSize(1000);*/
+			map.getPlayer().addWeapon(new Weapon("Flamethrower"), this);
+			map.getPlayer().setCurrWeapon(new Weapon("Flamethrower"));
+			
+		}
+		else {
+			map.getPlayers().clear();
+//			Player p = new Player(setup.getNameGen().compose((int)(Math.random()*3)+2));
+//			p.setTeam(1);
+//			p.setBrain(new SmartBrain());
+			map.getPlayers().add(0,originalPlayer);
+			map.getPlayers().get(0).getWeapons().clear();
+			map.spawn(originalPlayer);
+			map.getPlayers().get(0).removeWeapon(new Weapon("Default"));
+			map.getPlayers().get(0).addWeapon(new Weapon("Flamethrower"), this);
+			map.getPlayers().get(0).setCurrWeapon(new Weapon("Flamethrower"));
+		}
 		
 		/*List<Player> z = addZombies(NUM_ENEMIES);
 		map.getPlayers().addAll(z);*/
@@ -119,6 +152,7 @@ public class ZombiesWGuns extends GameMode {
 			foe.addWeapon(new Weapon("Default"), this);
 			foe.getCurrWeapon().setPower((int)Math.ceil(foe.getCurrWeapon().getPower()*.4));
 			foe.setBrain(new ZombieBrain());
+			foe.setFriendlyFire(friendlyFire());
 			zombiesToAdd.add(foe);
 			
 		}
@@ -156,7 +190,7 @@ public class ZombiesWGuns extends GameMode {
 
 	@Override
 	public String getScoreForPlayer(org.cwi.shoot.model.Player player) {
-		return player.getType()==PlayerType.COMPUTER ? "" : player.getName() + ": " + player.getStats().getNumKills();
+		return player.getTeam() == ZOMBIES_TEAM_NUM ? "" : player.getName() + ": " + player.getStats().getNumKills();
 	}
 
 	@Override
@@ -185,14 +219,22 @@ public class ZombiesWGuns extends GameMode {
 
 	@Override
 	public int getWinningTeam(List<org.cwi.shoot.model.Player> players) {
-		for(int i = 0; i < players.size(); i++)
-			if(players.get(i).getType()==PlayerType.HUMAN)
-				return -1;
+		if(humanPlaying) {
+			for(int i = 0; i < players.size(); i++)
+				if(players.get(i).getType()==PlayerType.HUMAN)
+					return -1;
+		}
+		else {
+			for(int i = 0; i < players.size(); i++)
+				if(players.get(0).getTeam()!=ZOMBIES_TEAM_NUM)
+					return -1;
+		}
 		return ZOMBIES_TEAM_NUM;
 	}
 	public void showGameEndDialog(GameMap map, int winner){
 		Weapon w = new Weapon((char)(76), new Point());
-		JOptionPane.showMessageDialog(null, "You're dead. You lasted " + (System.currentTimeMillis() - getStartTime())/1000. + " seconds.", "Game over!", 0, new ImageIcon(Weapon.getWeaponImg(w.getImgLoc())));
+		if(humanPlaying) JOptionPane.showMessageDialog(null, "You're dead. You lasted " + (System.currentTimeMillis() - getStartTime())/1000. + " seconds.", "Game over!", 0, new ImageIcon(Weapon.getWeaponImg(w.getImgLoc())));
+		else JOptionPane.showMessageDialog(null, "He's dead. He lasted " + (System.currentTimeMillis() - getStartTime())/1000. + " seconds.", "Game over!", 0, new ImageIcon(Weapon.getWeaponImg(w.getImgLoc())));
 	}
 	@Override
 	public boolean canGetWeapon(Player p, Weapon w) {
@@ -222,8 +264,12 @@ public class ZombiesWGuns extends GameMode {
 
 	@Override
 	public void onPlayerDeath(org.cwi.shoot.model.Player p) {
-		if(p.getType() == PlayerType.COMPUTER) {
+		if(p.getType() == PlayerType.COMPUTER && p.getTeam() == ZOMBIES_TEAM_NUM) {
 			deadZombies.add(p);
+		}
+		else {
+			p.reset();
+			originalPlayer = p;
 		}
 	}
 
@@ -244,6 +290,10 @@ public class ZombiesWGuns extends GameMode {
 	}
 	
 	public boolean handlesRespawn(){
+		return true;
+	}
+	
+	public boolean friendlyFire() {
 		return true;
 	}
 

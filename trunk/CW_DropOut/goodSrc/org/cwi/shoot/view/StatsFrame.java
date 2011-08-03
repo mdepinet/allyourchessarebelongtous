@@ -37,14 +37,23 @@ public class StatsFrame extends JFrame {
 	private List<Player> players;
 	private List<JLabel> labels;
 	private char[] teams;
+	private boolean hasPlayer = false;
 	public StatsFrame(GameMode mode, List<Player> p, char[] t) {
 		this.setBounds(new Rectangle(300,300,WIDTH,HEIGHT));
 		this.setUndecorated(true);
 		this.setFocusable(false);
 		this.setBackground(Color.WHITE);
 		this.setVisible(true);
-		this.playerInfoCanvas = new PlayerInfoCanvas(p.get(0));
-		playerInfoCanvas.setPreferredSize(new Dimension(180,60));
+		boolean hasPlayer = false;
+		for(int i = 0; i < p.size(); i++)
+			if(p.get(i).getType()==PlayerType.HUMAN) {
+				hasPlayer = true;
+				break;
+			}
+		if(hasPlayer){
+			this.playerInfoCanvas = new PlayerInfoCanvas(p.get(0));
+			playerInfoCanvas.setPreferredSize(new Dimension(180,60));
+		}
 		getContentPane().setLayout(new BorderLayout());
 		Container north = new Container(); north.setLayout(new FlowLayout());
 		Container center = new Container(); center.setLayout(new FlowLayout());
@@ -72,9 +81,11 @@ public class StatsFrame extends JFrame {
 			labels.add(label);
 		}
 		getContentPane().add(center, BorderLayout.CENTER);
-		south.add(playerInfoCanvas);
-		getContentPane().add(south, BorderLayout.SOUTH);
-		playerInfoCanvas.init();
+		if(hasPlayer) {
+			south.add(playerInfoCanvas);
+			getContentPane().add(south, BorderLayout.SOUTH);
+			playerInfoCanvas.init();
+		}
 	}
 	public Player getPlayer() {
 		for(int i = 0; i < players.size(); i++)
@@ -100,7 +111,7 @@ public class StatsFrame extends JFrame {
 		for(int i = 0; i < players.size();i++) labels.get(i+teams.length).setText(gameMode.getScoreForPlayer(players.get(i)));
 		
 		if(players.get(0).getType()==PlayerType.HUMAN) playerInfoCanvas.setPlayer(players.get(0));
-		playerInfoCanvas.updateGraphics();
+		if(hasPlayer) playerInfoCanvas.updateGraphics();
 	}
 	
 	class PlayerInfoCanvas extends Canvas {
