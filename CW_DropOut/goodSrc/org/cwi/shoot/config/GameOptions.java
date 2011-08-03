@@ -37,15 +37,17 @@ public class GameOptions {
 		this.playersPerTeam = playersPerTeam;
 		if (mapFile == null || !mapFile.exists()) mapFile = new File(MAP_RESOURCE);
 		try {
-			this.nameGen = new NameGenerator(nameGenFile.getAbsolutePath());
+			if(nameGenFile.getAbsolutePath().contains("\\bonus\\"))
+				this.nameGen = new OtherNameGenerator(nameGenFile.getAbsolutePath());
+			else this.nameGen = new NameGenerator(nameGenFile.getAbsolutePath());
 		} catch (IOException e1) {
 			e1.printStackTrace();
 		}
 		if (this.nameGen == null)
 			try {
-				if(NAME_RESOURCE.contains("/other/"))
-					this.nameGen = new OtherNameGenerator(NAME_RESOURCE);
-				else this.nameGen = new NameGenerator(NAME_RESOURCE);
+				if(nameGenFile.getPath().contains("/bouns/"))
+					this.nameGen = new OtherNameGenerator(nameGenFile.getPath());
+				else this.nameGen = new NameGenerator(nameGenFile.getPath());
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
