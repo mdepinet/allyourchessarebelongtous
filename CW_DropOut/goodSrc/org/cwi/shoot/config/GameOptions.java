@@ -28,15 +28,19 @@ public class GameOptions {
 	private String playerName;
 	private List<Character> validChars;
 	
-	public GameOptions(GameMode mode, File mapFile, NameGenerator nameGen, int numTeams, int playerTeam, String playerName, int playersPerTeam){
+	public GameOptions(GameMode mode, File mapFile, File nameGenFile, int numTeams, int playerTeam, String playerName, int playersPerTeam){
 		this.mode = mode;
 		this.mapFile = mapFile;
-		this.nameGen = nameGen;
 		this.numTeams = Math.max(numTeams, 2); //Minimum 2 teams
 		this.playerTeam = playerTeam;
 		this.playerName = playerName;
 		this.playersPerTeam = playersPerTeam;
 		if (mapFile == null || !mapFile.exists()) mapFile = new File(MAP_RESOURCE);
+		try {
+			this.nameGen = new NameGenerator(nameGenFile.getAbsolutePath());
+		} catch (IOException e1) {
+			e1.printStackTrace();
+		}
 		if (this.nameGen == null)
 			try {
 				if(NAME_RESOURCE.contains("/other/"))

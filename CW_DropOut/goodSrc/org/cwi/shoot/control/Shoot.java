@@ -38,8 +38,8 @@ public class Shoot implements KeyListener, MouseListener, MouseMotionListener, C
 		new MainMenuFrame(this);
 	}
 	
-	public void startGame(File mapFile, GameMode mode, char[] teams, int team) {
-		GameOptions setup = new GameOptions(mode, mapFile, null, teams.length, team, "Player 1", 4);
+	public void startGame(String playerName, File mapFile, File nameSetFile, GameMode mode, char[] teams, int team) {
+		GameOptions setup = new GameOptions(mode, mapFile, nameSetFile, teams.length, team, playerName, 4);
 		holdCounter = -1;
 		map = new GameMap(setup);
 		this.mode = mode;
