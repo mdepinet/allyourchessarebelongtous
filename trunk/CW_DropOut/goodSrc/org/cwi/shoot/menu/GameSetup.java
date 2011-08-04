@@ -40,7 +40,7 @@ import org.cwi.shoot.control.Shoot;
 import org.cwi.shoot.map.GameMap;
 import org.cwi.shoot.model.Weapon;
 
-public class MainMenuFrame extends JFrame implements ActionListener, ListSelectionListener {
+public class GameSetup extends JFrame implements ActionListener, ListSelectionListener {
 	private static final long serialVersionUID = -6659414234158999706L;
 	private File mapChosen;
 	private JTextField mapTextField;
@@ -55,7 +55,7 @@ public class MainMenuFrame extends JFrame implements ActionListener, ListSelecti
 	private GameMode[] modes;
 	private boolean compPlayersOnly;
 	
-	public MainMenuFrame(Shoot control) {
+	public GameSetup(Shoot control) {
 		super("Shoot Menu");
 		compPlayersOnly = false;
 		team = 1;
