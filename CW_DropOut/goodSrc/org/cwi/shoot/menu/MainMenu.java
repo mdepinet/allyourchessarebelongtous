@@ -1,13 +1,11 @@
 package org.cwi.shoot.menu;
 
 import java.awt.BorderLayout;
-import java.awt.Button;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Graphics;
 import java.awt.Rectangle;
-import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
@@ -20,6 +18,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
+import javax.swing.border.LineBorder;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
@@ -39,7 +38,10 @@ public class MainMenu extends JFrame implements ActionListener, ListSelectionLis
 		
 		setBounds(new Rectangle(800,600));
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		getContentPane().setLayout(new BorderLayout());
+		JPanel cPane = new JPanel(new BorderLayout());
+		cPane.setBorder(new LineBorder(Color.BLACK, 5));
+		setContentPane(cPane);
+		
 		
 		BackGPanel backgPanel = new BackGPanel();
 		
