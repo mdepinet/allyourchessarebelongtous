@@ -64,7 +64,6 @@ public class ZombiesWGuns extends GameMode {
 			p.setBrain(new SmartBrain());
 			map.getPlayers().add(p);
 			map.spawn(p);
-			map.getPlayers().get(0).removeWeapon(new Weapon("Default"));
 			map.getPlayers().get(0).addWeapon(new Weapon("Flamethrower"), this);
 			map.getPlayers().get(0).setCurrWeapon(new Weapon("Flamethrower"));
 			humanPlaying = false;
