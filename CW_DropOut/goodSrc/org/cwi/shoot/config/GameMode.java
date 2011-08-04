@@ -26,7 +26,6 @@ public abstract class GameMode {
 		availableTypes.add(ZombiesWGuns.class);
 		availableTypes.add(ClassicZombiesMode.class);
 		availableTypes.add(KotHMode.class);
-		availableTypes.add(ComputerPlayersOnlyMode.class);
 	}
 
 	protected char[][] modeMap;

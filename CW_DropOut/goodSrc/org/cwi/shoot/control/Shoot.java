@@ -19,7 +19,8 @@ import java.io.File;
 import org.cwi.shoot.config.GameMode;
 import org.cwi.shoot.config.GameOptions;
 import org.cwi.shoot.map.GameMap;
-import org.cwi.shoot.menu.GameSetupFrame;
+import org.cwi.shoot.menu.MainMenu;
+import org.cwi.shoot.menu.PauseFrame;
 import org.cwi.shoot.model.Weapon;
 import org.cwi.shoot.util.VectorTools;
 import org.cwi.shoot.view.GameFrame;
@@ -34,8 +35,10 @@ public class Shoot implements KeyListener, MouseListener, MouseMotionListener, C
 	GameMode mode;
 	private int holdCounter;
 	private Point mouseLoc;
+	private boolean stop;
 	public Shoot() {
-		new GameSetupFrame(this);
+		stop = false;
+		new MainMenu(this);
 	}
 	
 	public void startGame(String playerName, File mapFile, File nameSetFile, GameMode mode, char[] teams, int team) {
@@ -84,7 +87,7 @@ public class Shoot implements KeyListener, MouseListener, MouseMotionListener, C
 	// Run the game loop here.
 	private void gameLoop() {
 		long beginTime, timeTaken, timeLeft;
-		while (true) {
+		while (!stop) {
 			beginTime = System.nanoTime();
 			if(map.getPlayer()!=null){
 				double HRZ_SCALE = (double)GameFrame.WIDTH / map.getPixelWidth();
@@ -147,7 +150,15 @@ public class Shoot implements KeyListener, MouseListener, MouseMotionListener, C
 	}
 	@Override
 	public void keyReleased(KeyEvent e) {
-		if(map.getPlayer()==null) return;
+		if(map.getPlayer()==null) {
+			if(e.getKeyCode()==KeyEvent.VK_P) {
+				if(map.isPaused()) map.unpause();
+				else map.pause();
+				new PauseFrame(this);
+			}
+			
+			return;
+		}
 		switch(e.getKeyCode())
 		{
 			case KeyEvent.VK_DOWN:
@@ -182,6 +193,11 @@ public class Shoot implements KeyListener, MouseListener, MouseMotionListener, C
 				break;
 			case KeyEvent.VK_R:
 				map.getPlayer().getCurrWeapon().reload();
+				break;
+			case KeyEvent.VK_P:
+				if(map.isPaused()) map.unpause();
+				else map.pause();
+				new PauseFrame(this);
 				break;
 			default:
 				if(e.getKeyChar()>47 && e.getKeyChar()<58)
@@ -262,5 +278,18 @@ public class Shoot implements KeyListener, MouseListener, MouseMotionListener, C
 	public void focusLost(FocusEvent arg0) {
 		
 		
+	}
+	
+	public void resumeGame() {
+		map.unpause();
+	}
+	public GameFrame getFrame() {
+		return frame;
+	}
+	public StatsFrame getStatsFrame() {
+		return statsFrame;
+	}
+	public void close() {
+		stop = true;
 	}
 }

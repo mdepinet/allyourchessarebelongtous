@@ -7,6 +7,7 @@ import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Graphics;
 import java.awt.Rectangle;
+import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
@@ -28,36 +29,42 @@ public class MainMenu extends JFrame implements ActionListener, ListSelectionLis
 	public static final String IMG_LOC = "resource/images/";
 	private ArrayList<JButton> buttonGroup;
 	private Shoot control;
+	private JPanel buttonPanel;
+	private JPanel panel;
 	
 	public MainMenu(Shoot control) {
 		super("Shoot");
 		
 		this.control = control;
-
-		setBounds(new Rectangle(400,300,800,600));
+		
+		setBounds(new Rectangle(800,600));
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		getContentPane().setLayout(new BorderLayout());
 		
-		JPanel optionsPanel = new JPanel();
-		optionsPanel.setPreferredSize(new Dimension(400,450));
+		BackGPanel backgPanel = new BackGPanel();
+		
+		BackGPanel optionsPanel = new BackGPanel();
+		optionsPanel.setPreferredSize(new Dimension(800,470));
 		optionsPanel.setLayout(new FlowLayout());
-		getContentPane().add(optionsPanel, BorderLayout.NORTH);
+		optionsPanel.setOpaque(true);
+		backgPanel.add(optionsPanel, BorderLayout.NORTH);
 
 		buttonGroup = new ArrayList<JButton>();
-		JPanel panel = new JPanel(new FlowLayout());
-		JPanel buttonPanel = new JPanel(new FlowLayout());
+		panel = new JPanel(new FlowLayout());
+		buttonPanel = new JPanel(new FlowLayout());
 		JButton button;
-		for(int i = 1; i < 4;i++) {
+		for(int i = 1; i < 5;i++) {
 			String text = "";
 			if(i==1) text = "SOLO";
-			if(i==2) text = "MULTI";
+			if(i==2) text = "MULTIPLAYER";
 			if(i==3) text = "OPTIONS";
+			if(i==4) text = "EXIT";
 			button = new JButton(text, new ImageIcon(IMG_LOC + "MenuButton" + ".png"));
 			button.setVerticalTextPosition(JButton.BOTTOM);
 			button.setHorizontalTextPosition(JButton.CENTER);
 			button.setPreferredSize(new Dimension(185,100));
-			button.setForeground((i==1) ? Color.BLACK : Color.GRAY);
-			button.setBackground((i==1) ? Color.GREEN : Color.BLUE);
+			button.setForeground(Color.BLACK);
+			button.setBackground(Color.WHITE);
 			button.setActionCommand("option" + i);
 			button.addActionListener(this);
 			button.setOpaque(false);
@@ -67,19 +74,28 @@ public class MainMenu extends JFrame implements ActionListener, ListSelectionLis
 		buttonPanel.setOpaque(false);
 		panel.add(buttonPanel);
 		panel.setOpaque(false);
-		getContentPane().add(panel, BorderLayout.CENTER);
+		backgPanel.add(panel, BorderLayout.SOUTH);
 		
+		getContentPane().add(backgPanel);
+		
+		setLocationRelativeTo(getRootPane());
+		setUndecorated(true);
 		setVisible(true);
 	}
 	
-	public void paint(Graphics g) {
-		BufferedImage backgImg = null;
-		try {
-			backgImg = ImageIO.read(new File(IMG_LOC + "MainMenu.png"));
-		} catch (IOException e) {
-			e.printStackTrace();
+	private class BackGPanel extends JPanel {
+		public BackGPanel() {
 		}
-		g.drawImage(backgImg, 0, 0, this);
+		
+		public void paintComponent(Graphics g) {
+			BufferedImage backgImg = null;
+			try {
+				backgImg = ImageIO.read(new File(IMG_LOC + "MainMenu.png"));
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			g.drawImage(backgImg, 0, 0, this);
+		}
 	}
 
 	@Override
@@ -94,6 +110,10 @@ public class MainMenu extends JFrame implements ActionListener, ListSelectionLis
 		if(e.getActionCommand().equals("option1")) {
 			GameSetupFrame setup = new GameSetupFrame(control);
 			this.dispose();
+		}
+		if(e.getActionCommand().equals("option4")) {
+			this.dispose();
+			System.exit(0);
 		}
 	}
 }

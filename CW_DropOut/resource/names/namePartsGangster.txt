@@ -1,0 +1,27 @@
+-bon
+-da +c
+-de +c
+-dw +v
+-ja +c
+-la +c
+a -c +c
+brick +v
+bron
+fer +v
+marc +v
+mark +v
+mich +v
+mik +v
+n -v +v
+qui
+shawn +v
+steve +c
+gus
++ane -c
++awn -c
++ayne -c
++da
++el -c
++ese -c
++shaw
++son

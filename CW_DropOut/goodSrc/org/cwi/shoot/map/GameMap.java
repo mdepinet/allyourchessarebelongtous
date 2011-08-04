@@ -37,6 +37,7 @@ public class GameMap{
 	private List<Explosion> explosions;
 	private Map<Integer, List<Point2D.Double>> spawnLocs;
 	private List<Point2D.Double> droppedWeps;
+	private boolean paused;
 	
 	public GameMap(GameOptions setup) {
 		this.setup = setup;
@@ -225,103 +226,110 @@ public class GameMap{
 	}
 
 	public void gameUpdate() {
-		setup.getMode().update(players);
-		int winner;
-		if((winner = setup.getMode().getWinningTeam(players)) != -1) {
-			setup.getMode().showGameEndDialog(this, winner);
-			resetGame();
-		}
-		OUTTER: for(int i=0;i<bullets.size();i++) {
-			
-			Bullet b = bullets.get(i);
-			if(!isValid(b.getLocation(),1)) 
-				if(!b.getWeapon().getTypes().contains(Weapon.WeaponType.THROWN)){
-					explode(b); 
-					bullets.remove(i--); 
-					continue OUTTER;
-				}
-			
-			for(int j = 0; j < map.length; j++) {
-				for(int k = 0; k < map[j].length;k++)
-					if(map[j][k] == GameOptions.WALL_CHARACTER){
-						Point2D.Double intersection = bulletColDetect(b,new Rectangle(j*GRID_PIXELS,k*GRID_PIXELS,GRID_PIXELS,GRID_PIXELS));
-						if(intersection!=null && !b.getWeapon().getTypes().contains(Weapon.WeaponType.THROWN)){
-							b.setLocation(intersection);
-							explode(b);
-							bullets.remove(i--); 
-							continue OUTTER;
-						}
+		if(!paused) {
+			setup.getMode().update(players);
+			int winner;
+			if((winner = setup.getMode().getWinningTeam(players)) != -1) {
+				setup.getMode().showGameEndDialog(this, winner);
+				resetGame();
+			}
+			OUTTER: for(int i=0;i<bullets.size();i++) {
+				
+				Bullet b = bullets.get(i);
+				if(!isValid(b.getLocation(),1)) 
+					if(!b.getWeapon().getTypes().contains(Weapon.WeaponType.THROWN)){
+						explode(b); 
+						bullets.remove(i--); 
+						continue OUTTER;
 					}
-			}
-			
-			Player hit = getHitPlayer(b);
-			b.update();
-			double effRange = b.getWeapon().getEffRange();
-			//if it's outside effective range and it's an explosive, blow it and remove it
-			if(b.getDistanceTraveled()>effRange) 
-				if(explode(b)){
-					bullets.remove(b);
-					i--;
-					continue OUTTER;
+				
+				for(int j = 0; j < map.length; j++) {
+					for(int k = 0; k < map[j].length;k++)
+						if(map[j][k] == GameOptions.WALL_CHARACTER){
+							Point2D.Double intersection = bulletColDetect(b,new Rectangle(j*GRID_PIXELS,k*GRID_PIXELS,GRID_PIXELS,GRID_PIXELS));
+							if(intersection!=null && !b.getWeapon().getTypes().contains(Weapon.WeaponType.THROWN)){
+								b.setLocation(intersection);
+								explode(b);
+								bullets.remove(i--); 
+								continue OUTTER;
+							}
+						}
 				}
-			
-			if(b.getDistanceTraveled() > effRange*2) { bullets.remove(b); i--; continue OUTTER; }
-			if (hit != null){
-				double damage = b.getWeapon().getPower();
-				if (b.getDistanceTraveled() > effRange) damage -= ((b.getDistanceTraveled() - effRange)/effRange)*damage;
-				hit.takeDamage(damage);
-				if (hit.getHealth()<=0) {
-					if(hit!=b.getPlayer()) b.getPlayer().getStats().incNumKills();
-					else b.getPlayer().getStats().incNumSuicides();
-					kill(hit);
-				}
-				explode(b);
-				bullets.remove(b);
-				i--;
-			}
-		}
-		
-		
-		for(int i =0; i<players.size(); i++) {
-			Player p= players.get(i);
-			Point2D.Double loc = p.getLocation();
-			p.update(setup.getMode(), this);
-			if(p.getCurrWeapon()!=null && p.getCurrWeapon().isSwung()) {
-				Player hit = melee(p);
-				if(hit!=null) {
-					hit.takeDamage(p.getCurrWeapon().getPower());
+				
+				Player hit = getHitPlayer(b);
+				b.update();
+				double effRange = b.getWeapon().getEffRange();
+				//if it's outside effective range and it's an explosive, blow it and remove it
+				if(b.getDistanceTraveled()>effRange) 
+					if(explode(b)){
+						bullets.remove(b);
+						i--;
+						continue OUTTER;
+					}
+				
+				if(b.getDistanceTraveled() > effRange*2) { bullets.remove(b); i--; continue OUTTER; }
+				if (hit != null){
+					double damage = b.getWeapon().getPower();
+					if (b.getDistanceTraveled() > effRange) damage -= ((b.getDistanceTraveled() - effRange)/effRange)*damage;
+					hit.takeDamage(damage);
 					if (hit.getHealth()<=0) {
-						p.getStats().incNumKills();
+						if(hit!=b.getPlayer()) b.getPlayer().getStats().incNumKills();
+						else b.getPlayer().getStats().incNumSuicides();
 						kill(hit);
 					}
+					explode(b);
+					bullets.remove(b);
+					i--;
 				}
-				p.getCurrWeapon().setSwung(false);
-			}
-			if(!isValid(p.getLocation(), (int) Player.radius)) {
-				if(isValid(new Point2D.Double(p.getLocation().x,loc.y), (int) Player.radius))
-					p.setLocation(new Point2D.Double(p.getLocation().x,loc.y));
-				else if(isValid(new Point2D.Double(loc.x,p.getLocation().y), (int) Player.radius))
-					p.setLocation(new Point2D.Double(loc.x,p.getLocation().y));
-				else
-					p.setLocation(loc);
 			}
 			
-			Weapon w;
-			if((w = getWeapon(p))!=null){
-				if(p.addWeapon(w,setup.getMode())) {
-					if(w.getName().indexOf("Flag")==-1 && !droppedWeps.contains(new Point2D.Double(getPlayerGridX(p), getPlayerGridY(p))))
-						new WeaponAdderThread(map[getPlayerGridX(p)][getPlayerGridY(p)], new Point(getPlayerGridX(p), getPlayerGridY(p)), this).start();
-					else 
-						droppedWeps.remove(new Point2D.Double(getPlayerGridX(p), getPlayerGridY(p)));
-					map[getPlayerGridX(p)][getPlayerGridY(p)] = GameOptions.BLANK_CHARACTER;
+			
+			for(int i =0; i<players.size(); i++) {
+				Player p= players.get(i);
+				Point2D.Double loc = p.getLocation();
+				p.update(setup.getMode(), this);
+				if(p.getCurrWeapon()!=null && p.getCurrWeapon().isSwung()) {
+					Player hit = melee(p);
+					if(hit!=null) {
+						hit.takeDamage(p.getCurrWeapon().getPower());
+						if (hit.getHealth()<=0) {
+							p.getStats().incNumKills();
+							kill(hit);
+						}
+					}
+					p.getCurrWeapon().setSwung(false);
+				}
+				if(!isValid(p.getLocation(), (int) Player.radius)) {
+					if(isValid(new Point2D.Double(p.getLocation().x,loc.y), (int) Player.radius))
+						p.setLocation(new Point2D.Double(p.getLocation().x,loc.y));
+					else if(isValid(new Point2D.Double(loc.x,p.getLocation().y), (int) Player.radius))
+						p.setLocation(new Point2D.Double(loc.x,p.getLocation().y));
+					else
+						p.setLocation(loc);
+				}
+				
+				Weapon w;
+				if((w = getWeapon(p))!=null){
+					if(p.addWeapon(w,setup.getMode())) {
+						if(w.getName().indexOf("Flag")==-1 && !droppedWeps.contains(new Point2D.Double(getPlayerGridX(p), getPlayerGridY(p))))
+							new WeaponAdderThread(map[getPlayerGridX(p)][getPlayerGridY(p)], new Point(getPlayerGridX(p), getPlayerGridY(p)), this).start();
+						else 
+							droppedWeps.remove(new Point2D.Double(getPlayerGridX(p), getPlayerGridY(p)));
+						map[getPlayerGridX(p)][getPlayerGridY(p)] = GameOptions.BLANK_CHARACTER;
+					}
 				}
 			}
+			
+			for(int i = 0; i < explosions.size();i++) {	
+				explosions.get(i).update();
+				if(!explosions.get(i).isActive())
+					explosions.remove(i);
+			}
 		}
-		
-		for(int i = 0; i < explosions.size();i++) {	
-			explosions.get(i).update();
-			if(!explosions.get(i).isActive())
-				explosions.remove(i);
+		else {
+			for(int i = 0; i < threads.size(); i++) {
+//				threads.get(i).
+			}
 		}
 	}
 	
@@ -524,5 +532,17 @@ public class GameMap{
 			threads.add(new RespawnThread(this, p, i == 0 && p.getType()==PlayerType.HUMAN, 5000));
 			threads.get(threads.size()-1).start();
 		}
+	}
+	
+	public boolean pause() {
+		paused = true;
+		return true;
+	}
+	public boolean unpause() {
+		paused = false;
+		return false;
+	}
+	public boolean isPaused() {
+		return paused;
 	}
 }
