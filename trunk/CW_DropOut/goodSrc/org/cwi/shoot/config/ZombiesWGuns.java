@@ -48,7 +48,6 @@ public class ZombiesWGuns extends GameMode {
 					spawnLocs.add(new Point(r,c));
 		if(setup.getPlayerTeam()!=-1) {
 			map.spawn(map.getPlayer());
-			map.getPlayer().removeWeapon(new Weapon("Default"));
 			/*map.getPlayer().addWeapon(new Weapon("Minigun"), this);
 			map.getPlayer().setCurrWeapon(new Weapon("Minigun"));
 			map.getPlayer().getCurrWeapon().setClipCount(-1);

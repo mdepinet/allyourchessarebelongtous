@@ -19,7 +19,7 @@ public class Weapon implements Updatable{
 	private static final int reloadMillis = 3000; //3 seconds
 	private static final int updatesPerSec = 30;
 	public enum WeaponType{
-		OBJECTIVE, PISTOL, EXPLOSIVE, RIFLE, SNIPER, SHOTGUN, THROWN, SPECIAL, MELEE
+		OBJECTIVE, PISTOL, EXPLOSIVE, RIFLE, SNIPER, SHOTGUN, THROWN, SPECIAL, MELEE, HUGECLIP
 	}
 	private static Map<String, BufferedImage> images = new HashMap<String, BufferedImage>();
 	public static char[] DEFAULT_WEAPONS = new char[]{'P','R','S','B','F','G','H','C','F','D','E','J','Q','K','T'};

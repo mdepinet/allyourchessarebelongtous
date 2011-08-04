@@ -19,6 +19,8 @@ import java.util.List;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.border.LineBorder;
 
 import org.cwi.shoot.config.GameMode;
 import org.cwi.shoot.map.GameMap;
@@ -44,6 +46,9 @@ public class StatsFrame extends JFrame {
 		this.setFocusable(false);
 		this.setBackground(Color.WHITE);
 		this.setVisible(true);
+		JPanel cPane = new JPanel(new BorderLayout());
+		cPane.setBorder(new LineBorder(Color.BLACK, 5));
+		setContentPane(cPane);
 		hasPlayer = false;
 		for(int i = 0; i < p.size(); i++)
 			if(p.get(i).getType()==PlayerType.HUMAN) {
@@ -76,7 +81,7 @@ public class StatsFrame extends JFrame {
 		getContentPane().add(north, BorderLayout.NORTH);
 		for(Player x: players) {
 			label = new JLabel(x.getName() + ": " + x.getStats().getNumKills());
-			label.setPreferredSize(new Dimension(200, 20));
+			label.setPreferredSize(new Dimension(180, 20));
 			center.add(label);
 			labels.add(label);
 		}
@@ -136,10 +141,10 @@ public class StatsFrame extends JFrame {
 		
 		public void updateGraphics() {
 			if (player == null) player = getPlayer();
-			backg.setBackground(new Color(1f,1f,1f,1f));
-			backg.clearRect(0,0,getWidth(), getHeight());
-			backg.setColor(new Color(0f,0f,0f,1f));
 			backg.setStroke(new BasicStroke(3f));
+			backg.setColor(new Color(1f,1f,1f,1f));
+			backg.fillRoundRect(2, 2, getWidth()-4, getHeight()-4, 20, 20);
+			backg.setColor(new Color(0f,0f,0f,1f));
 			backg.drawRoundRect(2, 2, getWidth()-4, getHeight()-4, 20, 20);
 			if(player!=null && player.getCurrWeapon()!=null)
 			{
@@ -154,12 +159,18 @@ public class StatsFrame extends JFrame {
 					backg.drawString("Reloading...", getWidth()-105, getHeight()-15);
 				else{
 					int clipSize = player.getCurrWeapon().getClipSize()*((player.getCurrWeapon().getTypes().contains(WeaponType.SHOTGUN))? 1 : player.getCurrWeapon().getRoundsPerShot());
-					for(int i=0; i < clipSize;i++)
-					{	
-						if(i<20 || i<clipSize/2)
-							backg.fillRect(getWidth()-12-(i*6),getHeight()-28, 4, 10);
-						else
-							backg.fillRect(getWidth()-12-((i-Math.max(20, clipSize/2)))*6,getHeight()-16, 4, 10);
+					int maxClipSize = player.getCurrWeapon().getMaxClipCount()*player.getCurrWeapon().getMaxClipSize()*((player.getCurrWeapon().getTypes().contains(WeaponType.SHOTGUN))? 1 : player.getCurrWeapon().getRoundsPerShot());
+					if(player.getCurrWeapon().getTypes().contains(WeaponType.HUGECLIP)) {
+						backg.fillRect(10,getHeight()-28, (int)(((double)clipSize/(double)maxClipSize)*162), 10);
+					}
+					else {
+						for(int i=0; i < clipSize;i++)
+						{	
+							if(i<clipSize/2)
+								backg.fillRect(getWidth()-12-(i*6),getHeight()-28, 4, 10);
+							else
+								backg.fillRect(getWidth()-12-((i-Math.max(20, clipSize/2)))*6,getHeight()-16, 4, 10);
+						}
 					}
 				}
 			}
