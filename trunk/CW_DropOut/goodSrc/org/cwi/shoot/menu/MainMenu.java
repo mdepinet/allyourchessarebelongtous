@@ -92,7 +92,7 @@ public class MainMenu extends JFrame implements ActionListener, ListSelectionLis
 	public void actionPerformed(ActionEvent e) {
 		// TODO Auto-generated method stub
 		if(e.getActionCommand().equals("option1")) {
-			GameSetup setup = new GameSetup(control);
+			GameSetupFrame setup = new GameSetupFrame(control);
 			this.dispose();
 		}
 	}
