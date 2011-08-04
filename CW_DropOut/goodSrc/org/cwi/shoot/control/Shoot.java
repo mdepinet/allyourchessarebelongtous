@@ -19,7 +19,7 @@ import java.io.File;
 import org.cwi.shoot.config.GameMode;
 import org.cwi.shoot.config.GameOptions;
 import org.cwi.shoot.map.GameMap;
-import org.cwi.shoot.menu.MainMenuFrame;
+import org.cwi.shoot.menu.MainMenu;
 import org.cwi.shoot.model.Weapon;
 import org.cwi.shoot.util.VectorTools;
 import org.cwi.shoot.view.GameFrame;
@@ -35,7 +35,7 @@ public class Shoot implements KeyListener, MouseListener, MouseMotionListener, C
 	private int holdCounter;
 	private Point mouseLoc;
 	public Shoot() {
-		new MainMenuFrame(this);
+		new MainMenu(this);
 	}
 	
 	public void startGame(String playerName, File mapFile, File nameSetFile, GameMode mode, char[] teams, int team) {
