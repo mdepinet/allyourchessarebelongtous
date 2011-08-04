@@ -44,7 +44,7 @@ public class StatsFrame extends JFrame {
 		this.setFocusable(false);
 		this.setBackground(Color.WHITE);
 		this.setVisible(true);
-		boolean hasPlayer = false;
+		hasPlayer = false;
 		for(int i = 0; i < p.size(); i++)
 			if(p.get(i).getType()==PlayerType.HUMAN) {
 				hasPlayer = true;

@@ -23,6 +23,7 @@ public class CaptureTheFlagMode extends GameMode {
 	private static final double OBJECTIVE_WEIGHT = 11;
 	private static final double DEFEND_OBJECTIVE_WEIGHT = 12;
 	private Map<Player, Integer> flagsCaptured;
+	private int[] teamFlagsCaptured;
 	private Map<Integer, Point> currentFlagLocs;
 	private Map<Integer, Point> flagSpawnLocs;
 	enum CaptureState {
@@ -35,6 +36,7 @@ public class CaptureTheFlagMode extends GameMode {
 	
 	public CaptureTheFlagMode(){
 		flagsCaptured = new HashMap<Player,Integer>();
+		teamFlagsCaptured = new int[4];
 		flagSpawnLocs = new HashMap<Integer, Point>();
 		currentFlagLocs = new HashMap<Integer, Point>();
 		flagRespawnTimes= new long[4];
@@ -85,12 +87,7 @@ public class CaptureTheFlagMode extends GameMode {
 
 	@Override
 	public String getScoreForTeam(int team, List<Player> players) {
-		int score = 0;
-		for(Player p : players)
-			if(flagsCaptured.get(p)!=null &&  p.getTeam()==team){
-				score+=flagsCaptured.get(p);
-			}
-		return ""+score;
+		return ""+teamFlagsCaptured[team-1];
 	}
 
 	@Override
@@ -99,7 +96,9 @@ public class CaptureTheFlagMode extends GameMode {
 			Player p = players.get(i);
 			if(p.getCurrWeapon()!=null && isFlag(p.getCurrWeapon())){
 				if(flagSpawnLocs.get(p.getTeam()).equals(GameMap.getGridPoint(p.getLocation())) && modeMap[flagSpawnLocs.get(p.getTeam()).x][flagSpawnLocs.get(p.getTeam()).y]==(char)(p.getTeam()+75)) {
+					resetTeamStates();
 					flagsCaptured.put(p, (flagsCaptured.get(p)!=null ? flagsCaptured.get(p)+1 : 1));
+					teamFlagsCaptured[p.getTeam()-1] += 1;
 					modeMap[flagSpawnLocs.get(p.getCurrWeapon().getCharacter()-75).x][flagSpawnLocs.get(p.getCurrWeapon().getCharacter()-75).y] = p.getCurrWeapon().getCharacter();
 					currentFlagLocs.put(p.getCurrWeapon().getCharacter()-75, flagSpawnLocs.get(p.getCurrWeapon().getCharacter()-75));
 					p.removeWeapon(p.getCurrWeapon());
@@ -138,6 +137,7 @@ public class CaptureTheFlagMode extends GameMode {
 	}
 	private void resetMode(List<Player> players)
 	{
+		teamFlagsCaptured = new int[4];
 		flagRespawnTimes= new long[4];
 		for(Player p : players) {
 			p.getWeapons().clear(); p.addWeapon(new Weapon("Default"), this);
@@ -161,14 +161,9 @@ public class CaptureTheFlagMode extends GameMode {
 
 	@Override
 	public int getWinningTeam(List<Player> players) {
-		int[] teamCaptures = new int[4];
-		for(Player p : players)
-			if(flagsCaptured.get(p)!=null){
-				teamCaptures[p.getTeam()-1]+=flagsCaptured.get(p);
-				if(teamCaptures[p.getTeam()-1]>=capturesToWin) {
-					flagsCaptured = new HashMap<Player,Integer>();
-					return p.getTeam();
-				}
+		for(int i = 0; i < teamFlagsCaptured.length;i++)
+			if(teamFlagsCaptured[i]>=capturesToWin) {
+				return i+1;
 			}
 		return -1;
 	}
@@ -257,7 +252,8 @@ public class CaptureTheFlagMode extends GameMode {
 	
 	public void drawModeMapPost(Graphics2D g, List<Player> p) {
 		// TODO Auto-generated method stub
-		for(Player player : p) {
+		for(int i = 0; i < p.size(); i++) {
+			Player player = p.get(i);
 			if(playerHasFlag(player))
 				g.drawImage(Weapon.getWeaponImg(player.getCurrWeapon().getImgLoc()), (int)player.getLocation().getX()+6, (int)player.getLocation().getY()-15,30,15, null);
 		}
