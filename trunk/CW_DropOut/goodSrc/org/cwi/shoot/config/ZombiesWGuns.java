@@ -4,7 +4,9 @@ import java.awt.Graphics2D;
 import java.awt.Point;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
@@ -32,6 +34,7 @@ public class ZombiesWGuns extends GameMode {
 	protected List<Point> spawnLocs;
 	protected boolean humanPlaying;
 	protected Player originalPlayer;
+	protected Map<String, Object> stats;
 	
 	public ZombiesWGuns() {
 		startTime = System.currentTimeMillis();
@@ -39,6 +42,7 @@ public class ZombiesWGuns extends GameMode {
 		wave = 1;
 		deadZombies = new ArrayList<Player>();
 		spawnLocs = new ArrayList<Point>();
+		stats = new HashMap<String, Object>();
 	}
 	
 	public void onStartup(GameMap map, GameOptions setup){
@@ -84,6 +88,8 @@ public class ZombiesWGuns extends GameMode {
 		map.getThreads().clear();
 		
 		if(humanPlaying) {
+			setup.getProfile().addStats(stats);
+			setup.getProfile().writeToFile();
 			Player player = new Player(setup.getPlayerName());
 			player.setTeam(setup.getPlayerTeam());
 			player.setType(Player.PlayerType.HUMAN);
@@ -266,6 +272,12 @@ public class ZombiesWGuns extends GameMode {
 			deadZombies.add(p);
 		}
 		else {
+			if(p.getType()==PlayerType.HUMAN) {
+				stats = new HashMap<String, Object>();
+				int score = 5 * ((int)(System.currentTimeMillis() - getStartTime())/1000 - 30) +(int)(1/5 *p.getStats().getKillsMinusSuicides() - p.getStats().getNumDeaths());
+				stats.put("TotalScore:", score);
+				stats.put("Bullets-shot:", p.getStats().getShotsFired());
+			}
 			p.reset();
 			originalPlayer = p;
 		}

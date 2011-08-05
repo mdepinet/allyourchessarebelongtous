@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Scanner;
 
 import org.cwi.shoot.model.Weapon;
+import org.cwi.shoot.profile.Profile;
 import org.cwi.shoot.util.NameGenerator;
 import org.cwi.shoot.util.OtherNameGenerator;
 
@@ -25,16 +26,16 @@ public class GameOptions {
 	private int numTeams;
 	private int playersPerTeam;
 	private int playerTeam;
-	private String playerName;
 	private List<Character> validChars;
+	private Profile profile;
 	
-	public GameOptions(GameMode mode, File mapFile, File nameGenFile, int numTeams, int playerTeam, String playerName, int playersPerTeam){
+	public GameOptions(GameMode mode, File mapFile, File nameGenFile, int numTeams, int playerTeam, Profile profile, int playersPerTeam){
 		this.mode = mode;
 		this.mapFile = mapFile;
 		this.numTeams = Math.max(numTeams, 2); //Minimum 2 teams
 		this.playerTeam = playerTeam;
-		this.playerName = playerName;
 		this.playersPerTeam = playersPerTeam;
+		this.profile = profile;
 		if (mapFile == null || !mapFile.exists()) mapFile = new File(MAP_RESOURCE);
 		try {
 			if(nameGenFile.getAbsolutePath().contains("\\bonus\\"))
@@ -81,7 +82,7 @@ public class GameOptions {
 		return playerTeam;
 	}
 	public String getPlayerName() {
-		return playerName;
+		return profile.getName();
 	}
 	public int getPlayersPerTeam() {
 		return playersPerTeam;
@@ -136,5 +137,13 @@ public class GameOptions {
 			}
 		}
 		return rotated;
+	}
+
+	public Profile getProfile() {
+		return profile;
+	}
+
+	public void setProfile(Profile profile) {
+		this.profile = profile;
 	}
 }

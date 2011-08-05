@@ -30,9 +30,12 @@ import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
 import javax.swing.SwingConstants;
+import javax.swing.border.LineBorder;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.filechooser.FileFilter;
+import javax.swing.table.AbstractTableModel;
+import javax.swing.table.TableModel;
 
 import org.cwi.shoot.config.GameMode;
 import org.cwi.shoot.config.GameOptions;
@@ -41,7 +44,7 @@ import org.cwi.shoot.map.GameMap;
 import org.cwi.shoot.model.Weapon;
 import org.cwi.shoot.profile.Profile;
 
-public class GameSetupFrame extends JFrame implements ActionListener, ListSelectionListener {
+public class GameSetupFrame2 extends JFrame implements ActionListener, ListSelectionListener {
 	private static final long serialVersionUID = -6659414234158999706L;
 	private File mapChosen;
 	private JTextField mapTextField;
@@ -55,9 +58,11 @@ public class GameSetupFrame extends JFrame implements ActionListener, ListSelect
 	private GameMode[] modes;
 	private boolean compPlayersOnly;
 	private Profile profile;
+	private JPanel pPanel;
+	private TableModel data;
 	
-	public GameSetupFrame(Shoot control, Profile profile) {
-		super("Shoot Menu");
+	public GameSetupFrame2(Shoot control, Profile profile) {
+		super("Game Setup Menu");
 		compPlayersOnly = false;
 		team = 1;
 		this.control = control;
@@ -66,9 +71,28 @@ public class GameSetupFrame extends JFrame implements ActionListener, ListSelect
 		gameMode = null;
 		mapChosen = new File(GameOptions.MAP_RESOURCE);
 		nameSetChosen = new File(GameOptions.NAME_RESOURCE);
-		setBounds(new Rectangle(400,300,400,600));
+		setBounds(new Rectangle(800,600));
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		
+		JPanel cPane = new JPanel(new BorderLayout());
+		cPane.setBorder(new LineBorder(Color.BLACK, 5));
+		setContentPane(cPane);
 		getContentPane().setLayout(new BorderLayout());
+		
+		
+		data = new PlayerTableModel();
+		table = new JTable(data);
+		pPanel = new JPanel(new BorderLayout());
+		JScrollPane spane = new JScrollPane(table);
+		table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+		table.getSelectionModel().addListSelectionListener(this);
+		spane.setPreferredSize(new Dimension(150, 200));
+		table.setRowHeight(30);
+		table.setColumnSelectionAllowed(false);
+		table.setRowSelectionAllowed(true);
+		table.setTableHeader(null);
+		pPanel.add(spane, BorderLayout.CENTER);
+		getContentPane().add(pPanel, BorderLayout.WEST);
 		
 		JPanel optionsPanel = new JPanel();
 		optionsPanel.setPreferredSize(new Dimension(400,200));
@@ -79,12 +103,6 @@ public class GameSetupFrame extends JFrame implements ActionListener, ListSelect
 		optionsSubPanel.setPreferredSize(new Dimension(400,30));
 		optionsSubPanel.setLayout(new FlowLayout());
 		optionsSubPanel.setAlignmentY(JPanel.CENTER_ALIGNMENT);
-//		JLabel label = new JLabel("What is your name?", SwingConstants.LEFT);
-//		label.setPreferredSize(new Dimension(150,20));
-//		optionsSubPanel.add(label);
-//		nameTextField = new JTextField("Player 1");
-//		nameTextField.setPreferredSize(new Dimension(200,20));
-//		optionsSubPanel.add(nameTextField);
 		JLabel label = new JLabel(profile.getRankAndName());
 		label.setPreferredSize(new Dimension(150,20));
 		optionsSubPanel.add(label);
@@ -180,12 +198,20 @@ public class GameSetupFrame extends JFrame implements ActionListener, ListSelect
 		panel.add(buttonPanel);
 		getContentPane().add(panel, BorderLayout.CENTER);
 		
+		JPanel southPanel = new JPanel(new FlowLayout());
 		button = new JButton("Start Game");
 		button.setAlignmentY(JButton.RIGHT_ALIGNMENT);
 		button.setActionCommand("startgame");
 		button.setSize(new Dimension(200, 30));
 		button.addActionListener(this);
-		getContentPane().add(button, BorderLayout.SOUTH);
+		southPanel.add(button);
+		button = new JButton("Back");
+		button.setAlignmentY(JButton.RIGHT_ALIGNMENT);
+		button.setActionCommand("back");
+		button.setSize(new Dimension(200, 30));
+		button.addActionListener(this);
+		southPanel.add(button);
+		getContentPane().add(southPanel, BorderLayout.SOUTH);
 		
 		String mapString = "";
         try {
@@ -197,6 +223,8 @@ public class GameSetupFrame extends JFrame implements ActionListener, ListSelect
         		buttonGroup.get(i-1).setVisible(false);
         	}
         }
+        setUndecorated(true);
+        setLocationRelativeTo(getRootPane());
 		setVisible(true);
 	}
 
@@ -282,6 +310,10 @@ public class GameSetupFrame extends JFrame implements ActionListener, ListSelect
 	        control.startGame(profile, mapChosen, nameSetChosen, gameMode, teams, (compPlayersOnly ? -1 : team));
 			this.dispose();
 		}
+		else if(e.getActionCommand().equals("back")) {
+			new MainMenu(control, profile);
+			this.dispose();
+		}
 		else
 		{
 			resetButtonColors();
@@ -311,5 +343,27 @@ public class GameSetupFrame extends JFrame implements ActionListener, ListSelect
 	public void valueChanged(ListSelectionEvent e) {
 		gameMode = modes[table.getSelectedRow()];
 	}
+	
+	private class PlayerTableModel extends AbstractTableModel {
 
+		@Override
+		public int getColumnCount() {
+			// TODO Auto-generated method stub
+			return 1;
+		}
+
+		@Override
+		public int getRowCount() {
+			// TODO Auto-generated method stub
+			return 2;
+		}
+
+		@Override
+		public Object getValueAt(int rowIndex, int columnIndex) {
+			if(rowIndex==0) return profile.getRankAndName();
+			if(rowIndex==getRowCount()-1) return "Add Player";
+			return null;
+		}
+		
+	}
 }
