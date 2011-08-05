@@ -22,6 +22,7 @@ import org.cwi.shoot.map.GameMap;
 import org.cwi.shoot.menu.MainMenu;
 import org.cwi.shoot.menu.PauseFrame;
 import org.cwi.shoot.model.Weapon;
+import org.cwi.shoot.profile.Profile;
 import org.cwi.shoot.util.VectorTools;
 import org.cwi.shoot.view.GameFrame;
 import org.cwi.shoot.view.StatsFrame;
@@ -36,16 +37,18 @@ public class Shoot implements KeyListener, MouseListener, MouseMotionListener, C
 	private int holdCounter;
 	private Point mouseLoc;
 	private boolean stop;
+	private Profile profile;
 	public Shoot() {
 		stop = false;
-		new MainMenu(this);
+		new MainMenu(this, null);
 	}
 	
-	public void startGame(String playerName, File mapFile, File nameSetFile, GameMode mode, char[] teams, int team) {
-		GameOptions setup = new GameOptions(mode, mapFile, nameSetFile, teams.length, team, playerName, 4);
+	public void startGame(Profile profile, File mapFile, File nameSetFile, GameMode mode, char[] teams, int team) {
+		GameOptions setup = new GameOptions(mode, mapFile, nameSetFile, teams.length, team, profile, 4);
 		holdCounter = -1;
 		map = new GameMap(setup);
 		this.mode = mode;
+		this.profile = profile;
 		
 		mouseLoc = new Point();
 		frame = new GameFrame("Shoot", map);

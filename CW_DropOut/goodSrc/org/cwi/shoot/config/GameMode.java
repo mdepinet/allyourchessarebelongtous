@@ -3,8 +3,10 @@ package org.cwi.shoot.config;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
@@ -12,7 +14,6 @@ import javax.swing.JOptionPane;
 import org.cwi.shoot.ai.objective.Objective;
 import org.cwi.shoot.map.GameMap;
 import org.cwi.shoot.model.Player;
-import org.cwi.shoot.model.PlayerStats;
 import org.cwi.shoot.model.Weapon;
 import org.cwi.shoot.threads.RespawnThread;
 
@@ -64,6 +65,16 @@ public abstract class GameMode {
 		}
 	}
 	public void onReset(GameMap map, GameOptions setup){
+		if(map.getPlayer()!=null) {
+			Map<String, Object> stats = new HashMap<String, Object>();
+			int score = 10 * (map.getPlayer().getStats().getKillsMinusSuicides() - map.getPlayer().getStats().getNumDeaths());
+			stats.put("TotalScore:", score);
+			stats.put("Kills:", map.getPlayer().getStats().getKillsMinusSuicides());
+			stats.put("Deaths:", map.getPlayer().getStats().getNumDeaths());
+			stats.put("Bullets-shot:", map.getPlayer().getStats().getShotsFired());
+			setup.getProfile().addStats(stats);
+			setup.getProfile().writeToFile();
+		}
 		for(Player p : map.getPlayers()) {
 			p.reset();
 			map.spawn(p);
