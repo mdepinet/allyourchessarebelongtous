@@ -88,7 +88,7 @@ public class MainMenu extends JFrame implements ActionListener, ListSelectionLis
 		panel.add(buttonPanel);
 		panel.setOpaque(false);
 		southPanel.add(panel, BorderLayout.CENTER);
-		JLabel label = new JLabel("Welcome" + (profile.getRankAndName().equals("") || profile == null ? ". Please create a profile before playing." : " " + profile.getRankAndName()));
+		JLabel label = new JLabel("Welcome" + (profile.getRankAndName().equals("") || profile == null || profile.getRankAndName().equals("default") ? ". Please create a profile before playing." : " " + profile.getRankAndName()));
 		southPanel.add(label, BorderLayout.NORTH);
 		backgPanel.add(southPanel, BorderLayout.SOUTH);
 		

@@ -95,9 +95,9 @@ public class GameSetupFrame2 extends JFrame implements ActionListener, ListSelec
 		getContentPane().add(pPanel, BorderLayout.WEST);
 		
 		JPanel optionsPanel = new JPanel();
-		optionsPanel.setPreferredSize(new Dimension(400,200));
+		//optionsPanel.setPreferredSize(new Dimension(400,200));
 		optionsPanel.setLayout(new FlowLayout());
-		getContentPane().add(optionsPanel, BorderLayout.NORTH);
+		//getContentPane().add(optionsPanel, BorderLayout.NORTH);
 		
 		JPanel optionsSubPanel = new JPanel();
 		optionsSubPanel.setPreferredSize(new Dimension(400,30));
@@ -169,6 +169,7 @@ public class GameSetupFrame2 extends JFrame implements ActionListener, ListSelec
 		}
 		table = new JTable(modeNames, columnNames);
 		JPanel panel = new JPanel(new FlowLayout());
+		panel.setPreferredSize(new Dimension(400,200));
 		JScrollPane pane = new JScrollPane(table);
 		table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		table.getSelectionModel().addListSelectionListener(this);
@@ -196,7 +197,8 @@ public class GameSetupFrame2 extends JFrame implements ActionListener, ListSelec
 			buttonGroup.add(button);
 		}
 		panel.add(buttonPanel);
-		getContentPane().add(panel, BorderLayout.CENTER);
+		optionsPanel.add(panel);
+		getContentPane().add(optionsPanel, BorderLayout.CENTER);
 		
 		JPanel southPanel = new JPanel(new FlowLayout());
 		button = new JButton("Start Game");

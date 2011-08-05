@@ -2,6 +2,8 @@ package org.cwi.shoot.view;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Toolkit;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -18,7 +20,9 @@ public class GameFrame extends JFrame {
 	public GameFrame(String s, GameMap map)
 	{
 		super(s);
-		this.setBounds(250,200,WIDTH+6,HEIGHT+28);
+		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+		//this.setBounds(250,200,WIDTH+6,HEIGHT+28);
+		this.setBounds(0,0,WIDTH+6, screenSize.height);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		JPanel cPane = new JPanel(new BorderLayout());
 		cPane.setBorder(new LineBorder(Color.BLACK, 5));
@@ -26,6 +30,7 @@ public class GameFrame extends JFrame {
 		this.setResizable(false);
 		canvas = new GameCanvas();
 		getContentPane().add(canvas);
+		setLocationRelativeTo(getRootPane());
 		setUndecorated(true);
 		this.setVisible(true);
 		canvas.init();
