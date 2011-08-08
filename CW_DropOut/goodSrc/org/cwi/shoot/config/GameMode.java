@@ -71,7 +71,7 @@ public abstract class GameMode {
 			stats.put("TotalScore:", score);
 			stats.put("Kills:", map.getPlayer().getStats().getKillsMinusSuicides());
 			stats.put("Deaths:", map.getPlayer().getStats().getNumDeaths());
-			stats.put("Bullets-shot:", map.getPlayer().getStats().getShotsFired());
+//			stats.put("Bullets-shot:", map.getPlayer().getStats().getShotsFired());
 			setup.getProfile().addStats(stats);
 			setup.getProfile().writeToFile();
 		}
