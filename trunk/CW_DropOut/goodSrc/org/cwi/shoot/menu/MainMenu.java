@@ -9,9 +9,13 @@ import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Scanner;
 
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
@@ -31,6 +35,7 @@ import org.cwi.shoot.view.OptionsFrame;
 public class MainMenu extends JFrame implements ActionListener, ListSelectionListener {
 	private static final long serialVersionUID = 1L;
 	public static final String IMG_LOC = "resource/images/";
+	public static final String PREFERENCES_LOC = "resource/preferences.txt";
 	private ArrayList<JButton> buttonGroup;
 	private Shoot control;
 	private JPanel buttonPanel;
@@ -42,7 +47,24 @@ public class MainMenu extends JFrame implements ActionListener, ListSelectionLis
 		
 		this.control = control;
 		
-		if(prof==null) profile = new Profile(OptionsFrame.getProfileNames().size()==0 ? "" : OptionsFrame.getProfileNames().get(0).substring(0,OptionsFrame.getProfileNames().get(0).indexOf(".pprf")));
+		if(prof==null) {
+			String profileName = "";
+			try {
+				Scanner scan = new Scanner(new File(PREFERENCES_LOC));
+				while(scan.hasNextLine()) {
+					String line = scan.nextLine();
+					if(line.contains("Profile:"))
+						profileName = line.substring(line.indexOf("Profile:")+"Profile:".length()+1);
+				}
+				scan.close();
+				
+			} catch (FileNotFoundException e) {
+				e.printStackTrace();
+			}
+			if(profileName.equals("")) profile = new Profile("");
+			else profile = new Profile(profileName);
+//			profile = new Profile(OptionsFrame.getProfileNames().size()==0 ? "" : OptionsFrame.getProfileNames().get(0).substring(0,OptionsFrame.getProfileNames().get(0).indexOf(".pprf")));
+		}
 		else profile = prof;
 		
 		setBounds(new Rectangle(800,625));
@@ -135,6 +157,13 @@ public class MainMenu extends JFrame implements ActionListener, ListSelectionLis
 				return;
 			}
 			new GameSetupFrame(control, profile);
+			try {
+				BufferedWriter writer = new BufferedWriter(new FileWriter(PREFERENCES_LOC));
+				writer.write("Profile: " + profile.getName());
+				writer.close();
+			} catch (IOException e1) {
+				e1.printStackTrace();
+			}
 			this.dispose();
 		}
 		else if(e.getActionCommand().equals("option3")) {

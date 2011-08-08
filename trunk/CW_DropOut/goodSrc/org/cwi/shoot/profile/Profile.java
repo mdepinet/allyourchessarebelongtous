@@ -24,6 +24,8 @@ public class Profile {
 	private int deaths;
 	private int bulletsShot;
 	private List<String> achievements;
+	private String prevNameSet;
+	private String prevWepSet;
 	
 	public Profile(String profileName) {
 		name = profileName;
@@ -67,11 +69,16 @@ public class Profile {
 			}
 			data.put(item, achievements);
 		}
-		else if(item.equals("Bullets-shot:")) {
+		else if(item.equals("Bullets--shot:")) {
 			bulletsShot = Integer.parseInt(scan.next());
-			data.put(item.replace("-", " "), bulletsShot);
+			data.put(item.replace("--", " "), bulletsShot);
 		}
-		
+		else if(item.equals("Prev--nameset:")) {
+			prevNameSet = scan.next().replace("--", " ");
+		}
+		else if(item.equals("Prev--wepset:")) {
+			prevWepSet = scan.next().replace("--", " ");
+		}
 	}
 	
 	public String getName() {
@@ -91,6 +98,18 @@ public class Profile {
 	}
 	public Map<String, Object> getData() {
 		return data;
+	}
+	public String getPrevNameSet() {
+		return prevNameSet;
+	}
+	public void setPrevNameSet(String ns) {
+		prevNameSet = ns;
+	}
+	public String getPrevWepSet() {
+		return prevWepSet;
+	}
+	public void setPrevWepSet(String ws) {
+		prevWepSet = ws;
 	}
 	
 	public void addStats(Map<String, Object> stats) {
@@ -112,10 +131,12 @@ public class Profile {
 					writer.write("\n");
 				}
 				else {
-					writer.write(s.replace(" ", "-")+" ");
+					writer.write(s.replace(" ", "--")+" ");
 					writer.write(data.get(s)+"\n");
 				}
 			}
+			writer.write("Prev-nameset: "+prevNameSet.replace(" ", "--")+"\n");
+			writer.write("Prev-wepset: "+prevWepSet.replace(" ", "--")+"\n");
 			writer.close();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block

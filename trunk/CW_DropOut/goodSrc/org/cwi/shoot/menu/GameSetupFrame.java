@@ -66,8 +66,9 @@ public class GameSetupFrame extends JFrame implements ActionListener, ListSelect
 	private Profile profile;
 	private JPanel pPanel;
 	private TableModel data;
-	private String weaponSetChosen = WeaponLoader.weaponSet;
-	WeaponTableModel wdata;
+	private String weaponSetChosen;
+	private JLabel wsLabel;
+	private WeaponTableModel wdata;
 	
 	public GameSetupFrame(Shoot control, Profile profile) {
 		super("Game Setup Menu");
@@ -75,10 +76,11 @@ public class GameSetupFrame extends JFrame implements ActionListener, ListSelect
 		team = 1;
 		this.control = control;
 		this.profile = profile;
+		weaponSetChosen = profile.getPrevWepSet() != null ? profile.getPrevWepSet() : WeaponLoader.weaponSet;
 		buttonGroup = new ArrayList<JButton>();
 		gameMode = null;
 		mapChosen = new File(GameOptions.MAP_RESOURCE);
-		nameSetChosen = new File(GameOptions.NAME_RESOURCE);
+		nameSetChosen = new File(profile.getPrevNameSet() != null ? profile.getPrevNameSet() : GameOptions.NAME_RESOURCE);
 		setBounds(new Rectangle(800,600));
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		
@@ -102,7 +104,7 @@ public class GameSetupFrame extends JFrame implements ActionListener, ListSelect
 		pPanel.add(spane, BorderLayout.CENTER);
 		getContentPane().add(pPanel, BorderLayout.WEST);
 		
-		wdata = new WeaponTableModel("resource/weapon_sets/default.ws");
+		wdata = new WeaponTableModel(weaponSetChosen);
 		table = new JTable(wdata);
 		pPanel = new JPanel(new BorderLayout());
 		spane = new JScrollPane(table);
@@ -113,9 +115,13 @@ public class GameSetupFrame extends JFrame implements ActionListener, ListSelect
 		table.setColumnSelectionAllowed(false);
 		table.setRowSelectionAllowed(true);
 		pPanel.add(spane, BorderLayout.CENTER);
-		JLabel wsLabel = new JLabel("Current Weapon Set:\n\t"+wdata.getWeaponSet());
-		wsLabel.setPreferredSize(new Dimension(100,50));
-		pPanel.add(wsLabel,BorderLayout.NORTH);
+		JPanel wsPanel = new JPanel(new BorderLayout());
+		JLabel labelws = new JLabel("Current Weapon Set:");
+//		wsLabel.setPreferredSize(new Dimension(150,200));
+		wsPanel.add(labelws, BorderLayout.NORTH);
+		wsLabel = new JLabel("\t     " + wdata.getWeaponSet());
+		wsPanel.add(wsLabel, BorderLayout.SOUTH);
+		pPanel.add(wsPanel, BorderLayout.NORTH);
 		JButton wsButton = new JButton("Change Weapon Set");
 		wsButton.addActionListener(this);
 		wsButton.setActionCommand("changews");
@@ -334,9 +340,10 @@ public class GameSetupFrame extends JFrame implements ActionListener, ListSelect
 			});
 			weaponSetChosen = null;
 	        if (chooser.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) {
-	        	weaponSetChosen = "resource/weapon_sets/" + chooser.getSelectedFile().getName();
+	        	weaponSetChosen = chooser.getSelectedFile().getAbsolutePath();
 	        	wdata.changeWS(weaponSetChosen);
 	        	wdata.fireTableDataChanged();
+	        	wsLabel.setText("\t     " + wdata.getWeaponSet());
 	        }
 	        else weaponSetChosen = WeaponLoader.DEFAULT_WEAPON_SET;
 		}
@@ -355,6 +362,8 @@ public class GameSetupFrame extends JFrame implements ActionListener, ListSelect
 		        for(int i =0; i < teams.length;i++)
 		        	teams[i]=list.get(i);
 	        control.startGame(profile, mapChosen, nameSetChosen, gameMode, teams, (compPlayersOnly ? -1 : team), weaponSetChosen);
+	        profile.setPrevNameSet(nameSetChosen.getAbsolutePath());
+	        profile.setPrevWepSet(weaponSetChosen);
 			this.dispose();
 		}
 		else if(e.getActionCommand().equals("back")) {
@@ -480,7 +489,7 @@ public class GameSetupFrame extends JFrame implements ActionListener, ListSelect
 			}
 		}
 		public String getWeaponSet() {
-			return wepSet.substring(wepSet.lastIndexOf("/")+1, wepSet.indexOf(".ws"));
+			return wepSet.substring((wepSet.lastIndexOf("/") != -1 ? wepSet.lastIndexOf("/") : wepSet.lastIndexOf("\\"))+1, wepSet.indexOf(".ws"));
 		}
 	}
 }
