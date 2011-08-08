@@ -17,6 +17,9 @@ import java.nio.MappedByteBuffer;
 import java.nio.channels.FileChannel;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Scanner;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -30,16 +33,22 @@ import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
 import javax.swing.SwingConstants;
+import javax.swing.border.LineBorder;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.filechooser.FileFilter;
+import javax.swing.table.AbstractTableModel;
+import javax.swing.table.TableModel;
 
 import org.cwi.shoot.config.GameMode;
 import org.cwi.shoot.config.GameOptions;
 import org.cwi.shoot.control.Shoot;
 import org.cwi.shoot.map.GameMap;
 import org.cwi.shoot.model.Weapon;
+import org.cwi.shoot.model.Weapon.WeaponType;
 import org.cwi.shoot.profile.Profile;
+import org.cwi.shoot.util.WeaponDefinition;
+import org.cwi.shoot.util.WeaponLoader;
 
 public class GameSetupFrame extends JFrame implements ActionListener, ListSelectionListener {
 	private static final long serialVersionUID = -6659414234158999706L;
@@ -55,9 +64,13 @@ public class GameSetupFrame extends JFrame implements ActionListener, ListSelect
 	private GameMode[] modes;
 	private boolean compPlayersOnly;
 	private Profile profile;
+	private JPanel pPanel;
+	private TableModel data;
+	private String weaponSetChosen;
+	WeaponTableModel wdata;
 	
 	public GameSetupFrame(Shoot control, Profile profile) {
-		super("Shoot Menu");
+		super("Game Setup Menu");
 		compPlayersOnly = false;
 		team = 1;
 		this.control = control;
@@ -66,25 +79,55 @@ public class GameSetupFrame extends JFrame implements ActionListener, ListSelect
 		gameMode = null;
 		mapChosen = new File(GameOptions.MAP_RESOURCE);
 		nameSetChosen = new File(GameOptions.NAME_RESOURCE);
-		setBounds(new Rectangle(400,300,400,600));
+		setBounds(new Rectangle(800,600));
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		
+		JPanel cPane = new JPanel(new BorderLayout());
+		cPane.setBorder(new LineBorder(Color.BLACK, 5));
+		setContentPane(cPane);
 		getContentPane().setLayout(new BorderLayout());
 		
+		
+		data = new PlayerTableModel();
+		table = new JTable(data);
+		pPanel = new JPanel(new BorderLayout());
+		JScrollPane spane = new JScrollPane(table);
+		table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+		table.getSelectionModel().addListSelectionListener(this);
+		spane.setPreferredSize(new Dimension(150, 200));
+		table.setRowHeight(30);
+		table.setColumnSelectionAllowed(false);
+		table.setRowSelectionAllowed(true);
+		table.setTableHeader(null);
+		pPanel.add(spane, BorderLayout.CENTER);
+		getContentPane().add(pPanel, BorderLayout.WEST);
+		
+		wdata = new WeaponTableModel("resource/weapon_sets/default.ws");
+		table = new JTable(wdata);
+		pPanel = new JPanel(new BorderLayout());
+		spane = new JScrollPane(table);
+		table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+		table.getSelectionModel().addListSelectionListener(this);
+		spane.setPreferredSize(new Dimension(150, 200));
+		table.setRowHeight(30);
+		table.setColumnSelectionAllowed(false);
+		table.setRowSelectionAllowed(true);
+		pPanel.add(spane, BorderLayout.CENTER);
+		JButton wsButton = new JButton("Change Weapon Set");
+		wsButton.addActionListener(this);
+		wsButton.setActionCommand("changews");
+		pPanel.add(wsButton, BorderLayout.SOUTH);
+		getContentPane().add(pPanel, BorderLayout.EAST);
+		
 		JPanel optionsPanel = new JPanel();
-		optionsPanel.setPreferredSize(new Dimension(400,200));
+		//optionsPanel.setPreferredSize(new Dimension(400,200));
 		optionsPanel.setLayout(new FlowLayout());
-		getContentPane().add(optionsPanel, BorderLayout.NORTH);
+		//getContentPane().add(optionsPanel, BorderLayout.NORTH);
 		
 		JPanel optionsSubPanel = new JPanel();
 		optionsSubPanel.setPreferredSize(new Dimension(400,30));
 		optionsSubPanel.setLayout(new FlowLayout());
 		optionsSubPanel.setAlignmentY(JPanel.CENTER_ALIGNMENT);
-//		JLabel label = new JLabel("What is your name?", SwingConstants.LEFT);
-//		label.setPreferredSize(new Dimension(150,20));
-//		optionsSubPanel.add(label);
-//		nameTextField = new JTextField("Player 1");
-//		nameTextField.setPreferredSize(new Dimension(200,20));
-//		optionsSubPanel.add(nameTextField);
 		JLabel label = new JLabel(profile.getRankAndName());
 		label.setPreferredSize(new Dimension(150,20));
 		optionsSubPanel.add(label);
@@ -151,6 +194,7 @@ public class GameSetupFrame extends JFrame implements ActionListener, ListSelect
 		}
 		table = new JTable(modeNames, columnNames);
 		JPanel panel = new JPanel(new FlowLayout());
+		panel.setPreferredSize(new Dimension(400,200));
 		JScrollPane pane = new JScrollPane(table);
 		table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		table.getSelectionModel().addListSelectionListener(this);
@@ -178,14 +222,23 @@ public class GameSetupFrame extends JFrame implements ActionListener, ListSelect
 			buttonGroup.add(button);
 		}
 		panel.add(buttonPanel);
-		getContentPane().add(panel, BorderLayout.CENTER);
+		optionsPanel.add(panel);
+		getContentPane().add(optionsPanel, BorderLayout.CENTER);
 		
+		JPanel southPanel = new JPanel(new FlowLayout());
 		button = new JButton("Start Game");
 		button.setAlignmentY(JButton.RIGHT_ALIGNMENT);
 		button.setActionCommand("startgame");
 		button.setSize(new Dimension(200, 30));
 		button.addActionListener(this);
-		getContentPane().add(button, BorderLayout.SOUTH);
+		southPanel.add(button);
+		button = new JButton("Back");
+		button.setAlignmentY(JButton.RIGHT_ALIGNMENT);
+		button.setActionCommand("back");
+		button.setSize(new Dimension(200, 30));
+		button.addActionListener(this);
+		southPanel.add(button);
+		getContentPane().add(southPanel, BorderLayout.SOUTH);
 		
 		String mapString = "";
         try {
@@ -197,6 +250,8 @@ public class GameSetupFrame extends JFrame implements ActionListener, ListSelect
         		buttonGroup.get(i-1).setVisible(false);
         	}
         }
+        setUndecorated(true);
+        setLocationRelativeTo(getRootPane());
 		setVisible(true);
 	}
 
@@ -265,6 +320,26 @@ public class GameSetupFrame extends JFrame implements ActionListener, ListSelect
 	        else nameSetChosen = new File(GameOptions.NAME_RESOURCE);
 	        nameSetTextField.setText(nameSetChosen.getName());
 		}
+		else if (e.getActionCommand().equals("changews")){
+			JFileChooser chooser = new JFileChooser("resource/weapon_sets");
+			chooser.setFileFilter(new FileFilter(){
+				@Override
+				public boolean accept(File f) {
+					return f.isDirectory() || f.getName().endsWith(".ws");
+				}
+				@Override
+				public String getDescription() {
+					return "Weapon Set files";
+				}
+			});
+			weaponSetChosen = null;
+	        if (chooser.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) {
+	        	weaponSetChosen = "resource/weapon_sets/" + chooser.getSelectedFile().getName();
+	        	wdata.changeWS(weaponSetChosen);
+	        	wdata.fireTableDataChanged();
+	        }
+	        else weaponSetChosen = GameOptions.DEFAULT_WEAPON_SET;
+		}
 		else if(e.getActionCommand().equals("startgame")) {
 			ArrayList<Character> list = new ArrayList<Character>();
 			 String mapString = "";
@@ -279,7 +354,11 @@ public class GameSetupFrame extends JFrame implements ActionListener, ListSelect
 		        char[] teams = new char[list.size()];
 		        for(int i =0; i < teams.length;i++)
 		        	teams[i]=list.get(i);
-	        control.startGame(profile, mapChosen, nameSetChosen, gameMode, teams, (compPlayersOnly ? -1 : team));
+	        control.startGame(profile, mapChosen, nameSetChosen, gameMode, teams, (compPlayersOnly ? -1 : team), weaponSetChosen);
+			this.dispose();
+		}
+		else if(e.getActionCommand().equals("back")) {
+			new MainMenu(control, profile);
 			this.dispose();
 		}
 		else
@@ -311,5 +390,95 @@ public class GameSetupFrame extends JFrame implements ActionListener, ListSelect
 	public void valueChanged(ListSelectionEvent e) {
 		gameMode = modes[table.getSelectedRow()];
 	}
+	
+	private class PlayerTableModel extends AbstractTableModel {
+		public String getColumnName(int index) {
+			return "Players";
+		}
+		@Override
+		public int getColumnCount() {
+			// TODO Auto-generated method stub
+			return 1;
+		}
 
+		@Override
+		public int getRowCount() {
+			// TODO Auto-generated method stub
+			return 2;
+		}
+
+		@Override
+		public Object getValueAt(int rowIndex, int columnIndex) {
+			if(rowIndex==0) return profile.getRankAndName();
+			if(rowIndex==getRowCount()-1) return "Add Player";
+			return null;
+		}
+		
+	}
+	private class WeaponTableModel extends AbstractTableModel {
+		private static final long serialVersionUID = 1L;
+		private List<String> weaponSet;
+		public WeaponTableModel(String ws) {
+			weaponSet = new ArrayList<String>();
+			Scanner scan = null;
+			try{
+				scan = new Scanner(new File(ws));
+				while (scan.hasNext()){
+					String line = scan.nextLine();
+					if (!line.startsWith(WeaponLoader.COMMENT_MARKER)){
+						WeaponDefinition wepDef = new WeaponDefinition(line);
+						if(!wepDef.getTypes().contains(WeaponType.OBJECTIVE)) {
+							String wep = wepDef.getName() + "\n";
+							for(WeaponType type : wepDef.getTypes())
+								wep = wep + " " + type.toString();
+							weaponSet.add(wep);
+						}
+					}
+				}
+			} catch (IOException ex){
+				ex.printStackTrace();
+			}
+		}
+		public String getColumnName(int index) {
+			return "Weapons";
+			
+		}
+		@Override
+		public int getColumnCount() {
+			// TODO Auto-generated method stub
+			return 1;
+		}
+
+		@Override
+		public int getRowCount() {
+			// TODO Auto-generated method stub
+			return weaponSet.size();
+		}
+
+		@Override
+		public Object getValueAt(int rowIndex, int columnIndex) {
+			return weaponSet.get(rowIndex);
+		}
+		public void changeWS(String ws) {
+			weaponSet = new ArrayList<String>();
+			Scanner scan = null;
+			try{
+				scan = new Scanner(new File(ws));
+				while (scan.hasNext()){
+					String line = scan.nextLine();
+					if (!line.startsWith(WeaponLoader.COMMENT_MARKER)){
+						WeaponDefinition wepDef = new WeaponDefinition(line);
+						if(!wepDef.getTypes().contains(WeaponType.OBJECTIVE)) {
+							String wep = wepDef.getName() + "\n";
+							for(WeaponType type : wepDef.getTypes())
+								wep = wep + " " + type.toString();
+							weaponSet.add(wep);
+						}
+					}
+				}
+			} catch (IOException ex){
+				ex.printStackTrace();
+			}
+		}
+	}
 }

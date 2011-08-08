@@ -232,6 +232,7 @@ public class OptionsFrame extends JFrame implements ActionListener, ListSelectio
 		}
 		
 		public int getRowCount() {
+			if(prof==null) return 0;
 			return prof.getData().keySet().size()+1;
 		}
 
