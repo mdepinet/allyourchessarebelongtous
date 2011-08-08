@@ -6,15 +6,16 @@ import java.util.Map;
 import java.util.Scanner;
 import java.util.TreeMap;
 
+import org.cwi.shoot.config.GameOptions;
 import org.cwi.shoot.model.Weapon;
 
 public class WeaponLoader {
-	private static final String defaultWeaponSet = "resource/default.ws";
-	private static final String COMMENT_MARKER = "#";
+	public static final String COMMENT_MARKER = "#";
 	
 	private static Map<String,WeaponDefinition> definitions;
 	private static Map<Character,WeaponDefinition> chars;
 	private static WeaponDefinition defaultWeapon;
+	private static String weaponSet;
 	
 	public static boolean load(Weapon wep, String name){
 		if (definitions == null || definitions.isEmpty()) loadAll();
@@ -37,7 +38,8 @@ public class WeaponLoader {
 		chars = new TreeMap<Character,WeaponDefinition>();
 		Scanner scan = null;
 		try{
-			scan = new Scanner(new File(defaultWeaponSet));
+			if(weaponSet == null) weaponSet = "resource/weapon_sets/default.ws";
+			scan = new Scanner(new File(GameOptions.getWeaponSet()));
 			while (scan.hasNext()){
 				String line = scan.nextLine();
 				if (!line.startsWith(COMMENT_MARKER)){
@@ -60,5 +62,8 @@ public class WeaponLoader {
 		if (definitions == null || definitions.isEmpty()) loadAll();
 		if (s.equalsIgnoreCase("Default")) return defaultWeapon;
 		return definitions.get(s);
+	}
+	public static void defineWeaponSet(String ws) {
+		weaponSet = ws;
 	}
 }

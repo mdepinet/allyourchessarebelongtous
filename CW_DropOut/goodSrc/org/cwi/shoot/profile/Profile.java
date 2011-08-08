@@ -29,15 +29,18 @@ public class Profile {
 		name = profileName;
 		data = new HashMap<String, Object>();
 		Scanner scan = null;
-		try {
-			scan = new Scanner(new File(PROFILE_LOCATION+profileName+".pprf"));
-			while(scan.hasNextLine()) {
-				processLine(scan.nextLine());
+
+		if(!profileName.equals("")) {
+			try {
+				scan = new Scanner(new File(PROFILE_LOCATION+profileName+".pprf"));
+				while(scan.hasNextLine()) {
+					processLine(scan.nextLine());
+				}
+				scan.close();
+			} catch (FileNotFoundException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}
-			scan.close();
-		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
 		}
 	}
 	

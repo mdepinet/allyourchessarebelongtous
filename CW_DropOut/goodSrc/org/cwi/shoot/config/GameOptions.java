@@ -15,6 +15,7 @@ import org.cwi.shoot.util.OtherNameGenerator;
 public class GameOptions {
 	public static final String NAME_RESOURCE = "resource/names/namePartsNigerian.txt";
 	public static final String MAP_RESOURCE = "resource/maps/default.map";
+	public static final String DEFAULT_WEAPON_SET = "resource/weapon_sets/default.ws";
 	private static final int DEFAULT_MAP_HEIGHT = 30;
 	private static final int DEFAULT_MAP_WIDTH = 30;
 	public static final char BLANK_CHARACTER = '_';
@@ -28,14 +29,16 @@ public class GameOptions {
 	private int playerTeam;
 	private List<Character> validChars;
 	private Profile profile;
+	private static String weaponSet;
 	
-	public GameOptions(GameMode mode, File mapFile, File nameGenFile, int numTeams, int playerTeam, Profile profile, int playersPerTeam){
+	public GameOptions(GameMode mode, File mapFile, File nameGenFile, int numTeams, int playerTeam, Profile profile, int playersPerTeam, String weaponSet){
 		this.mode = mode;
 		this.mapFile = mapFile;
 		this.numTeams = Math.max(numTeams, 2); //Minimum 2 teams
 		this.playerTeam = playerTeam;
 		this.playersPerTeam = playersPerTeam;
 		this.profile = profile;
+		setWeaponSet(weaponSet);
 		if (mapFile == null || !mapFile.exists()) mapFile = new File(MAP_RESOURCE);
 		try {
 			if(nameGenFile.getAbsolutePath().contains("\\bonus\\"))
@@ -145,5 +148,13 @@ public class GameOptions {
 
 	public void setProfile(Profile profile) {
 		this.profile = profile;
+	}
+
+	public static String getWeaponSet() {
+		return weaponSet != null ? weaponSet : DEFAULT_WEAPON_SET;
+	}
+
+	public void setWeaponSet(String weaponSet) {
+		this.weaponSet = weaponSet;
 	}
 }

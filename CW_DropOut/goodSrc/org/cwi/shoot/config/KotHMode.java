@@ -143,7 +143,8 @@ public class KotHMode extends GameMode {
 	@Override
 	public void update(List<Player> players) {
 		if(teamControl==-1) {
-			for(Player p : players) {
+			for(int i = 0; i < players.size(); i++) {
+				Player p = players.get(i);
 				if(zone.containsKey(GameMap.getGridPoint(p.getLocation()))) {
 					teamControl = p.getTeam();
 					startTeamTime = startTeamTime==-1 ? System.currentTimeMillis() : startTeamTime;
@@ -163,7 +164,8 @@ public class KotHMode extends GameMode {
 		else {
 			boolean teamInZone = false;
 			boolean contested = false;
-			for(Player p : players) {
+			for(int i = 0; i < players.size(); i++) {
+				Player p = players.get(i);
 				if(p.getTeam()==teamControl && zone.containsKey(GameMap.getGridPoint(p.getLocation()))) {
 					teamInZone = true;
 					inTheZone.add(p);
@@ -181,20 +183,21 @@ public class KotHMode extends GameMode {
 			}
 			else if(!teamInZone) {
 				boolean inZone = false;
-				for(Player p : players) {
+				for(int i = 0; i < players.size(); i++) {
+					Player p = players.get(i);
 					if(zone.containsKey(GameMap.getGridPoint(p.getLocation()))) {
-						Integer i = teamPoints.get(teamControl);
-						i = (i == null ? 0 : i);
-						teamPoints.put(teamControl, (int) (teamControl != -1 ? i+teamTime : i));
+						Integer j = teamPoints.get(teamControl);
+						j = (j == null ? 0 : j);
+						teamPoints.put(teamControl, (int) (teamControl != -1 ? j+teamTime : j));
 						teamControl = p.getTeam();
 						startTeamTime = System.currentTimeMillis();
 						teamTime = (int) ((System.currentTimeMillis() - startTeamTime)/1000);
 					}
 				}
 				if(!inZone) {
-					Integer i = teamPoints.get(teamControl);
-					i = (i == null ? 0 : i);
-					teamPoints.put(teamControl, (int) (teamControl != -1 ? i+teamTime : i));
+					Integer j = teamPoints.get(teamControl);
+					j = (j == null ? 0 : j);
+					teamPoints.put(teamControl, (int) (teamControl != -1 ? j+teamTime : j));
 					teamControl = -1;
 					teamTime = -1;
 					startTeamTime = -1;

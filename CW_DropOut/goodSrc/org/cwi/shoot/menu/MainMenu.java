@@ -130,11 +130,11 @@ public class MainMenu extends JFrame implements ActionListener, ListSelectionLis
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		if(e.getActionCommand().equals("option1")) {
-			if(profile.equals("") || profile==null) {
+			if(profile.getName().equals("") || profile==null) {
 				JOptionPane.showMessageDialog(buttonGroup.get(0), "You must create a profile before playing.\nYou may do so in 'PROFILE MANAGEMENT'.", "No Profile found", 0);
 				return;
 			}
-			new GameSetupFrame2(control, profile);
+			new GameSetupFrame(control, profile);
 			this.dispose();
 		}
 		else if(e.getActionCommand().equals("option3")) {
