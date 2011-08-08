@@ -10,12 +10,13 @@ import org.cwi.shoot.config.GameOptions;
 import org.cwi.shoot.model.Weapon;
 
 public class WeaponLoader {
+	public static String DEFAULT_WEAPON_SET = "resource/weapon_sets/default.ws";
 	public static final String COMMENT_MARKER = "#";
 	
 	private static Map<String,WeaponDefinition> definitions;
 	private static Map<Character,WeaponDefinition> chars;
 	private static WeaponDefinition defaultWeapon;
-	private static String weaponSet;
+	public static String weaponSet = DEFAULT_WEAPON_SET;
 	
 	public static boolean load(Weapon wep, String name){
 		if (definitions == null || definitions.isEmpty()) loadAll();
@@ -38,8 +39,7 @@ public class WeaponLoader {
 		chars = new TreeMap<Character,WeaponDefinition>();
 		Scanner scan = null;
 		try{
-			if(weaponSet == null) weaponSet = "resource/weapon_sets/default.ws";
-			scan = new Scanner(new File(GameOptions.getWeaponSet()));
+			scan = new Scanner(new File(weaponSet));
 			while (scan.hasNext()){
 				String line = scan.nextLine();
 				if (!line.startsWith(COMMENT_MARKER)){
@@ -63,7 +63,9 @@ public class WeaponLoader {
 		if (s.equalsIgnoreCase("Default")) return defaultWeapon;
 		return definitions.get(s);
 	}
-	public static void defineWeaponSet(String ws) {
-		weaponSet = ws;
+	public static void unloadAll() {
+		definitions = null;
+		chars = null;
+		defaultWeapon = null;
 	}
 }

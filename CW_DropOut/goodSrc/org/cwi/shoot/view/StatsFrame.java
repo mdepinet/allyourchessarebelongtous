@@ -166,7 +166,7 @@ public class StatsFrame extends JFrame {
 					else {
 						for(int i=0; i < clipSize;i++)
 						{	
-							if(i<clipSize/2)
+							if(i<20 || i<clipSize/2)
 								backg.fillRect(getWidth()-12-(i*6),getHeight()-28, 4, 10);
 							else
 								backg.fillRect(getWidth()-12-((i-Math.max(20, clipSize/2)))*6,getHeight()-16, 4, 10);

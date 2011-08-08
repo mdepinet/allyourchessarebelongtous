@@ -66,7 +66,7 @@ public class GameSetupFrame extends JFrame implements ActionListener, ListSelect
 	private Profile profile;
 	private JPanel pPanel;
 	private TableModel data;
-	private String weaponSetChosen;
+	private String weaponSetChosen = WeaponLoader.weaponSet;
 	WeaponTableModel wdata;
 	
 	public GameSetupFrame(Shoot control, Profile profile) {
@@ -113,6 +113,9 @@ public class GameSetupFrame extends JFrame implements ActionListener, ListSelect
 		table.setColumnSelectionAllowed(false);
 		table.setRowSelectionAllowed(true);
 		pPanel.add(spane, BorderLayout.CENTER);
+		JLabel wsLabel = new JLabel("Current Weapon Set:\n\t"+wdata.getWeaponSet());
+		wsLabel.setPreferredSize(new Dimension(100,50));
+		pPanel.add(wsLabel,BorderLayout.NORTH);
 		JButton wsButton = new JButton("Change Weapon Set");
 		wsButton.addActionListener(this);
 		wsButton.setActionCommand("changews");
@@ -128,16 +131,13 @@ public class GameSetupFrame extends JFrame implements ActionListener, ListSelect
 		optionsSubPanel.setPreferredSize(new Dimension(400,30));
 		optionsSubPanel.setLayout(new FlowLayout());
 		optionsSubPanel.setAlignmentY(JPanel.CENTER_ALIGNMENT);
-		JLabel label = new JLabel(profile.getRankAndName());
-		label.setPreferredSize(new Dimension(150,20));
-		optionsSubPanel.add(label);
 		optionsPanel.add(optionsSubPanel);
 		
 		optionsSubPanel = new JPanel();
 		optionsSubPanel.setPreferredSize(new Dimension(400, 60));
 		optionsSubPanel.setLayout(new FlowLayout());
 		optionsSubPanel.setAlignmentY(JPanel.CENTER_ALIGNMENT);
-		label = new JLabel("Pick a Map", SwingConstants.CENTER);
+		JLabel label = new JLabel("Pick a Map", SwingConstants.CENTER);
 		label.setPreferredSize(new Dimension(300,20));
 		optionsSubPanel.add(label);
 		mapTextField = new JTextField(mapChosen.getName());
@@ -338,7 +338,7 @@ public class GameSetupFrame extends JFrame implements ActionListener, ListSelect
 	        	wdata.changeWS(weaponSetChosen);
 	        	wdata.fireTableDataChanged();
 	        }
-	        else weaponSetChosen = GameOptions.DEFAULT_WEAPON_SET;
+	        else weaponSetChosen = WeaponLoader.DEFAULT_WEAPON_SET;
 		}
 		else if(e.getActionCommand().equals("startgame")) {
 			ArrayList<Character> list = new ArrayList<Character>();
@@ -418,8 +418,10 @@ public class GameSetupFrame extends JFrame implements ActionListener, ListSelect
 	private class WeaponTableModel extends AbstractTableModel {
 		private static final long serialVersionUID = 1L;
 		private List<String> weaponSet;
+		private String wepSet;
 		public WeaponTableModel(String ws) {
 			weaponSet = new ArrayList<String>();
+			wepSet = ws;
 			Scanner scan = null;
 			try{
 				scan = new Scanner(new File(ws));
@@ -428,9 +430,7 @@ public class GameSetupFrame extends JFrame implements ActionListener, ListSelect
 					if (!line.startsWith(WeaponLoader.COMMENT_MARKER)){
 						WeaponDefinition wepDef = new WeaponDefinition(line);
 						if(!wepDef.getTypes().contains(WeaponType.OBJECTIVE)) {
-							String wep = wepDef.getName() + "\n";
-							for(WeaponType type : wepDef.getTypes())
-								wep = wep + " " + type.toString();
+							String wep = wepDef.getName() + " / " + wepDef.getRepresentativeChar();
 							weaponSet.add(wep);
 						}
 					}
@@ -440,7 +440,7 @@ public class GameSetupFrame extends JFrame implements ActionListener, ListSelect
 			}
 		}
 		public String getColumnName(int index) {
-			return "Weapons";
+			return "Weapon/Character on Map";
 			
 		}
 		@Override
@@ -461,6 +461,7 @@ public class GameSetupFrame extends JFrame implements ActionListener, ListSelect
 		}
 		public void changeWS(String ws) {
 			weaponSet = new ArrayList<String>();
+			wepSet = ws;
 			Scanner scan = null;
 			try{
 				scan = new Scanner(new File(ws));
@@ -469,9 +470,7 @@ public class GameSetupFrame extends JFrame implements ActionListener, ListSelect
 					if (!line.startsWith(WeaponLoader.COMMENT_MARKER)){
 						WeaponDefinition wepDef = new WeaponDefinition(line);
 						if(!wepDef.getTypes().contains(WeaponType.OBJECTIVE)) {
-							String wep = wepDef.getName() + "\n";
-							for(WeaponType type : wepDef.getTypes())
-								wep = wep + " " + type.toString();
+							String wep = wepDef.getName() + " / " + wepDef.getRepresentativeChar();
 							weaponSet.add(wep);
 						}
 					}
@@ -479,6 +478,9 @@ public class GameSetupFrame extends JFrame implements ActionListener, ListSelect
 			} catch (IOException ex){
 				ex.printStackTrace();
 			}
+		}
+		public String getWeaponSet() {
+			return wepSet.substring(wepSet.lastIndexOf("/")+1, wepSet.indexOf(".ws"));
 		}
 	}
 }

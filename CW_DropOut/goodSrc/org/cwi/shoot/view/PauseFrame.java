@@ -1,4 +1,4 @@
-package org.cwi.shoot.menu;
+package org.cwi.shoot.view;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
@@ -28,7 +28,7 @@ public class PauseFrame extends JFrame implements ActionListener {
 		JLabel label = new JLabel("PAUSED");
 		labelPanel.add(label);
 		getContentPane().add(labelPanel, BorderLayout.NORTH);
-		
+		control.getFrame().setFocusable(false);
 		JPanel panel = new JPanel(new FlowLayout());
 		panel.setPreferredSize(new Dimension(25,25));
 		JButton button = new JButton("Resume Game");
@@ -57,6 +57,7 @@ public class PauseFrame extends JFrame implements ActionListener {
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		if(e.getActionCommand().equals("resume")) {
+			control.getFrame().setFocusable(true);
 			control.resumeGame();
 			this.dispose();
 		}
