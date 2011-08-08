@@ -1,5 +1,6 @@
 package org.cwi.shoot.profile;
 
+import java.awt.Point;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -26,6 +27,7 @@ public class Profile {
 	private List<String> achievements;
 	private String prevNameSet;
 	private String prevWepSet;
+	private Point screensize;
 	
 	public Profile(String profileName) {
 		name = profileName;
@@ -79,6 +81,9 @@ public class Profile {
 		else if(item.equals("Prev--wepset:")) {
 			prevWepSet = scan.next().replace("--", " ");
 		}
+		else if(item.equals("Screensize:")) {
+			screensize = new Point(Integer.parseInt(scan.next()), Integer.parseInt(scan.next()));
+		}
 	}
 	
 	public String getName() {
@@ -111,6 +116,12 @@ public class Profile {
 	public void setPrevWepSet(String ws) {
 		prevWepSet = ws;
 	}
+	public Point getScreenSize() {
+		return screensize;
+	}
+	public void setScreenSize(Point ss) {
+		screensize = ss;
+	}
 	
 	public void addStats(Map<String, Object> stats) {
 		for(String s : stats.keySet()) {
@@ -137,6 +148,8 @@ public class Profile {
 			}
 			writer.write("Prev-nameset: "+prevNameSet.replace(" ", "--")+"\n");
 			writer.write("Prev-wepset: "+prevWepSet.replace(" ", "--")+"\n");
+			if(screensize!=null) writer.write("Screensize: "+screensize.x+" "+screensize.y+"\n");
+			else writer.write("Screensize: "+750+" "+750+"\n");
 			writer.close();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block

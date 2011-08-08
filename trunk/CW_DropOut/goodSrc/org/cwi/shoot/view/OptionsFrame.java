@@ -101,12 +101,13 @@ public class OptionsFrame extends JFrame implements ActionListener, ListSelectio
 		panel.add(button);
 		buttonGroup.add(button);
 		
-		JPanel mainPanel = new JPanel(new FlowLayout());
+		JPanel mainPanel = new JPanel(new BorderLayout());
 		profile = getProfileNames().size()==0 ? null : new Profile(getProfileNames().get((table.getSelectedRow()==-1 ? 0 : table.getSelectedRow())).substring(0, getProfileNames().get((table.getSelectedRow()==-1 ? 0 : table.getSelectedRow())).indexOf(".pprf")));
 		profileData = new ProfileTableModel(profile);
 		profileTable = new JTable(profileData);
 		profileTable.clearSelection();
-		mainPanel.add(profileTable);
+		mainPanel.add(profileTable, BorderLayout.NORTH);
+		
 		
 		getContentPane().add(pPanel, BorderLayout.WEST);
 		getContentPane().add(panel, BorderLayout.SOUTH);

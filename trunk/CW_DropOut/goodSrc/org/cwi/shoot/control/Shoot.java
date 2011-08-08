@@ -55,14 +55,14 @@ public class Shoot implements KeyListener, MouseListener, MouseMotionListener, C
 		this.profile = profile;
 		
 		mouseLoc = new Point();
-		frame = new GameFrame("Shoot", map);
+		if(profile.getScreenSize()==null) frame = new GameFrame("Shoot", map, -1, -1);
+		else frame = new GameFrame("Shoot", map, profile.getScreenSize().x, profile.getScreenSize().y);
 		frame.setFocusable(true);
 		frame.addFocusListener(this);
 		frame.getCanvas().addKeyListener(this);
 		frame.getCanvas().setFocusable(true);
 		frame.getCanvas().addMouseListener(this);
 		frame.getCanvas().addMouseMotionListener(this);
-		frame.getCanvas().requestFocusInWindow();
 		
 		statsFrame = new StatsFrame(mode, map.getPlayers(), teams);
 		statsFrame.setFocusable(true);
@@ -95,11 +95,18 @@ public class Shoot implements KeyListener, MouseListener, MouseMotionListener, C
 		long beginTime, timeTaken, timeLeft;
 		while (!stop) {
 			beginTime = System.nanoTime();
-			if(map.getPlayer()!=null){
+			if(map.getPlayer()!=null){ 
 				double HRZ_SCALE = (double)GameFrame.WIDTH / map.getPixelWidth();
 				double VERT_SCALE = (double)GameFrame.HEIGHT / map.getPixelHeight();
-				Point2D.Double playLoc = new Point2D.Double(map.getPlayer().getLocation().x*HRZ_SCALE,map.getPlayer().getLocation().y*VERT_SCALE);
-		        map.getPlayer().setOrientation(VectorTools.getOrientationToPoint(playLoc,new Point2D.Double(mouseLoc.x*HRZ_SCALE,mouseLoc.y*VERT_SCALE)));
+				Point2D.Double playLoc;
+				if(frame.isSmallerScreen()) {
+					playLoc = new Point2D.Double(frame.getBounds().getWidth()/2*frame.getBounds().getWidth() / map.getPixelWidth(),frame.getBounds().getHeight()/2*frame.getBounds().getHeight() / map.getPixelHeight());
+					map.getPlayer().setOrientation(VectorTools.getOrientationToPoint(playLoc,new Point2D.Double(mouseLoc.x*frame.getBounds().getWidth() / map.getPixelWidth(),mouseLoc.y*frame.getBounds().getHeight() / map.getPixelHeight())));
+				}
+				else {
+					playLoc = new Point2D.Double(map.getPlayer().getLocation().x*HRZ_SCALE,map.getPlayer().getLocation().y*VERT_SCALE);
+					map.getPlayer().setOrientation(VectorTools.getOrientationToPoint(playLoc,new Point2D.Double(mouseLoc.x*HRZ_SCALE,mouseLoc.y*VERT_SCALE)));
+				}
 		        if(holdCounter>=0) {
 		        	holdCounter++;
 		        	Weapon w = map.getPlayer().getCurrWeapon();
