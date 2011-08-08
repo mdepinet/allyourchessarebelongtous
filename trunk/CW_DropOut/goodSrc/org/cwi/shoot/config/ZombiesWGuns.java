@@ -56,8 +56,8 @@ public class ZombiesWGuns extends GameMode {
 			map.getPlayer().setCurrWeapon(new Weapon("Minigun"));
 			map.getPlayer().getCurrWeapon().setClipCount(-1);
 			map.getPlayer().getCurrWeapon().setClipSize(1000);*/
-			map.getPlayer().addWeapon(new Weapon("Flamethrower"), this);
-			map.getPlayer().setCurrWeapon(new Weapon("Flamethrower"));
+			map.getPlayer().addWeapon(new Weapon('T', new Point()), this);
+			map.getPlayer().setCurrWeapon(new Weapon('T', new Point()));
 			humanPlaying = true;
 			originalPlayer = map.getPlayer();
 		}
@@ -68,8 +68,8 @@ public class ZombiesWGuns extends GameMode {
 			p.setBrain(new SmartBrain());
 			map.getPlayers().add(p);
 			map.spawn(p);
-			map.getPlayers().get(0).addWeapon(new Weapon("Flamethrower"), this);
-			map.getPlayers().get(0).setCurrWeapon(new Weapon("Flamethrower"));
+			map.getPlayers().get(0).addWeapon(new Weapon('T', new Point()), this);
+			map.getPlayers().get(0).setCurrWeapon(new Weapon('T', new Point()));
 			humanPlaying = false;
 			originalPlayer = map.getPlayers().get(0);
 		}
@@ -100,8 +100,8 @@ public class ZombiesWGuns extends GameMode {
 			map.getPlayer().setCurrWeapon(new Weapon("Minigun"));
 			map.getPlayer().getCurrWeapon().setClipCount(-1);
 			map.getPlayer().getCurrWeapon().setClipSize(1000);*/
-			map.getPlayer().addWeapon(new Weapon("Flamethrower"), this);
-			map.getPlayer().setCurrWeapon(new Weapon("Flamethrower"));
+			map.getPlayer().addWeapon(new Weapon('T', new Point()), this);
+			map.getPlayer().setCurrWeapon(new Weapon('T', new Point()));
 			
 		}
 		else {
@@ -113,8 +113,8 @@ public class ZombiesWGuns extends GameMode {
 			map.getPlayers().get(0).getWeapons().clear();
 			map.spawn(originalPlayer);
 			map.getPlayers().get(0).removeWeapon(new Weapon("Default"));
-			map.getPlayers().get(0).addWeapon(new Weapon("Flamethrower"), this);
-			map.getPlayers().get(0).setCurrWeapon(new Weapon("Flamethrower"));
+			map.getPlayers().get(0).addWeapon(new Weapon('T', new Point()), this);
+			map.getPlayers().get(0).setCurrWeapon(new Weapon('T', new Point()));
 		}
 		
 		/*List<Player> z = addZombies(NUM_ENEMIES);

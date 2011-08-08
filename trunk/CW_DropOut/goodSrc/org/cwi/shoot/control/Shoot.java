@@ -20,11 +20,12 @@ import org.cwi.shoot.config.GameMode;
 import org.cwi.shoot.config.GameOptions;
 import org.cwi.shoot.map.GameMap;
 import org.cwi.shoot.menu.MainMenu;
-import org.cwi.shoot.menu.PauseFrame;
 import org.cwi.shoot.model.Weapon;
 import org.cwi.shoot.profile.Profile;
 import org.cwi.shoot.util.VectorTools;
+import org.cwi.shoot.util.WeaponLoader;
 import org.cwi.shoot.view.GameFrame;
+import org.cwi.shoot.view.PauseFrame;
 import org.cwi.shoot.view.StatsFrame;
 
 public class Shoot implements KeyListener, MouseListener, MouseMotionListener, ComponentListener, FocusListener {
@@ -44,7 +45,10 @@ public class Shoot implements KeyListener, MouseListener, MouseMotionListener, C
 	}
 	
 	public void startGame(Profile profile, File mapFile, File nameSetFile, GameMode mode, char[] teams, int team, String weaponSet) {
-		GameOptions setup = new GameOptions(mode, mapFile, nameSetFile, teams.length, team, profile, 4, weaponSet);
+		WeaponLoader.weaponSet = weaponSet;
+		WeaponLoader.unloadAll();
+		
+		GameOptions setup = new GameOptions(mode, mapFile, nameSetFile, teams.length, team, profile, 4);
 		holdCounter = -1;
 		map = new GameMap(setup);
 		this.mode = mode;
@@ -72,7 +76,6 @@ public class Shoot implements KeyListener, MouseListener, MouseMotionListener, C
 	                statsFrame.setVisible(true);
 	          }
 	    });
-
 		gameStart();
 	}
 
@@ -199,8 +202,10 @@ public class Shoot implements KeyListener, MouseListener, MouseMotionListener, C
 				break;
 			case KeyEvent.VK_P:
 				if(map.isPaused()) map.unpause();
-				else map.pause();
-				new PauseFrame(this);
+				else {
+					map.pause();
+					new PauseFrame(this);
+				}
 				break;
 			default:
 				if(e.getKeyChar()>47 && e.getKeyChar()<58)
