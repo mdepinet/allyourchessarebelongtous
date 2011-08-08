@@ -21,7 +21,7 @@ public class GameFrame extends JFrame {
 	{
 		super(s);
 		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-		this.setBounds(250,200,WIDTH+6,HEIGHT+28);
+		this.setBounds(250,200,WIDTH+10,HEIGHT+10);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		JPanel cPane = new JPanel(new BorderLayout());
 		cPane.setBorder(new LineBorder(Color.BLACK, 5));
