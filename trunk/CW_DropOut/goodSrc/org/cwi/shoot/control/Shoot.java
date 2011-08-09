@@ -63,6 +63,7 @@ public class Shoot implements KeyListener, MouseListener, MouseMotionListener, C
 		frame.getCanvas().setFocusable(true);
 		frame.getCanvas().addMouseListener(this);
 		frame.getCanvas().addMouseMotionListener(this);
+		frame.getCanvas().requestFocusInWindow();
 		
 		statsFrame = new StatsFrame(mode, map.getPlayers(), teams);
 		statsFrame.setFocusable(true);

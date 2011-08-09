@@ -1,12 +1,14 @@
 package org.cwi.shoot.view;
 
 import java.awt.BorderLayout;
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -29,15 +31,23 @@ public class PauseFrame extends JFrame implements ActionListener {
 		labelPanel.add(label);
 		getContentPane().add(labelPanel, BorderLayout.NORTH);
 		control.getFrame().setFocusable(false);
-		JPanel panel = new JPanel(new FlowLayout());
+		JPanel panel = new JPanel();
+		panel.setLayout(new BoxLayout(panel, BoxLayout.PAGE_AXIS));
 		panel.setPreferredSize(new Dimension(25,25));
 		JButton button = new JButton("Resume Game");
 		button.addActionListener(this);
 		button.setActionCommand("resume");
+		button.setAlignmentX(Component.CENTER_ALIGNMENT);
+		panel.add(button);
+		button = new JButton("Options");
+		button.addActionListener(this);
+		button.setActionCommand("options");
+		button.setAlignmentX(Component.CENTER_ALIGNMENT);
 		panel.add(button);
 		button = new JButton("Quit Game");
 		button.addActionListener(this);
 		button.setActionCommand("exit");
+		button.setAlignmentX(Component.CENTER_ALIGNMENT);
 		panel.add(button);
 		
 		JPanel qPanel = new JPanel();
@@ -60,6 +70,9 @@ public class PauseFrame extends JFrame implements ActionListener {
 			control.getFrame().setFocusable(true);
 			control.resumeGame();
 			this.dispose();
+		}
+		else if(e.getActionCommand().equals("options")) {
+			new OptionsFrame(control, "pause");
 		}
 		else if(e.getActionCommand().equals("exit")) {
 			control.getStatsFrame().dispose();

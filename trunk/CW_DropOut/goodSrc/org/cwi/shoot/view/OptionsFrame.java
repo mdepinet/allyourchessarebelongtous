@@ -2,6 +2,7 @@ package org.cwi.shoot.view;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Rectangle;
@@ -15,6 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -50,10 +52,12 @@ public class OptionsFrame extends JFrame implements ActionListener, ListSelectio
 	private Profile profile;
 	private JTable profileTable;
 	private TableModel profileData;
-	public OptionsFrame(Shoot control) {
+	private String prevFrame;
+	public OptionsFrame(Shoot control, String prevFrame) {
 		super("Options");
 		
 		this.control = control;
+		this.prevFrame = prevFrame;
 		
 		setBounds(new Rectangle(800,600));
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -101,13 +105,29 @@ public class OptionsFrame extends JFrame implements ActionListener, ListSelectio
 		panel.add(button);
 		buttonGroup.add(button);
 		
-		JPanel mainPanel = new JPanel(new BorderLayout());
+		JPanel mainPanel = new JPanel();
+		mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.PAGE_AXIS));
+		mainPanel.setPreferredSize(new Dimension(50,300));
 		profile = getProfileNames().size()==0 ? null : new Profile(getProfileNames().get((table.getSelectedRow()==-1 ? 0 : table.getSelectedRow())).substring(0, getProfileNames().get((table.getSelectedRow()==-1 ? 0 : table.getSelectedRow())).indexOf(".pprf")));
 		profileData = new ProfileTableModel(profile);
 		profileTable = new JTable(profileData);
 		profileTable.clearSelection();
-		mainPanel.add(profileTable, BorderLayout.NORTH);
+		profileTable.setAlignmentX(Component.CENTER_ALIGNMENT);
+		mainPanel.add(profileTable);
 		
+		JPanel ssPanel = new JPanel(new FlowLayout());
+		JTextField width = new JTextField(profile.getScreenSize()==null ? 750 : profile.getScreenSize().x);
+		width.setPreferredSize(new Dimension(25,25));
+		JTextField height = new JTextField(profile.getScreenSize()==null ? 750 : profile.getScreenSize().y);
+		height.setPreferredSize(new Dimension(25,25));
+		JLabel ssLabel = new JLabel("Width");
+		ssPanel.add(ssLabel);
+		ssPanel.add(width);
+		ssLabel = new JLabel("Height");
+		ssPanel.add(ssLabel);
+		ssPanel.add(height);
+		ssPanel.setAlignmentY(Component.CENTER_ALIGNMENT);
+		//mainPanel.add(ssPanel);
 		
 		getContentPane().add(pPanel, BorderLayout.WEST);
 		getContentPane().add(panel, BorderLayout.SOUTH);
@@ -132,7 +152,7 @@ public class OptionsFrame extends JFrame implements ActionListener, ListSelectio
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		if(e.getActionCommand().equals("back")) {
-			new MainMenu(control, profile);
+			if(!prevFrame.equals("pause")) new MainMenu(control, profile);
 //			menu.setProfile(new Profile(getProfileNames().get((table.getSelectedRow()==-1 ? 0 : table.getSelectedRow())).substring(0, getProfileNames().get((table.getSelectedRow()==-1 ? 0 : table.getSelectedRow())).indexOf(".pprf"))));
 			this.dispose();
 		}
