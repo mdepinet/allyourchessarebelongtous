@@ -10,6 +10,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import javax.swing.JPanel;
+
 import org.cwi.shoot.ai.objective.KillObjective;
 import org.cwi.shoot.ai.objective.LocationObjective;
 import org.cwi.shoot.ai.objective.Objective;
@@ -21,6 +23,7 @@ import org.cwi.shoot.util.VectorTools;
 public class OddBallMode extends GameMode{
 	public static final int POINTS_TO_WIN = 151;
 	private static final int BALL_RADIUS = 3;
+	private int ptw = POINTS_TO_WIN;
 	private Map<Integer, Integer> teamPoints = new HashMap<Integer, Integer>();
 	private Player lastBallHolder = null;
 	private long pickedUpTime = 0;
@@ -103,9 +106,9 @@ public class OddBallMode extends GameMode{
 
 	@Override
 	public int getWinningTeam(List<Player> players) {
-		if (currentStreak >= POINTS_TO_WIN) return lastBallHolder.getTeam();
+		if (currentStreak >= ptw) return lastBallHolder.getTeam();
 		for (Map.Entry<Integer,Integer> entry : teamPoints.entrySet()){
-			if (entry.getValue() + ((lastBallHolder != null && lastBallHolder.getTeam() == entry.getKey()) ? currentStreak : 0) >= POINTS_TO_WIN) return entry.getKey();
+			if (entry.getValue() + ((lastBallHolder != null && lastBallHolder.getTeam() == entry.getKey()) ? currentStreak : 0) >= ptw) return entry.getKey();
 		}
 		return -1;
 	}
@@ -172,5 +175,14 @@ public class OddBallMode extends GameMode{
 			g.setColor(Color.CYAN);
 			g.fillOval((int) (drawLoc.x-BALL_RADIUS), (int) (drawLoc.y-BALL_RADIUS), BALL_RADIUS*2, BALL_RADIUS*2);
 		}
+	}
+	public Map<String, Object> getOptions() {
+		Map<String, Object> options = new HashMap<String, Object>();
+		Integer[] vals = { POINTS_TO_WIN-1, 10, 600 };
+		options.put("Time to win:", vals);
+		return options;
+	}
+	public void defineSettings(String key, Object value) {
+		if(key.equals("Time to win:")) ptw = Integer.parseInt((String)value)+1;
 	}
 }

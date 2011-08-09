@@ -10,6 +10,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import javax.swing.JPanel;
+
 import org.cwi.shoot.ai.objective.KillObjective;
 import org.cwi.shoot.ai.objective.LocationObjective;
 import org.cwi.shoot.ai.objective.Objective;
@@ -25,6 +27,8 @@ public class KotHMode extends GameMode {
 	private static final double DEFEND_OBJECTIVE_WEIGHT = 20;
 	public static final long HILL_IDLE_TIME = 5;
 
+	private long ttw = TIME_TO_WIN;
+	private long hit = HILL_IDLE_TIME;
 	private Map<Integer, Integer> teamPoints = new HashMap<Integer, Integer>();
 	private Map<Point, Character> zone;
 	private int teamControl;
@@ -156,7 +160,7 @@ public class KotHMode extends GameMode {
 					inTheZone.remove(p);
 			}
 			timeIdle = timeIdle == -1 ? System.currentTimeMillis() : timeIdle;
-			if(((System.currentTimeMillis() - timeIdle)/1000) > HILL_IDLE_TIME) {
+			if(((System.currentTimeMillis() - timeIdle)/1000) > hit) {
 				timeIdle = -1;
 				moveHill();
 			}
@@ -209,9 +213,9 @@ public class KotHMode extends GameMode {
 
 	@Override
 	public int getWinningTeam(List<Player> players) {
-		if (teamTime >= TIME_TO_WIN) return teamControl;
+		if (teamTime >= ttw) return teamControl;
 		for (Map.Entry<Integer,Integer> entry : teamPoints.entrySet()){
-			if (entry.getValue() + ((teamControl == entry.getKey()) ? teamTime : 0) >= TIME_TO_WIN) return entry.getKey();
+			if (entry.getValue() + ((teamControl == entry.getKey()) ? teamTime : 0) >= ttw) return entry.getKey();
 		}
 		return -1;
 	}
@@ -295,5 +299,16 @@ public class KotHMode extends GameMode {
 	public void drawModeMapPost(Graphics2D g, List<Player> players) {
 		// TODO Auto-generated method stub
 	}
-
+	public Map<String, Object> getOptions() {
+		Map<String, Object> options = new HashMap<String, Object>();
+		Integer[] vals = { (int)TIME_TO_WIN-1, 10, 600 };
+		options.put("Time to win:", vals);
+		Integer[] vals2 = { (int)HILL_IDLE_TIME, 1, 60 };
+		options.put("Amount of time idle hill moves:", vals2);
+		return options;
+	}
+	public void defineSettings(String key, Object value) {
+		if(key.equals("Time to win:")) ttw = Long.parseLong((String)value)+1;
+		else if(key.equals("Amount of time idle hill moves:")) hit = Long.parseLong((String)value);
+	}
 }

@@ -2,6 +2,7 @@ package org.cwi.shoot.menu;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
@@ -18,7 +19,9 @@ import java.nio.MappedByteBuffer;
 import java.nio.channels.FileChannel;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Scanner;
 
 import javax.swing.BoxLayout;
@@ -72,6 +75,8 @@ public class GameSetupFrame extends JFrame implements ActionListener, ListSelect
 	private WeaponTableModel wdata;
 	private JTextField numPlayersPerTeam;
 	private List<JButton> arrowbuttons;
+	private JPanel modeOptionsPanel;
+	private Map<String, JTextField> modeOptions;
 	
 	public GameSetupFrame(Shoot control, Profile profile) {
 		super("Game Setup Menu");
@@ -79,6 +84,7 @@ public class GameSetupFrame extends JFrame implements ActionListener, ListSelect
 		team = 1;
 		this.control = control;
 		this.profile = profile;
+		modeOptions = new HashMap<String, JTextField>();
 		weaponSetChosen = profile.getPrevWepSet() != null ? profile.getPrevWepSet() : WeaponLoader.weaponSet;
 		buttonGroup = new ArrayList<JButton>();
 		arrowbuttons = new ArrayList<JButton>();
@@ -243,25 +249,13 @@ public class GameSetupFrame extends JFrame implements ActionListener, ListSelect
 		numPlayersPerTeam = new JTextField("" + profile.getNumPlayersPerTeam());
 		numPlayersPerTeam.setPreferredSize(new Dimension(20,20));
 		gameSettingsPanel.add(numPlayersPerTeam);
-		JButton arrowButton = new JButton(new ImageIcon("resource/images/arrowup.gif"));
-		arrowButton.addActionListener(this);
-		arrowButton.setActionCommand("arrowupteammates");
-		arrowButton.setPreferredSize(new Dimension(10,10));
-		arrowButton.setFont(new Font("Button", arrowButton.getFont().getStyle(), 8));
-		arrowbuttons.add(arrowButton);
-		JPanel arrowPanel = new JPanel();
-		arrowPanel.setLayout(new BoxLayout(arrowPanel, BoxLayout.PAGE_AXIS));
-		arrowPanel.add(arrowButton);
-		arrowButton = new JButton(new ImageIcon("resource/images/arrowdown.gif"));
-		arrowButton.addActionListener(this);
-		arrowButton.setActionCommand("arrowdownteammates");
-		arrowButton.setFont(new Font("Button", arrowButton.getFont().getStyle(), 8));
-		arrowButton.setPreferredSize(new Dimension(10,10));
-		arrowPanel.add(arrowButton);
-		arrowbuttons.add(arrowButton);
-		gameSettingsPanel.add(arrowPanel);
+		gameSettingsPanel.add(addArrowButtons(numPlayersPerTeam, 1, 1, 25));
 		
 		optionsPanel.add(gameSettingsPanel);
+		
+		modeOptionsPanel = new JPanel();
+		modeOptionsPanel.add(loadOptionsForMode(table.getSelectedRow()));
+		optionsPanel.add(modeOptionsPanel);
 		
 		getContentPane().add(optionsPanel, BorderLayout.CENTER);
 		
@@ -293,6 +287,54 @@ public class GameSetupFrame extends JFrame implements ActionListener, ListSelect
         setUndecorated(true);
         setLocationRelativeTo(getRootPane());
 		setVisible(true);
+	}
+	
+	public JPanel loadOptionsForMode(int modeTableRow) {
+		JPanel optionsPanel = new JPanel();
+		optionsPanel.setLayout(new BoxLayout(optionsPanel, BoxLayout.PAGE_AXIS));
+		Map<String, Object> options = modes[modeTableRow].getOptions();
+		if(options!=null) {
+			for(String s : options.keySet()) {
+				JPanel horizontal = new JPanel(new FlowLayout());
+				horizontal.add(new JLabel(s));
+				if(options.get(s) instanceof Number[]) {
+					JTextField numberBox = new JTextField("" + ((Number[])options.get(s))[0]);
+					numberBox.setPreferredSize(new Dimension(30,20));
+					modeOptions.put(s, numberBox);
+					horizontal.add(numberBox);
+					horizontal.add(addArrowButtons(numberBox, (Integer)((Number[])options.get(s))[0] < 25 ? 1 :(Integer)((Number[])options.get(s))[0] < 100 ? 5 : (Integer)((Number[])options.get(s))[0] < 1000 ? 50 : (Integer)((Number[])options.get(s))[0] < 10000 ? 500 : 1, ((Integer[])options.get(s))[1], ((Integer[])options.get(s))[2]));
+					modes[modeTableRow].defineSettings(s, numberBox.getText());
+				}
+				optionsPanel.add(horizontal);
+			}
+		}
+		return optionsPanel;
+	}
+	public JPanel addArrowButtons(final Component source, final int scale, final int min, final int max) {
+		JButton arrowButton = new JButton(new ImageIcon("resource/images/arrowup.gif"));
+		arrowButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				if(Integer.parseInt(((JTextField)source).getText())<max) ((JTextField)source).setText("" + (Integer.parseInt(((JTextField)source).getText())+scale));
+			}
+			
+		});
+		arrowButton.setPreferredSize(new Dimension(10,10));
+		arrowButton.setFont(new Font("Button", arrowButton.getFont().getStyle(), 8));
+		arrowbuttons.add(arrowButton);
+		JPanel arrowPanel = new JPanel();
+		arrowPanel.setLayout(new BoxLayout(arrowPanel, BoxLayout.PAGE_AXIS));
+		arrowPanel.add(arrowButton);
+		arrowButton = new JButton(new ImageIcon("resource/images/arrowdown.gif"));
+		arrowButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				if(Integer.parseInt(((JTextField)source).getText())>min) ((JTextField)source).setText("" + (Integer.parseInt(((JTextField)source).getText())-scale));
+			}
+		});
+		arrowButton.setFont(new Font("Button", arrowButton.getFont().getStyle(), 8));
+		arrowButton.setPreferredSize(new Dimension(10,10));
+		arrowPanel.add(arrowButton);
+		arrowbuttons.add(arrowButton);
+		return arrowPanel;
 	}
 
 	private static String readFile(File f) throws IOException {
@@ -399,6 +441,9 @@ public class GameSetupFrame extends JFrame implements ActionListener, ListSelect
 	        profile.setPrevWepSet(weaponSetChosen);
 	        profile.setNumPlayersPerTeam(Integer.parseInt(numPlayersPerTeam.getText()));
 	        profile.writeToFile();
+	        for(String s : modeOptions.keySet()) {
+	        	modes[table.getSelectedRow()].defineSettings(s, modeOptions.get(s).getText());
+	        }
 	        control.startGame(profile, mapChosen, nameSetChosen, gameMode, teams, (compPlayersOnly ? -1 : team), weaponSetChosen, Integer.parseInt(numPlayersPerTeam.getText()));
 			this.dispose();
 		}
@@ -423,7 +468,7 @@ public class GameSetupFrame extends JFrame implements ActionListener, ListSelect
 			}
 			else {
 				if(e.getActionCommand().equals("arrowupteammates")) {
-					if(Integer.parseInt(numPlayersPerTeam.getText())<12) numPlayersPerTeam.setText("" + (Integer.parseInt(numPlayersPerTeam.getText())+1));
+					if(Integer.parseInt(numPlayersPerTeam.getText())<25) numPlayersPerTeam.setText("" + (Integer.parseInt(numPlayersPerTeam.getText())+1));
 				}
 				else if(e.getActionCommand().equals("arrowdownteammates")) {
 					if(Integer.parseInt(numPlayersPerTeam.getText())>1) numPlayersPerTeam.setText("" + (Integer.parseInt(numPlayersPerTeam.getText())-1));
@@ -444,6 +489,14 @@ public class GameSetupFrame extends JFrame implements ActionListener, ListSelect
 	@Override
 	public void valueChanged(ListSelectionEvent e) {
 		gameMode = modes[table.getSelectedRow()];
+		if(modeOptionsPanel!=null && modeOptions!=null) {
+			modeOptions.clear();
+			modeOptionsPanel.removeAll(); 
+			modeOptionsPanel.validate();
+			modeOptionsPanel.add(loadOptionsForMode(table.getSelectedRow()));
+			modeOptionsPanel.revalidate();
+			repaint();
+		}
 	}
 	
 	private class PlayerTableModel extends AbstractTableModel {

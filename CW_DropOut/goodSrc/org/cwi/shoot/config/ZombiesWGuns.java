@@ -27,6 +27,9 @@ public class ZombiesWGuns extends GameMode {
 	public static final int ADD_NUM_ZOMBIES = 20;
 	public static final int WAVE_TIME_LIMIT = 20;
 	public static final int ZOMBIES_TEAM_NUM = 0;
+	private int num_zombies_to_add = ADD_NUM_ZOMBIES;
+	private int wave_time = WAVE_TIME_LIMIT;
+	
 	private long startTime;
 	private int wave;
 	private long waveStartTime;
@@ -37,8 +40,6 @@ public class ZombiesWGuns extends GameMode {
 	protected Map<String, Object> stats;
 	
 	public ZombiesWGuns() {
-		startTime = System.currentTimeMillis();
-		waveStartTime = System.currentTimeMillis();
 		wave = 1;
 		deadZombies = new ArrayList<Player>();
 		spawnLocs = new ArrayList<Point>();
@@ -52,10 +53,6 @@ public class ZombiesWGuns extends GameMode {
 					spawnLocs.add(new Point(r,c));
 		if(setup.getPlayerTeam()!=-1) {
 			map.spawn(map.getPlayer());
-			/*map.getPlayer().addWeapon(new Weapon("Minigun"), this);
-			map.getPlayer().setCurrWeapon(new Weapon("Minigun"));
-			map.getPlayer().getCurrWeapon().setClipCount(-1);
-			map.getPlayer().getCurrWeapon().setClipSize(1000);*/
 			map.getPlayer().addWeapon(new Weapon('T', new Point()), this);
 			map.getPlayer().setCurrWeapon(new Weapon('T', new Point()));
 			humanPlaying = true;
@@ -73,16 +70,14 @@ public class ZombiesWGuns extends GameMode {
 			humanPlaying = false;
 			originalPlayer = map.getPlayers().get(0);
 		}
-		
-		/*List<Player> z = addZombies(NUM_ENEMIES);
-		map.getPlayers().addAll(z);*/
+		startTime = System.currentTimeMillis();
+		waveStartTime = System.currentTimeMillis();
 			
 	}
 	public void onReset(GameMap map, GameOptions setup){
 		map.getPlayers().clear();
 		for(int i = 0; i < map.getThreads().size(); i++) { 
 			RespawnThread t = map.getThreads().get(i); 
-			//t.respawn(); 
 			t.kill(); 
 		}
 		map.getThreads().clear();
@@ -96,19 +91,12 @@ public class ZombiesWGuns extends GameMode {
 			map.getPlayers().add(0,player);
 			map.spawn(player);
 			map.getPlayer().removeWeapon(new Weapon("Default"));
-			/*map.getPlayer().addWeapon(new Weapon("Minigun"), this);
-			map.getPlayer().setCurrWeapon(new Weapon("Minigun"));
-			map.getPlayer().getCurrWeapon().setClipCount(-1);
-			map.getPlayer().getCurrWeapon().setClipSize(1000);*/
 			map.getPlayer().addWeapon(new Weapon('T', new Point()), this);
 			map.getPlayer().setCurrWeapon(new Weapon('T', new Point()));
 			
 		}
 		else {
 			map.getPlayers().clear();
-//			Player p = new Player(setup.getNameGen().compose((int)(Math.random()*3)+2));
-//			p.setTeam(1);
-//			p.setBrain(new SmartBrain());
 			map.getPlayers().add(0,originalPlayer);
 			map.getPlayers().get(0).getWeapons().clear();
 			map.spawn(originalPlayer);
@@ -116,9 +104,6 @@ public class ZombiesWGuns extends GameMode {
 			map.getPlayers().get(0).addWeapon(new Weapon('T', new Point()), this);
 			map.getPlayers().get(0).setCurrWeapon(new Weapon('T', new Point()));
 		}
-		
-		/*List<Player> z = addZombies(NUM_ENEMIES);
-		map.getPlayers().addAll(z);*/
 		
 		setWave(1);
 		setWaveStartTime(System.currentTimeMillis());
@@ -132,8 +117,6 @@ public class ZombiesWGuns extends GameMode {
 		if(deadZombies.size()>0) {
 			for(int i = 0; i < deadZombies.size(); i++)
 				if(deadZombies.get(i).getHealth()<=0) {
-					/*gameMap.getPlayers().add(deadZombies.get(i));
-					gameMap.spawn(deadZombies.get(i));*/
 					deadZombies.remove(i--);
 				}
 		}
@@ -205,8 +188,8 @@ public class ZombiesWGuns extends GameMode {
 
 	@Override
 	public void update(List<org.cwi.shoot.model.Player> players) {
-		if((System.currentTimeMillis() - getWaveStartTime())/1000. >= WAVE_TIME_LIMIT) {
-			List<Player> addZombies = addZombies(ADD_NUM_ZOMBIES);
+		if((System.currentTimeMillis() - getWaveStartTime())/1000. >= wave_time) {
+			List<Player> addZombies = addZombies(num_zombies_to_add);
 			if(deadZombies.size()>0) {
 				for(int i = 0; i < deadZombies.size(); i++)
 					if(deadZombies.get(i).getHealth()<=0) {
@@ -306,5 +289,16 @@ public class ZombiesWGuns extends GameMode {
 	public boolean friendlyFire() {
 		return true;
 	}
-
+	public Map<String, Object> getOptions() {
+		Map<String, Object> options = new HashMap<String, Object>();
+		Integer[] waves = { WAVE_TIME_LIMIT, 10, 60 };
+		options.put("Time between waves:", waves);
+		Integer[] zombiesPerWave = { ADD_NUM_ZOMBIES, 1, 20 };
+		options.put("Number of Zombies per wave:", zombiesPerWave);
+		return options;
+	}
+	public void defineSettings(String key, Object value) {
+		if(key.equals("Time between waves:")) wave_time = Integer.parseInt((String)value);
+		else if(key.equals("Number of Zombies per wave:")) num_zombies_to_add = Integer.parseInt((String)value);
+	}
 }

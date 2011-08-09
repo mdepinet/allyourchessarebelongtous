@@ -10,6 +10,7 @@ import java.util.Map;
 
 import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 
 import org.cwi.shoot.ai.objective.Objective;
 import org.cwi.shoot.map.GameMap;
@@ -123,5 +124,12 @@ public abstract class GameMode {
 	}
 	public boolean friendlyFire() {
 		return false;
+	}
+	public Map<String, Object> getOptions() {
+		
+		return null;
+	}
+	public void defineSettings(String key, Object value) {
+		
 	}
 }

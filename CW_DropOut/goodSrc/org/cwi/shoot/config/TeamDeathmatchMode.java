@@ -2,6 +2,7 @@ package org.cwi.shoot.config;
 
 import java.awt.Graphics2D;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -13,6 +14,7 @@ import org.cwi.shoot.model.Weapon;
 
 public class TeamDeathmatchMode extends GameMode {
 	public static final int KILLS_TO_WIN = 10;
+	private int ktw = KILLS_TO_WIN;
 	@Override
 	public String getModeName() {
 		return "Team Deathmatch";
@@ -54,7 +56,7 @@ public class TeamDeathmatchMode extends GameMode {
 			
 		}
 		for(int i : teamKills.keySet())
-			if(teamKills.get(i)>=KILLS_TO_WIN)
+			if(teamKills.get(i)>=ktw)
 				return i;
 		return -1;
 	}
@@ -98,5 +100,16 @@ public class TeamDeathmatchMode extends GameMode {
 	public void drawModeMapPost(Graphics2D g, List<Player> players) {
 		// TODO Auto-generated method stub
 		
+	}
+	public Map<String, Object> getOptions() {
+		Map<String, Object> options = new HashMap<String, Object>();
+		Integer[] limits = { KILLS_TO_WIN, 1, 1000 };
+		options.put("Kills to Win:", limits);
+		return options;
+	}
+	public void defineSettings(String key, Object value) {
+		if(key.equals("Kills to Win:")) {
+			ktw = Integer.parseInt((String) value);
+		}
 	}
 }
