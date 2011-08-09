@@ -39,6 +39,7 @@ public class Shoot implements KeyListener, MouseListener, MouseMotionListener, C
 	private Point mouseLoc;
 	private boolean stop;
 	private Profile profile;
+	private PauseFrame pause;
 	public Shoot() {
 		stop = false;
 		new MainMenu(this, null);
@@ -89,6 +90,27 @@ public class Shoot implements KeyListener, MouseListener, MouseMotionListener, C
 			}
 		};
 		gameThread.start();
+	}
+	public void resetFrame(Profile profile) {
+		this.profile = profile;
+		frame.dispose();
+		frame = new GameFrame("Shoot", map, profile.getScreenSize().x, profile.getScreenSize().y);
+		frame.setFocusable(true);
+		frame.addFocusListener(this);
+		frame.getCanvas().addKeyListener(this);
+		frame.getCanvas().setFocusable(true);
+		frame.getCanvas().addMouseListener(this);
+		frame.getCanvas().addMouseMotionListener(this);
+		frame.getCanvas().requestFocusInWindow();
+		frame.addComponentListener(this);
+		frame.addWindowListener(new WindowAdapter(){
+	          public void windowIconified(WindowEvent e){
+	                statsFrame.setVisible(false);
+	          }
+	          public void windowDeiconified(WindowEvent e){
+	                statsFrame.setVisible(true);
+	          }
+	    });
 	}
 	   
 	// Run the game loop here.
@@ -212,7 +234,7 @@ public class Shoot implements KeyListener, MouseListener, MouseMotionListener, C
 				if(map.isPaused()) map.unpause();
 				else {
 					map.pause();
-					new PauseFrame(this);
+					pause = new PauseFrame(this);
 				}
 				break;
 			default:

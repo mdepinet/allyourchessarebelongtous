@@ -5,6 +5,7 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
+import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -52,8 +53,10 @@ public class OptionsFrame extends JFrame implements ActionListener, ListSelectio
 	private Profile profile;
 	private JTable profileTable;
 	private TableModel profileData;
-	private String prevFrame;
-	public OptionsFrame(Shoot control, String prevFrame) {
+	private JFrame prevFrame;
+	private JTextField width;
+	private JTextField height;
+	public OptionsFrame(Shoot control, JFrame prevFrame) {
 		super("Options");
 		
 		this.control = control;
@@ -115,10 +118,14 @@ public class OptionsFrame extends JFrame implements ActionListener, ListSelectio
 		profileTable.setAlignmentX(Component.CENTER_ALIGNMENT);
 		mainPanel.add(profileTable);
 		
-		JPanel ssPanel = new JPanel(new FlowLayout());
-		JTextField width = new JTextField(profile.getScreenSize()==null ? 750 : profile.getScreenSize().x);
+		JPanel ssPanel = new JPanel();
+		ssPanel.setLayout(new BoxLayout(ssPanel, BoxLayout.LINE_AXIS));
+		ssPanel.setPreferredSize(new Dimension(100,200));
+		width = new JTextField("Width");
+		width.setText("" + (profile.getScreenSize()==null ? 750 : profile.getScreenSize().x));
 		width.setPreferredSize(new Dimension(25,25));
-		JTextField height = new JTextField(profile.getScreenSize()==null ? 750 : profile.getScreenSize().y);
+		height = new JTextField("Height");
+		height.setText("" + (profile.getScreenSize()==null ? 750 : profile.getScreenSize().y));
 		height.setPreferredSize(new Dimension(25,25));
 		JLabel ssLabel = new JLabel("Width");
 		ssPanel.add(ssLabel);
@@ -126,8 +133,11 @@ public class OptionsFrame extends JFrame implements ActionListener, ListSelectio
 		ssLabel = new JLabel("Height");
 		ssPanel.add(ssLabel);
 		ssPanel.add(height);
-		ssPanel.setAlignmentY(Component.CENTER_ALIGNMENT);
-		//mainPanel.add(ssPanel);
+		ssPanel.setAlignmentX(Component.CENTER_ALIGNMENT);
+		mainPanel.add(ssPanel);
+		JPanel filler = new JPanel();
+		filler.add(new JLabel(""));
+		mainPanel.add(filler);
 		
 		getContentPane().add(pPanel, BorderLayout.WEST);
 		getContentPane().add(panel, BorderLayout.SOUTH);
@@ -152,8 +162,9 @@ public class OptionsFrame extends JFrame implements ActionListener, ListSelectio
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		if(e.getActionCommand().equals("back")) {
-			if(!prevFrame.equals("pause")) new MainMenu(control, profile);
-//			menu.setProfile(new Profile(getProfileNames().get((table.getSelectedRow()==-1 ? 0 : table.getSelectedRow())).substring(0, getProfileNames().get((table.getSelectedRow()==-1 ? 0 : table.getSelectedRow())).indexOf(".pprf"))));
+			profile.setScreenSize(new Point(Integer.parseInt(width.getText()), Integer.parseInt(height.getText())));
+			if(prevFrame instanceof MainMenu) new MainMenu(control, profile);
+			else ((PauseFrame)prevFrame).changeProfSettings(profile);
 			this.dispose();
 		}
 		else if(e.getActionCommand().equals("newprofile")) {
@@ -165,7 +176,6 @@ public class OptionsFrame extends JFrame implements ActionListener, ListSelectio
 	public void valueChanged(ListSelectionEvent e) {
 		profile = new Profile(getProfileNames().get((table.getSelectedRow()==-1 ? 0 : table.getSelectedRow())).substring(0, getProfileNames().get((table.getSelectedRow()==-1 ? 0 : table.getSelectedRow())).indexOf(".pprf")));
 		((ProfileTableModel)profileData).changeProfile(profile);
-//		profileTable = new JTable(profileData);
 		((AbstractTableModel)profileData).fireTableDataChanged();
 	}
 

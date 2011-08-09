@@ -146,8 +146,8 @@ public class Profile {
 					writer.write(data.get(s)+"\n");
 				}
 			}
-			writer.write("Prev-nameset: "+prevNameSet.replace(" ", "--")+"\n");
-			writer.write("Prev-wepset: "+prevWepSet.replace(" ", "--")+"\n");
+			if(prevNameSet!=null) writer.write("Prev-nameset: "+prevNameSet.replace(" ", "--")+"\n");
+			if(prevWepSet!=null) writer.write("Prev-wepset: "+prevWepSet.replace(" ", "--")+"\n");
 			if(screensize!=null) writer.write("Screensize: "+screensize.x+" "+screensize.y+"\n");
 			else writer.write("Screensize: "+750+" "+750+"\n");
 			writer.close();
