@@ -4,6 +4,7 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
+import java.awt.Font;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
@@ -70,6 +71,7 @@ public class GameSetupFrame extends JFrame implements ActionListener, ListSelect
 	private JLabel wsLabel;
 	private WeaponTableModel wdata;
 	private JTextField numPlayersPerTeam;
+	private List<JButton> arrowbuttons;
 	
 	public GameSetupFrame(Shoot control, Profile profile) {
 		super("Game Setup Menu");
@@ -79,6 +81,7 @@ public class GameSetupFrame extends JFrame implements ActionListener, ListSelect
 		this.profile = profile;
 		weaponSetChosen = profile.getPrevWepSet() != null ? profile.getPrevWepSet() : WeaponLoader.weaponSet;
 		buttonGroup = new ArrayList<JButton>();
+		arrowbuttons = new ArrayList<JButton>();
 		gameMode = null;
 		mapChosen = new File(GameOptions.MAP_RESOURCE);
 		nameSetChosen = new File(profile.getPrevNameSet() != null ? profile.getPrevNameSet() : GameOptions.NAME_RESOURCE);
@@ -238,7 +241,25 @@ public class GameSetupFrame extends JFrame implements ActionListener, ListSelect
 		JPanel gameSettingsPanel = new JPanel(new FlowLayout());
 		gameSettingsPanel.add(new JLabel("Number of Players per Team: "));
 		numPlayersPerTeam = new JTextField("" + profile.getNumPlayersPerTeam());
+		numPlayersPerTeam.setPreferredSize(new Dimension(20,20));
 		gameSettingsPanel.add(numPlayersPerTeam);
+		JButton arrowButton = new JButton(new ImageIcon("resource/images/arrowup.gif"));
+		arrowButton.addActionListener(this);
+		arrowButton.setActionCommand("arrowupteammates");
+		arrowButton.setPreferredSize(new Dimension(10,10));
+		arrowButton.setFont(new Font("Button", arrowButton.getFont().getStyle(), 8));
+		arrowbuttons.add(arrowButton);
+		JPanel arrowPanel = new JPanel();
+		arrowPanel.setLayout(new BoxLayout(arrowPanel, BoxLayout.PAGE_AXIS));
+		arrowPanel.add(arrowButton);
+		arrowButton = new JButton(new ImageIcon("resource/images/arrowdown.gif"));
+		arrowButton.addActionListener(this);
+		arrowButton.setActionCommand("arrowdownteammates");
+		arrowButton.setFont(new Font("Button", arrowButton.getFont().getStyle(), 8));
+		arrowButton.setPreferredSize(new Dimension(10,10));
+		arrowPanel.add(arrowButton);
+		arrowbuttons.add(arrowButton);
+		gameSettingsPanel.add(arrowPanel);
 		
 		optionsPanel.add(gameSettingsPanel);
 		
@@ -387,16 +408,26 @@ public class GameSetupFrame extends JFrame implements ActionListener, ListSelect
 		}
 		else
 		{
-			resetButtonColors();
-			((JButton)e.getSource()).setBackground(Color.GREEN);
-			((JButton)e.getSource()).setForeground(Color.BLACK);
-			switch((char)e.getActionCommand().charAt(0))
-			{
-				case 'L': team = 1; break;
-				case 'M': team = 2; break;
-				case 'N': team = 3; break;
-				case 'O': team = 4; break;
-				default: break;
+			if(!arrowbuttons.contains(e.getSource())) {
+				resetButtonColors();
+				((JButton)e.getSource()).setBackground(Color.GREEN);
+				((JButton)e.getSource()).setForeground(Color.BLACK);
+				switch((char)e.getActionCommand().charAt(0))
+				{
+					case 'L': team = 1; break;
+					case 'M': team = 2; break;
+					case 'N': team = 3; break;
+					case 'O': team = 4; break;
+					default: break;
+				}
+			}
+			else {
+				if(e.getActionCommand().equals("arrowupteammates")) {
+					if(Integer.parseInt(numPlayersPerTeam.getText())<12) numPlayersPerTeam.setText("" + (Integer.parseInt(numPlayersPerTeam.getText())+1));
+				}
+				else if(e.getActionCommand().equals("arrowdownteammates")) {
+					if(Integer.parseInt(numPlayersPerTeam.getText())>1) numPlayersPerTeam.setText("" + (Integer.parseInt(numPlayersPerTeam.getText())-1));
+				}
 			}
 		}
 		

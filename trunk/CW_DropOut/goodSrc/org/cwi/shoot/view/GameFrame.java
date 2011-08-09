@@ -23,7 +23,7 @@ public class GameFrame extends JFrame {
 	{
 		super(s);
 		if(width == -1 && height == -1)	this.setBounds(250,200,WIDTH+10,HEIGHT+10);
-		else this.setBounds(new Rectangle(width,height));
+		else this.setBounds(new Rectangle(width+10,height+10));
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		JPanel cPane = new JPanel(new BorderLayout());
 		cPane.setBorder(new LineBorder(Color.BLACK, 5));
