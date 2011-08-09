@@ -28,6 +28,7 @@ public class Profile {
 	private String prevNameSet;
 	private String prevWepSet;
 	private Point screensize;
+	private int numPlayersPerTeam;
 	
 	public Profile(String profileName) {
 		name = profileName;
@@ -70,6 +71,9 @@ public class Profile {
 				achievements.add(AchievementType.valueOf(scan.next()).toString());
 			}
 			data.put(item, achievements);
+		}
+		else if(item.equals("Number--of--Teammates:")) {
+			numPlayersPerTeam = Integer.parseInt(scan.next());
 		}
 		else if(item.equals("Bullets--shot:")) {
 			bulletsShot = Integer.parseInt(scan.next());
@@ -122,6 +126,13 @@ public class Profile {
 	public void setScreenSize(Point ss) {
 		screensize = ss;
 	}
+	public int getNumPlayersPerTeam() {
+		return numPlayersPerTeam;
+	}
+	public void setNumPlayersPerTeam(int num) {
+		numPlayersPerTeam = num;
+	}
+	
 	
 	public void addStats(Map<String, Object> stats) {
 		for(String s : stats.keySet()) {
@@ -146,6 +157,7 @@ public class Profile {
 					writer.write(data.get(s)+"\n");
 				}
 			}
+			writer.write("Number--of--Teammates: "+numPlayersPerTeam+"\n");
 			if(prevNameSet!=null) writer.write("Prev-nameset: "+prevNameSet.replace(" ", "--")+"\n");
 			if(prevWepSet!=null) writer.write("Prev-wepset: "+prevWepSet.replace(" ", "--")+"\n");
 			if(screensize!=null) writer.write("Screensize: "+screensize.x+" "+screensize.y+"\n");

@@ -110,34 +110,36 @@ public class OptionsFrame extends JFrame implements ActionListener, ListSelectio
 		
 		JPanel mainPanel = new JPanel();
 		mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.PAGE_AXIS));
-		mainPanel.setPreferredSize(new Dimension(50,300));
 		profile = getProfileNames().size()==0 ? null : new Profile(getProfileNames().get((table.getSelectedRow()==-1 ? 0 : table.getSelectedRow())).substring(0, getProfileNames().get((table.getSelectedRow()==-1 ? 0 : table.getSelectedRow())).indexOf(".pprf")));
 		profileData = new ProfileTableModel(profile);
 		profileTable = new JTable(profileData);
 		profileTable.clearSelection();
-		profileTable.setAlignmentX(Component.CENTER_ALIGNMENT);
-		mainPanel.add(profileTable);
+//		profileTable.setAlignmentX(Component.CENTER_ALIGNMENT);
+		JPanel tablePanel = new JPanel();
+		tablePanel.add(profileTable);
+		mainPanel.add(tablePanel);
 		
+		mainPanel.add(new JLabel("Settings:"));
 		JPanel ssPanel = new JPanel();
-		ssPanel.setLayout(new BoxLayout(ssPanel, BoxLayout.LINE_AXIS));
-		ssPanel.setPreferredSize(new Dimension(100,200));
-		width = new JTextField("Width");
-		width.setText("" + (profile.getScreenSize()==null ? 750 : profile.getScreenSize().x));
+		width = new JTextField("" + (profile.getScreenSize()==null ? 750 : profile.getScreenSize().x));
 		width.setPreferredSize(new Dimension(25,25));
-		height = new JTextField("Height");
-		height.setText("" + (profile.getScreenSize()==null ? 750 : profile.getScreenSize().y));
+		height = new JTextField("" + (profile.getScreenSize()==null ? 750 : profile.getScreenSize().y));
 		height.setPreferredSize(new Dimension(25,25));
-		JLabel ssLabel = new JLabel("Width");
+		JLabel ssLabel = new JLabel("Width:");
+		ssPanel.add(new JLabel("Change Screen Size:   "));
 		ssPanel.add(ssLabel);
 		ssPanel.add(width);
-		ssLabel = new JLabel("Height");
+		ssPanel.add(new JLabel("px"));
+		ssPanel.add(new JLabel("   "));
+		ssLabel = new JLabel("Height:");
 		ssPanel.add(ssLabel);
 		ssPanel.add(height);
-		ssPanel.setAlignmentX(Component.CENTER_ALIGNMENT);
+		ssPanel.add(new JLabel("px"));
+//		ssPanel.setAlignmentX(Component.CENTER_ALIGNMENT);
 		mainPanel.add(ssPanel);
-		JPanel filler = new JPanel();
-		filler.add(new JLabel(""));
-		mainPanel.add(filler);
+//		JPanel filler = new JPanel();
+//		filler.add(new JTextField("r"));
+//		mainPanel.add(filler);
 		
 		getContentPane().add(pPanel, BorderLayout.WEST);
 		getContentPane().add(panel, BorderLayout.SOUTH);
@@ -163,6 +165,7 @@ public class OptionsFrame extends JFrame implements ActionListener, ListSelectio
 	public void actionPerformed(ActionEvent e) {
 		if(e.getActionCommand().equals("back")) {
 			profile.setScreenSize(new Point(Integer.parseInt(width.getText()), Integer.parseInt(height.getText())));
+			profile.writeToFile();
 			if(prevFrame instanceof MainMenu) new MainMenu(control, profile);
 			else ((PauseFrame)prevFrame).changeProfSettings(profile);
 			this.dispose();
