@@ -45,11 +45,11 @@ public class Shoot implements KeyListener, MouseListener, MouseMotionListener, C
 		new MainMenu(this, null);
 	}
 	
-	public void startGame(Profile profile, File mapFile, File nameSetFile, GameMode mode, char[] teams, int team, String weaponSet) {
+	public void startGame(Profile profile, File mapFile, File nameSetFile, GameMode mode, char[] teams, int team, String weaponSet, int numTeammates) {
 		WeaponLoader.weaponSet = weaponSet;
 		WeaponLoader.unloadAll();
 		
-		GameOptions setup = new GameOptions(mode, mapFile, nameSetFile, teams.length, team, profile, 4);
+		GameOptions setup = new GameOptions(mode, mapFile, nameSetFile, teams.length, team, profile, numTeammates);
 		holdCounter = -1;
 		map = new GameMap(setup);
 		this.mode = mode;

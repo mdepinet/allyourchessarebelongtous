@@ -70,10 +70,7 @@ public class PauseFrame extends JFrame implements ActionListener {
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		if(e.getActionCommand().equals("resume")) {
-			if(profile!=null) {
-				profile.writeToFile();
-				control.resetFrame(profile);
-			}
+			if(profile!=null) control.resetFrame(profile);
 			control.getFrame().setFocusable(true);
 			control.resumeGame();
 			this.dispose();

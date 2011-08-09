@@ -18,9 +18,9 @@ import java.nio.channels.FileChannel;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.Scanner;
 
+import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -69,6 +69,7 @@ public class GameSetupFrame extends JFrame implements ActionListener, ListSelect
 	private String weaponSetChosen;
 	private JLabel wsLabel;
 	private WeaponTableModel wdata;
+	private JTextField numPlayersPerTeam;
 	
 	public GameSetupFrame(Shoot control, Profile profile) {
 		super("Game Setup Menu");
@@ -130,13 +131,13 @@ public class GameSetupFrame extends JFrame implements ActionListener, ListSelect
 		
 		JPanel optionsPanel = new JPanel();
 		//optionsPanel.setPreferredSize(new Dimension(400,200));
-		optionsPanel.setLayout(new FlowLayout());
+		optionsPanel.setLayout(new BoxLayout(optionsPanel, BoxLayout.PAGE_AXIS));
 		//getContentPane().add(optionsPanel, BorderLayout.NORTH);
 		
 		JPanel optionsSubPanel = new JPanel();
 		optionsSubPanel.setPreferredSize(new Dimension(400,30));
 		optionsSubPanel.setLayout(new FlowLayout());
-		optionsSubPanel.setAlignmentY(JPanel.CENTER_ALIGNMENT);
+//		optionsSubPanel.setAlignmentY(JPanel.CENTER_ALIGNMENT);
 		optionsPanel.add(optionsSubPanel);
 		
 		optionsSubPanel = new JPanel();
@@ -199,8 +200,10 @@ public class GameSetupFrame extends JFrame implements ActionListener, ListSelect
 			}
 		}
 		table = new JTable(modeNames, columnNames);
-		JPanel panel = new JPanel(new FlowLayout());
+		JPanel panel = new JPanel();
+		panel.setLayout(new BoxLayout(panel, BoxLayout.PAGE_AXIS));
 		panel.setPreferredSize(new Dimension(400,200));
+		JPanel panePanel = new JPanel();
 		JScrollPane pane = new JScrollPane(table);
 		table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		table.getSelectionModel().addListSelectionListener(this);
@@ -209,9 +212,11 @@ public class GameSetupFrame extends JFrame implements ActionListener, ListSelect
 		table.setRowHeight(30);
 		table.setColumnSelectionAllowed(false);
 		table.setRowSelectionAllowed(true);
-		panel.add(pane);
+		panePanel.add(pane);
+		panel.add(panePanel);
 		
 		JPanel buttonPanel = new JPanel(new FlowLayout());
+//		buttonPanel.setLayout(new BoxLayout(buttonPanel, BoxLayout.LINE_AXIS));
 		char c = 0;
 		for(c = 'L'; c <= (int)('O');c++) {
 			Weapon w = new Weapon(c, new Point());
@@ -224,11 +229,19 @@ public class GameSetupFrame extends JFrame implements ActionListener, ListSelect
 			button.setBackground((c=='L') ? Color.GREEN : Color.BLUE);
 			button.setActionCommand("" + c);
 			button.addActionListener(this);
-			panel.add(button);
+			buttonPanel.add(button);
 			buttonGroup.add(button);
 		}
 		panel.add(buttonPanel);
 		optionsPanel.add(panel);
+		
+		JPanel gameSettingsPanel = new JPanel(new FlowLayout());
+		gameSettingsPanel.add(new JLabel("Number of Players per Team: "));
+		numPlayersPerTeam = new JTextField("" + profile.getNumPlayersPerTeam());
+		gameSettingsPanel.add(numPlayersPerTeam);
+		
+		optionsPanel.add(gameSettingsPanel);
+		
 		getContentPane().add(optionsPanel, BorderLayout.CENTER);
 		
 		JPanel southPanel = new JPanel(new FlowLayout());
@@ -361,9 +374,11 @@ public class GameSetupFrame extends JFrame implements ActionListener, ListSelect
 		        char[] teams = new char[list.size()];
 		        for(int i =0; i < teams.length;i++)
 		        	teams[i]=list.get(i);
-	        control.startGame(profile, mapChosen, nameSetChosen, gameMode, teams, (compPlayersOnly ? -1 : team), weaponSetChosen);
 	        profile.setPrevNameSet(nameSetChosen.getAbsolutePath());
 	        profile.setPrevWepSet(weaponSetChosen);
+	        profile.setNumPlayersPerTeam(Integer.parseInt(numPlayersPerTeam.getText()));
+	        profile.writeToFile();
+	        control.startGame(profile, mapChosen, nameSetChosen, gameMode, teams, (compPlayersOnly ? -1 : team), weaponSetChosen, Integer.parseInt(numPlayersPerTeam.getText()));
 			this.dispose();
 		}
 		else if(e.getActionCommand().equals("back")) {
