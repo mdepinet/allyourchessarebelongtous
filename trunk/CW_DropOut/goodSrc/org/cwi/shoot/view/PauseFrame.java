@@ -3,7 +3,6 @@ package org.cwi.shoot.view;
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Dimension;
-import java.awt.FlowLayout;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -15,14 +14,18 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 import org.cwi.shoot.control.Shoot;
+import org.cwi.shoot.profile.Profile;
 
 public class PauseFrame extends JFrame implements ActionListener {
 	private Shoot control;
+	private Rectangle screenDimensions;
+	private Profile profile;
 	
 	public PauseFrame(Shoot control) {
 		super("Pause");
 		
 		this.control = control;
+		screenDimensions = control.getFrame().getBounds();
 		
 		setBounds(new Rectangle(200,200));
 		
@@ -67,12 +70,16 @@ public class PauseFrame extends JFrame implements ActionListener {
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		if(e.getActionCommand().equals("resume")) {
+			if(profile!=null) {
+				profile.writeToFile();
+				control.resetFrame(profile);
+			}
 			control.getFrame().setFocusable(true);
 			control.resumeGame();
 			this.dispose();
 		}
 		else if(e.getActionCommand().equals("options")) {
-			new OptionsFrame(control, "pause");
+			new OptionsFrame(control, this);
 		}
 		else if(e.getActionCommand().equals("exit")) {
 			control.getStatsFrame().dispose();
@@ -84,5 +91,8 @@ public class PauseFrame extends JFrame implements ActionListener {
 		else if(e.getActionCommand().equals("quit")) {
 			System.exit(0);
 		}
+	}
+	public void changeProfSettings(Profile prof) {
+		profile = prof;
 	}
 }
