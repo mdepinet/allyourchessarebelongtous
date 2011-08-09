@@ -68,186 +68,195 @@ public class GameCanvas extends Canvas {
 	
 	public void updateGraphics(GameMap gameMap, GameMode mode) {
 		if(!smallerFrame) {
-			double HRZ_SCALE = (double)GameFrame.WIDTH / gameMap.getPixelWidth();
-			double VERT_SCALE = (double)GameFrame.HEIGHT / gameMap.getPixelHeight();
-			backg.setColor(Color.BLACK);
-			backg.clearRect(0, 0, GameFrame.WIDTH, GameFrame.HEIGHT);
-			
-			//Draw mode specific stuff
-			mode.drawModeMapPre(backg);
-			backg.setColor(Color.black);
-			//Draw map
-			for(int i = 0; i < gameMap.getMap().length;i++) {
-				for(int j = 0; j < gameMap.getMap()[i].length; j++)
-					if(gameMap.getMap()[i][j] == GameOptions.WALL_CHARACTER)
-						backg.fillRect((int) Math.round(i*GRID_PIXELS*HRZ_SCALE),
-								(int) Math.round(j*GRID_PIXELS*VERT_SCALE),
-								(int) Math.round(GRID_PIXELS*HRZ_SCALE),
-								(int) Math.round(GRID_PIXELS*VERT_SCALE));
-					else if(gameMap.getMap()[i][j] != GameOptions.BLANK_CHARACTER && !mode.getAdditionalMapChars().contains(gameMap.getMap()[i][j])) {
-						backg.drawRect((int) Math.round(i*GRID_PIXELS*HRZ_SCALE),
-								(int) Math.round(j*GRID_PIXELS*VERT_SCALE),
-								(int) Math.round(GRID_PIXELS*HRZ_SCALE),
-								(int) Math.round(GRID_PIXELS*VERT_SCALE));
-						backg.drawString("" + gameMap.getMap()[i][j], (int) Math.round(HRZ_SCALE*(i*GRID_PIXELS+GRID_PIXELS/3)), (int) Math.round(VERT_SCALE*((j+1)*GRID_PIXELS-GRID_PIXELS/4)));
-					}
-			}
-			
-			//Draw players
-			for(int i = 0; i < gameMap.getPlayers().size();i++) {
-				Player p = gameMap.getPlayers().get(i);
-				if (p.getHealth() > 0 && p!=null){
-					//Draw weapon
-					if (p.getCurrWeapon() != null){
-						AffineTransform transform = new AffineTransform();
-						backg.setColor(Color.BLACK);
-						Rectangle gun2;
-						gun2 = new Rectangle((int)Math.round(HRZ_SCALE*(p.getLocation().getX()-Player.radius)),(int)Math.round(VERT_SCALE*p.getLocation().getY()), (int) Math.round(4*HRZ_SCALE), (int) Math.round(12*VERT_SCALE));
-						transform.rotate(p.getOrientation(), (int)Math.round(HRZ_SCALE*(p.getLocation().getX())),(int)Math.round(VERT_SCALE*p.getLocation().getY()));
-						if (!p.getCurrWeapon().getTypes().contains(Weapon.WeaponType.THROWN)) backg.draw(transform.createTransformedShape(gun2));
-						
-					}
-	
-					//Draw player and name
-					switch(p.getTeam()) {
-						case 1: backg.setColor(new Color(0f,0f,0.5f)); break;
-						case 2: backg.setColor(new Color(0.5f,0f,0f)); break;
-						case 3: backg.setColor(new Color(0f,0.5f,0f)); break;
-						case 4: backg.setColor(new Color(.8f,0.4f,0f)); break;
-						default: break;
-					}
-					FontMetrics metrics = backg.getFontMetrics(backg.getFont());
-					backg.fillOval((int)Math.round(HRZ_SCALE*(p.getLocation().getX()-Player.radius)),(int)Math.round(VERT_SCALE*(p.getLocation().getY()-Player.radius)), (int) Player.radius*2, (int) Player.radius*2);
-					backg.drawString(p.getName(), (int)Math.round(HRZ_SCALE*(p.getLocation().getX()-metrics.stringWidth(p.getName())/2)), (int)Math.round(VERT_SCALE*(p.getLocation().getY()-Player.radius-2)));
-				}
-			}
-			
-			mode.drawModeMapPost(backg, gameMap.getPlayers());
-			
-			//Draw explosions
-			for(Explosion e: gameMap.getExplosions()) {
-				backg.drawImage(createTranslucentImage(explosionImage,e.getAlpha()), (int) Math.round(HRZ_SCALE*e.getRect().x), (int) Math.round(VERT_SCALE*e.getRect().y), (int) Math.round(HRZ_SCALE*e.getRect().width), (int) Math.round(VERT_SCALE*e.getRect().height), null);
-			}
-			
-			//Draw bullets
-			backg.setColor(Color.black);
-			for(int i=0;i<gameMap.getBullets().size();i++) {
-				Bullet b = gameMap.getBullets().get(i);
-				BufferedImage bulletImg = null;
-				if (b.getBulletImgLoc() != null && !b.getBulletImgLoc().equals("")){
-					bulletImg = Bullet.getBulletImg(b.getBulletImgLoc());
-				}
-				AffineTransform transformb = new AffineTransform();
-				if (bulletImg == null){
-					Rectangle bullet = new Rectangle((int)Math.round(b.getLocation().x*HRZ_SCALE),(int) Math.round(b.getLocation().y*VERT_SCALE),(int) Math.max(Math.round(1*HRZ_SCALE),1), (int) Math.max(Math.round(6*VERT_SCALE),1));
-					transformb.rotate(Math.atan2(b.getVelocity().y,b.getVelocity().x)+Math.PI/2, (int)Math.round(b.getLocation().x*HRZ_SCALE),(int) Math.round(b.getLocation().y*VERT_SCALE));
-					backg.draw(transformb.createTransformedShape(bullet));
-				}
-				else{
-					backg.drawImage(bulletImg, (int)b.getLocation().x, (int)b.getLocation().y, 6, 6, this);
-				}
-			}
+			updateNormalScreen(gameMap, mode);
+			repaint();
 		}
 		else {
-			double HRZ_SCALE = (double)GameFrame.WIDTH / gameMap.getPixelWidth();
-			double VERT_SCALE = (double)GameFrame.HEIGHT / gameMap.getPixelHeight();
-			backg.setColor(Color.BLACK);
-			if(playerLoc.x - bounds.getWidth()/2 < 0) backg.fillRect(0, 0,(int)(bounds.getWidth()/2 - playerLoc.x), (int)bounds.getHeight());
-			if(playerLoc.y - bounds.getHeight()/2 < 0) backg.fillRect(0, 0,(int)bounds.getWidth(), (int)(playerLoc.y - bounds.getHeight()));
-			backg.clearRect(0-(int)playerLoc.x, 0-(int)playerLoc.y, GameFrame.WIDTH, GameFrame.HEIGHT);
-			
-			//Draw mode specific stuff
-			mode.drawModeMapPre(backg);
-			backg.setColor(Color.black);
-			//Draw map
-			for(int i = 0; i < gameMap.getMap().length;i++) {
-				for(int j = 0; j < gameMap.getMap()[i].length; j++)
-					if(gameMap.getMap()[i][j] == GameOptions.WALL_CHARACTER)
-						backg.fillRect((int) Math.round(i*GRID_PIXELS*HRZ_SCALE)-(int)playerLoc.x,
-								(int) Math.round(j*GRID_PIXELS*VERT_SCALE)-(int)playerLoc.y,
-								(int) Math.round(GRID_PIXELS*HRZ_SCALE),
-								(int) Math.round(GRID_PIXELS*VERT_SCALE));
-					else if(gameMap.getMap()[i][j] != GameOptions.BLANK_CHARACTER && !mode.getAdditionalMapChars().contains(gameMap.getMap()[i][j])) {
-						backg.drawRect((int) Math.round(i*GRID_PIXELS*HRZ_SCALE)-(int)playerLoc.x,
-								(int) Math.round(j*GRID_PIXELS*VERT_SCALE)-(int)playerLoc.y,
-								(int) Math.round(GRID_PIXELS*HRZ_SCALE),
-								(int) Math.round(GRID_PIXELS*VERT_SCALE));
-						backg.drawString("" + gameMap.getMap()[i][j], (int) Math.round(HRZ_SCALE*(i*GRID_PIXELS+GRID_PIXELS/3))-(int)playerLoc.x, (int) Math.round(VERT_SCALE*((j+1)*GRID_PIXELS-GRID_PIXELS/4))-(int)playerLoc.y);
-					}
+			updateSmallerScreen(gameMap, mode);
+			repaint();
+		}
+	}
+	public void updateNormalScreen(GameMap gameMap, GameMode mode) {
+		double HRZ_SCALE = (double)GameFrame.WIDTH / gameMap.getPixelWidth();
+		double VERT_SCALE = (double)GameFrame.HEIGHT / gameMap.getPixelHeight();
+		backg.setColor(Color.BLACK);
+		backg.clearRect(0, 0, GameFrame.WIDTH, GameFrame.HEIGHT);
+		
+		//Draw mode specific stuff
+		mode.drawModeMapPre(backg);
+		backg.setColor(Color.black);
+		//Draw map
+		for(int i = 0; i < gameMap.getMap().length;i++) {
+			for(int j = 0; j < gameMap.getMap()[i].length; j++)
+				if(gameMap.getMap()[i][j] == GameOptions.WALL_CHARACTER)
+					backg.fillRect((int) Math.round(i*GRID_PIXELS*HRZ_SCALE),
+							(int) Math.round(j*GRID_PIXELS*VERT_SCALE),
+							(int) Math.round(GRID_PIXELS*HRZ_SCALE),
+							(int) Math.round(GRID_PIXELS*VERT_SCALE));
+				else if(gameMap.getMap()[i][j] != GameOptions.BLANK_CHARACTER && !mode.getAdditionalMapChars().contains(gameMap.getMap()[i][j])) {
+					backg.drawRect((int) Math.round(i*GRID_PIXELS*HRZ_SCALE),
+							(int) Math.round(j*GRID_PIXELS*VERT_SCALE),
+							(int) Math.round(GRID_PIXELS*HRZ_SCALE),
+							(int) Math.round(GRID_PIXELS*VERT_SCALE));
+					backg.drawString("" + gameMap.getMap()[i][j], (int) Math.round(HRZ_SCALE*(i*GRID_PIXELS+GRID_PIXELS/3)), (int) Math.round(VERT_SCALE*((j+1)*GRID_PIXELS-GRID_PIXELS/4)));
+				}
+		}
+		
+		//Draw players
+		for(int i = 0; i < gameMap.getPlayers().size();i++) {
+			Player p = gameMap.getPlayers().get(i);
+			if (p.getHealth() > 0 && p!=null){
+				//Draw weapon
+				if (p.getCurrWeapon() != null){
+					AffineTransform transform = new AffineTransform();
+					backg.setColor(Color.BLACK);
+					Rectangle gun2;
+					gun2 = new Rectangle((int)Math.round(HRZ_SCALE*(p.getLocation().getX()-Player.radius)),(int)Math.round(VERT_SCALE*p.getLocation().getY()), (int) Math.round(4*HRZ_SCALE), (int) Math.round(12*VERT_SCALE));
+					transform.rotate(p.getOrientation(), (int)Math.round(HRZ_SCALE*(p.getLocation().getX())),(int)Math.round(VERT_SCALE*p.getLocation().getY()));
+					if (!p.getCurrWeapon().getTypes().contains(Weapon.WeaponType.THROWN)) backg.draw(transform.createTransformedShape(gun2));
+					
+				}
+
+				//Draw player and name
+				switch(p.getTeam()) {
+					case 1: backg.setColor(new Color(0f,0f,0.5f)); break;
+					case 2: backg.setColor(new Color(0.5f,0f,0f)); break;
+					case 3: backg.setColor(new Color(0f,0.5f,0f)); break;
+					case 4: backg.setColor(new Color(.8f,0.4f,0f)); break;
+					default: break;
+				}
+				FontMetrics metrics = backg.getFontMetrics(backg.getFont());
+				backg.fillOval((int)Math.round(HRZ_SCALE*(p.getLocation().getX()-Player.radius)),(int)Math.round(VERT_SCALE*(p.getLocation().getY()-Player.radius)), (int) Player.radius*2, (int) Player.radius*2);
+				backg.drawString(p.getName(), (int)Math.round(HRZ_SCALE*(p.getLocation().getX()-metrics.stringWidth(p.getName())/2)), (int)Math.round(VERT_SCALE*(p.getLocation().getY()-Player.radius-2)));
 			}
-			
-			//Draw players
-			for(int i = 0; i < gameMap.getPlayers().size();i++) {
-				Player p = gameMap.getPlayers().get(i);
-				if (p.getHealth() > 0 && p!=null){
-					//Draw weapon
-					if (p.getCurrWeapon() != null && p.getType()!=PlayerType.HUMAN){
+		}
+		
+		mode.drawModeMapPost(backg, gameMap.getPlayers());
+		
+		//Draw explosions
+		for(Explosion e: gameMap.getExplosions()) {
+			backg.drawImage(createTranslucentImage(explosionImage,e.getAlpha()), (int) Math.round(HRZ_SCALE*e.getRect().x), (int) Math.round(VERT_SCALE*e.getRect().y), (int) Math.round(HRZ_SCALE*e.getRect().width), (int) Math.round(VERT_SCALE*e.getRect().height), null);
+		}
+		
+		//Draw bullets
+		backg.setColor(Color.black);
+		for(int i=0;i<gameMap.getBullets().size();i++) {
+			Bullet b = gameMap.getBullets().get(i);
+			BufferedImage bulletImg = null;
+			if (b.getBulletImgLoc() != null && !b.getBulletImgLoc().equals("")){
+				bulletImg = Bullet.getBulletImg(b.getBulletImgLoc());
+			}
+			AffineTransform transformb = new AffineTransform();
+			if (bulletImg == null){
+				Rectangle bullet = new Rectangle((int)Math.round(b.getLocation().x*HRZ_SCALE),(int) Math.round(b.getLocation().y*VERT_SCALE),(int) Math.max(Math.round(1*HRZ_SCALE),1), (int) Math.max(Math.round(6*VERT_SCALE),1));
+				transformb.rotate(Math.atan2(b.getVelocity().y,b.getVelocity().x)+Math.PI/2, (int)Math.round(b.getLocation().x*HRZ_SCALE),(int) Math.round(b.getLocation().y*VERT_SCALE));
+				backg.draw(transformb.createTransformedShape(bullet));
+			}
+			else{
+				backg.drawImage(bulletImg, (int)b.getLocation().x, (int)b.getLocation().y, 6, 6, this);
+			}
+		}
+	}
+	public void updateSmallerScreen(GameMap gameMap, GameMode mode) {
+		double HRZ_SCALE = (double)GameFrame.WIDTH / gameMap.getPixelWidth();
+		double VERT_SCALE = (double)GameFrame.HEIGHT / gameMap.getPixelHeight();
+		backg.setColor(Color.BLACK);
+		if(playerLoc.x - bounds.getWidth()/2 < 0) backg.fillRect(0, 0,(int)(bounds.getWidth()/2 - playerLoc.x), (int)bounds.getHeight());
+		if(playerLoc.y - bounds.getHeight()/2 < 0) backg.fillRect(0, 0,(int)bounds.getWidth(), (int)(bounds.getHeight() - playerLoc.y));
+		if(playerLoc.x + bounds.getWidth()/2 > GameFrame.WIDTH) backg.fillRect(0, (int)bounds.getHeight(),GameFrame.WIDTH - (int)(bounds.getWidth()/2 + playerLoc.x), GameFrame.HEIGHT);
+		if(playerLoc.y + bounds.getHeight()/2 > GameFrame.HEIGHT) backg.fillRect(0, (int)(bounds.getHeight()/2 + playerLoc.y) - GameFrame.HEIGHT, GameFrame.WIDTH,(int)bounds.getHeight());
+		backg.clearRect(0-(int)playerLoc.x, 0-(int)playerLoc.y, GameFrame.WIDTH, GameFrame.HEIGHT);
+		
+		//Draw mode specific stuff
+		mode.drawModeMapPre(backg);
+		backg.setColor(Color.black);
+		//Draw map
+		for(int i = 0; i < gameMap.getMap().length;i++) {
+			for(int j = 0; j < gameMap.getMap()[i].length; j++)
+				if(gameMap.getMap()[i][j] == GameOptions.WALL_CHARACTER)
+					backg.fillRect((int) Math.round(i*GRID_PIXELS*HRZ_SCALE)-(int)playerLoc.x,
+							(int) Math.round(j*GRID_PIXELS*VERT_SCALE)-(int)playerLoc.y,
+							(int) Math.round(GRID_PIXELS*HRZ_SCALE),
+							(int) Math.round(GRID_PIXELS*VERT_SCALE));
+				else if(gameMap.getMap()[i][j] != GameOptions.BLANK_CHARACTER && !mode.getAdditionalMapChars().contains(gameMap.getMap()[i][j])) {
+					backg.drawRect((int) Math.round(i*GRID_PIXELS*HRZ_SCALE)-(int)playerLoc.x,
+							(int) Math.round(j*GRID_PIXELS*VERT_SCALE)-(int)playerLoc.y,
+							(int) Math.round(GRID_PIXELS*HRZ_SCALE),
+							(int) Math.round(GRID_PIXELS*VERT_SCALE));
+					backg.drawString("" + gameMap.getMap()[i][j], (int) Math.round(HRZ_SCALE*(i*GRID_PIXELS+GRID_PIXELS/3))-(int)playerLoc.x, (int) Math.round(VERT_SCALE*((j+1)*GRID_PIXELS-GRID_PIXELS/4))-(int)playerLoc.y);
+				}
+		}
+		
+		//Draw players
+		for(int i = 0; i < gameMap.getPlayers().size();i++) {
+			Player p = gameMap.getPlayers().get(i);
+			if (p.getHealth() > 0 && p!=null){
+				//Draw weapon
+				if (p.getCurrWeapon() != null && p.getType()!=PlayerType.HUMAN){
+					AffineTransform transform = new AffineTransform();
+					backg.setColor(Color.BLACK);
+					Rectangle gun2;
+					gun2 = new Rectangle((int)Math.round(HRZ_SCALE*(p.getLocation().getX()-playerLoc.x-Player.radius)),(int)Math.round(VERT_SCALE*(p.getLocation().getY()-playerLoc.y)), (int) Math.round(4*HRZ_SCALE), (int) Math.round(12*VERT_SCALE));
+					transform.rotate(p.getOrientation(), (int)Math.round(HRZ_SCALE*(p.getLocation().getX()-playerLoc.x)),(int)Math.round(VERT_SCALE*p.getLocation().getY()-playerLoc.y));
+					if (!p.getCurrWeapon().getTypes().contains(Weapon.WeaponType.THROWN)) backg.draw(transform.createTransformedShape(gun2));
+					
+				}
+
+				//Draw player and name
+				switch(p.getTeam()) {
+					case 1: backg.setColor(new Color(0f,0f,0.5f)); break;
+					case 2: backg.setColor(new Color(0.5f,0f,0f)); break;
+					case 3: backg.setColor(new Color(0f,0.5f,0f)); break;
+					case 4: backg.setColor(new Color(.8f,0.4f,0f)); break;
+					default: break;
+				}
+				if(p.getType()!=PlayerType.HUMAN) {
+					FontMetrics metrics = backg.getFontMetrics(backg.getFont());	
+					backg.fillOval((int)Math.round(HRZ_SCALE*(p.getLocation().getX()-Player.radius))-(int)playerLoc.x,(int)Math.round(VERT_SCALE*(p.getLocation().getY()-Player.radius))-(int)playerLoc.y, (int) Player.radius*2, (int) Player.radius*2);
+					backg.drawString(p.getName(), (int)Math.round(HRZ_SCALE*(p.getLocation().getX()-metrics.stringWidth(p.getName())/2))-(int)playerLoc.x, (int)Math.round(VERT_SCALE*(p.getLocation().getY()-Player.radius-2))-(int)playerLoc.y);
+				}
+				else {
+					playerLoc = new Point2D.Double(HRZ_SCALE*(p.getLocation().getX()-Player.radius)-bounds.getWidth()/2, VERT_SCALE*(p.getLocation().getY()-Player.radius)-bounds.getHeight()/2);
+					FontMetrics metrics = backg.getFontMetrics(backg.getFont());
+					backg.fillOval((int)bounds.getWidth()/2,(int)bounds.getHeight()/2, (int) Player.radius*2, (int) Player.radius*2);
+					backg.drawString(p.getName(), (int)bounds.getWidth()/2,(int)bounds.getHeight()/2);
+					if(p.getCurrWeapon()!=null) {
 						AffineTransform transform = new AffineTransform();
 						backg.setColor(Color.BLACK);
 						Rectangle gun2;
-						gun2 = new Rectangle((int)Math.round(HRZ_SCALE*(p.getLocation().getX()-playerLoc.x-Player.radius)),(int)Math.round(VERT_SCALE*(p.getLocation().getY()-playerLoc.y)), (int) Math.round(4*HRZ_SCALE), (int) Math.round(12*VERT_SCALE));
-						transform.rotate(p.getOrientation(), (int)Math.round(HRZ_SCALE*(p.getLocation().getX()-playerLoc.x)),(int)Math.round(VERT_SCALE*p.getLocation().getY()-playerLoc.y));
+						gun2 = new Rectangle((int)(bounds.getWidth()/2+Player.radius*2-4),(int)(bounds.getHeight()/2-Player.radius/2), (int) Math.round(4*HRZ_SCALE), (int) Math.round(12*VERT_SCALE));
+						transform.rotate(p.getOrientation()+Math.PI, (int)bounds.getWidth()/2+Player.radius,(int)bounds.getHeight()/2+Player.radius);
 						if (!p.getCurrWeapon().getTypes().contains(Weapon.WeaponType.THROWN)) backg.draw(transform.createTransformedShape(gun2));
-						
 					}
-	
-					//Draw player and name
-					switch(p.getTeam()) {
-						case 1: backg.setColor(new Color(0f,0f,0.5f)); break;
-						case 2: backg.setColor(new Color(0.5f,0f,0f)); break;
-						case 3: backg.setColor(new Color(0f,0.5f,0f)); break;
-						case 4: backg.setColor(new Color(.8f,0.4f,0f)); break;
-						default: break;
-					}
-					if(p.getType()!=PlayerType.HUMAN) {
-						FontMetrics metrics = backg.getFontMetrics(backg.getFont());	
-						backg.fillOval((int)Math.round(HRZ_SCALE*(p.getLocation().getX()-Player.radius))-(int)playerLoc.x,(int)Math.round(VERT_SCALE*(p.getLocation().getY()-Player.radius))-(int)playerLoc.y, (int) Player.radius*2, (int) Player.radius*2);
-						backg.drawString(p.getName(), (int)Math.round(HRZ_SCALE*(p.getLocation().getX()-metrics.stringWidth(p.getName())/2))-(int)playerLoc.x, (int)Math.round(VERT_SCALE*(p.getLocation().getY()-Player.radius-2))-(int)playerLoc.y);
-					}
-					else {
-						playerLoc = new Point2D.Double(HRZ_SCALE*(p.getLocation().getX()-Player.radius)-bounds.getWidth()/2, VERT_SCALE*(p.getLocation().getY()-Player.radius)-bounds.getHeight()/2);
-						FontMetrics metrics = backg.getFontMetrics(backg.getFont());
-						backg.fillOval((int)bounds.getWidth()/2,(int)bounds.getHeight()/2, (int) Player.radius*2, (int) Player.radius*2);
-						backg.drawString(p.getName(), (int)bounds.getWidth()/2,(int)bounds.getHeight()/2);
-						if(p.getCurrWeapon()!=null) {
-							AffineTransform transform = new AffineTransform();
-							backg.setColor(Color.BLACK);
-							Rectangle gun2;
-							gun2 = new Rectangle((int)(bounds.getWidth()/2+Player.radius*2-4),(int)(bounds.getHeight()/2-Player.radius/2), (int) Math.round(4*HRZ_SCALE), (int) Math.round(12*VERT_SCALE));
-							transform.rotate(p.getOrientation()+Math.PI, (int)bounds.getWidth()/2+Player.radius,(int)bounds.getHeight()/2+Player.radius);
-							if (!p.getCurrWeapon().getTypes().contains(Weapon.WeaponType.THROWN)) backg.draw(transform.createTransformedShape(gun2));
-						}
-					}
-				}
-			}
-			
-			mode.drawModeMapPost(backg, gameMap.getPlayers());
-			
-			//Draw explosions
-			for(Explosion e: gameMap.getExplosions()) {
-				backg.drawImage(createTranslucentImage(explosionImage,e.getAlpha()), (int) Math.round(HRZ_SCALE*e.getRect().x)-(int)playerLoc.x, (int) Math.round(VERT_SCALE*e.getRect().y)-(int)playerLoc.y, (int) Math.round(HRZ_SCALE*e.getRect().width), (int) Math.round(VERT_SCALE*e.getRect().height), null);
-			}
-			
-			//Draw bullets
-			backg.setColor(Color.black);
-			for(int i=0;i<gameMap.getBullets().size();i++) {
-				Bullet b = gameMap.getBullets().get(i);
-				BufferedImage bulletImg = null;
-				if (b.getBulletImgLoc() != null && !b.getBulletImgLoc().equals("")){
-					bulletImg = Bullet.getBulletImg(b.getBulletImgLoc());
-				}
-				AffineTransform transformb = new AffineTransform();
-				if (bulletImg == null){
-					Rectangle bullet = new Rectangle((int)Math.round(HRZ_SCALE*(b.getLocation().getX()-playerLoc.x)),(int)Math.round(VERT_SCALE*(b.getLocation().getY()-playerLoc.y)),(int) Math.max(Math.round(1*HRZ_SCALE),1), (int) Math.max(Math.round(6*VERT_SCALE),1));
-					transformb.rotate(Math.atan2(b.getVelocity().y,b.getVelocity().x)+Math.PI/2, (int)Math.round(b.getLocation().x*HRZ_SCALE)-(int)playerLoc.x,(int) Math.round(b.getLocation().y*VERT_SCALE)-(int)playerLoc.y);
-					backg.draw(transformb.createTransformedShape(bullet));
-				}
-				else{
-					backg.drawImage(bulletImg, (int)b.getLocation().x-(int)playerLoc.x, (int)b.getLocation().y-(int)playerLoc.y, 6, 6, this);
 				}
 			}
 		}
-		repaint();
+		
+		mode.drawModeMapPost(backg, gameMap.getPlayers());
+		
+		//Draw explosions
+		for(Explosion e: gameMap.getExplosions()) {
+			backg.drawImage(createTranslucentImage(explosionImage,e.getAlpha()), (int) Math.round(HRZ_SCALE*e.getRect().x)-(int)playerLoc.x, (int) Math.round(VERT_SCALE*e.getRect().y)-(int)playerLoc.y, (int) Math.round(HRZ_SCALE*e.getRect().width), (int) Math.round(VERT_SCALE*e.getRect().height), null);
+		}
+		
+		//Draw bullets
+		backg.setColor(Color.black);
+		for(int i=0;i<gameMap.getBullets().size();i++) {
+			Bullet b = gameMap.getBullets().get(i);
+			BufferedImage bulletImg = null;
+			if (b.getBulletImgLoc() != null && !b.getBulletImgLoc().equals("")){
+				bulletImg = Bullet.getBulletImg(b.getBulletImgLoc());
+			}
+			AffineTransform transformb = new AffineTransform();
+			if (bulletImg == null){
+				Rectangle bullet = new Rectangle((int)Math.round(HRZ_SCALE*(b.getLocation().getX()-playerLoc.x)),(int)Math.round(VERT_SCALE*(b.getLocation().getY()-playerLoc.y)),(int) Math.max(Math.round(1*HRZ_SCALE),1), (int) Math.max(Math.round(6*VERT_SCALE),1));
+				transformb.rotate(Math.atan2(b.getVelocity().y,b.getVelocity().x)+Math.PI/2, (int)Math.round(b.getLocation().x*HRZ_SCALE)-(int)playerLoc.x,(int) Math.round(b.getLocation().y*VERT_SCALE)-(int)playerLoc.y);
+				backg.draw(transformb.createTransformedShape(bullet));
+			}
+			else{
+				backg.drawImage(bulletImg, (int)b.getLocation().x-(int)playerLoc.x, (int)b.getLocation().y-(int)playerLoc.y, 6, 6, this);
+			}
+		}
 	}
 	public void update(Graphics g) {
 		g.drawImage(backbuffer,0,0,this);

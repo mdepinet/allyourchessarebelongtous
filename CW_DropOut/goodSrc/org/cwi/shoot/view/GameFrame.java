@@ -22,7 +22,6 @@ public class GameFrame extends JFrame {
 	public GameFrame(String s, GameMap map, int width, int height)
 	{
 		super(s);
-		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
 		if(width == -1 && height == -1)	this.setBounds(250,200,WIDTH+10,HEIGHT+10);
 		else this.setBounds(new Rectangle(width,height));
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);

@@ -167,7 +167,7 @@ public class MainMenu extends JFrame implements ActionListener, ListSelectionLis
 			this.dispose();
 		}
 		else if(e.getActionCommand().equals("option3")) {
-			new OptionsFrame(control);
+			new OptionsFrame(control, "mainmenu");
 			this.dispose();
 		}
 		if(e.getActionCommand().equals("option4")) {
