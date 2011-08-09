@@ -17,7 +17,7 @@ public class Player implements Comparable<Player>, MapUpdatable {
 	public static final double radius = 8;
 	public static final char[] SPAWNLOC_CHARS ={'1','2','3','4'};
 	public enum PlayerType {
-		HUMAN, COMPUTER
+		HUMAN, COMPUTER, REMOTE, TRANSITION
 	}
 	private static double regenSpeed = 1/15.;
 	

@@ -31,6 +31,7 @@ import org.cwi.shoot.view.StatsFrame;
 public class Shoot implements KeyListener, MouseListener, MouseMotionListener, ComponentListener, FocusListener {
 	static final int UPDATE_RATE = 30;  // number of game update per second
 	static final long UPDATE_PERIOD = 1000000000L / UPDATE_RATE;  // nanoseconds
+	
 	GameFrame frame;
 	private StatsFrame statsFrame;
 	GameMap map;
@@ -40,6 +41,14 @@ public class Shoot implements KeyListener, MouseListener, MouseMotionListener, C
 	private boolean stop;
 	private Profile profile;
 	private PauseFrame pause;
+	
+	//used by server
+	private long _ID;
+	private String mapName;
+	private int numTeams;
+	private int numPlayersPerTeam;
+	private String weaponSet;
+	
 	public Shoot() {
 		stop = false;
 		new MainMenu(this, null);
@@ -48,6 +57,11 @@ public class Shoot implements KeyListener, MouseListener, MouseMotionListener, C
 	public void startGame(Profile profile, File mapFile, File nameSetFile, GameMode mode, char[] teams, int team, String weaponSet, int numTeammates) {
 		WeaponLoader.weaponSet = weaponSet;
 		WeaponLoader.unloadAll();
+		
+		numTeams = teams.length;
+		numPlayersPerTeam = numTeammates;
+		this.weaponSet = weaponSet;
+		mapName = mapFile.getName();
 		
 		GameOptions setup = new GameOptions(mode, mapFile, nameSetFile, teams.length, team, profile, numTeammates);
 		holdCounter = -1;
@@ -329,5 +343,42 @@ public class Shoot implements KeyListener, MouseListener, MouseMotionListener, C
 	}
 	public void close() {
 		stop = true;
+	}
+
+	public long getID() {
+		return _ID;
+	}
+	public void setID(long _ID) {
+		this._ID = _ID;
+	}
+	public boolean isFull(){
+		return false;
+		//TODO
+	}
+	public boolean allowsPlayerTakeover(){
+		return true;
+		//TODO
+	}
+	public boolean allowsTeamTakeover(){
+		return true;
+	}
+
+	public GameMap getMap() {
+		return map;
+	}
+	public String getMapName() {
+		return mapName;
+	}
+	public GameMode getMode() {
+		return mode;
+	}
+	public int getNumTeams() {
+		return numTeams;
+	}
+	public int getNumPlayersPerTeam() {
+		return numPlayersPerTeam;
+	}
+	public String getWeaponSet() {
+		return weaponSet;
 	}
 }
