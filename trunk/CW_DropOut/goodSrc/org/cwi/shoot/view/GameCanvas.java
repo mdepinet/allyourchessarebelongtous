@@ -161,10 +161,7 @@ public class GameCanvas extends Canvas {
 		double HRZ_SCALE = (double)GameFrame.WIDTH / gameMap.getPixelWidth();
 		double VERT_SCALE = (double)GameFrame.HEIGHT / gameMap.getPixelHeight();
 		backg.setColor(Color.BLACK);
-		if(playerLoc.x - bounds.getWidth()/2 < 0) backg.fillRect(0, 0,(int)(bounds.getWidth()/2 - playerLoc.x), (int)bounds.getHeight());
-		if(playerLoc.y - bounds.getHeight()/2 < 0) backg.fillRect(0, 0,(int)bounds.getWidth(), (int)(bounds.getHeight() - playerLoc.y));
-		if(playerLoc.x + bounds.getWidth()/2 > GameFrame.WIDTH) backg.fillRect(0, (int)bounds.getHeight(),GameFrame.WIDTH - (int)(bounds.getWidth()/2 + playerLoc.x), GameFrame.HEIGHT);
-		if(playerLoc.y + bounds.getHeight()/2 > GameFrame.HEIGHT) backg.fillRect(0, (int)(bounds.getHeight()/2 + playerLoc.y) - GameFrame.HEIGHT, GameFrame.WIDTH,(int)bounds.getHeight());
+		backg.fillRect((int)-getBounds().getWidth(), (int)-getBounds().getHeight(), (int)(GameFrame.WIDTH + getBounds().getWidth()), (int)(GameFrame.HEIGHT + getBounds().getHeight()));
 		backg.clearRect(0-(int)playerLoc.x, 0-(int)playerLoc.y, GameFrame.WIDTH, GameFrame.HEIGHT);
 		
 		//Draw mode specific stuff
