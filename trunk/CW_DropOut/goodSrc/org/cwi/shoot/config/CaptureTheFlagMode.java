@@ -10,6 +10,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import javax.swing.JPanel;
+
 import org.cwi.shoot.ai.objective.KillObjective;
 import org.cwi.shoot.ai.objective.LocationObjective;
 import org.cwi.shoot.ai.objective.Objective;
@@ -22,6 +24,7 @@ public class CaptureTheFlagMode extends GameMode {
 	private static final int capturesToWin = 3;
 	private static final double OBJECTIVE_WEIGHT = 11;
 	private static final double DEFEND_OBJECTIVE_WEIGHT = 12;
+	private int ctw = capturesToWin;
 	private Map<Player, Integer> flagsCaptured;
 	private int[] teamFlagsCaptured;
 	private Map<Integer, Point> currentFlagLocs;
@@ -162,7 +165,7 @@ public class CaptureTheFlagMode extends GameMode {
 	@Override
 	public int getWinningTeam(List<Player> players) {
 		for(int i = 0; i < teamFlagsCaptured.length;i++)
-			if(teamFlagsCaptured[i]>=capturesToWin) {
+			if(teamFlagsCaptured[i]>=ctw) {
 				return i+1;
 			}
 		return -1;
@@ -257,5 +260,15 @@ public class CaptureTheFlagMode extends GameMode {
 			if(playerHasFlag(player))
 				g.drawImage(Weapon.getWeaponImg(player.getCurrWeapon().getImgLoc()), (int)player.getLocation().getX()+6, (int)player.getLocation().getY()-15,30,15, null);
 		}
+	}
+	
+	public Map<String, Object> getOptions() {
+		Map<String, Object> options = new HashMap<String, Object>();
+		Integer[] vals = { capturesToWin, 1, 60 };
+		options.put("Number of captures to win:", vals);
+		return options;
+	}
+	public void defineSettings(String key, Object value) {
+		if(key.equals("Number of captures to win:")) ctw = Integer.parseInt((String)value);
 	}
 }

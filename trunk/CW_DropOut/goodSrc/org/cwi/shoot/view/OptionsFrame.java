@@ -5,6 +5,7 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
+import java.awt.Font;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
@@ -56,11 +57,13 @@ public class OptionsFrame extends JFrame implements ActionListener, ListSelectio
 	private JFrame prevFrame;
 	private JTextField width;
 	private JTextField height;
+	private List<JButton> arrowbuttons;
 	public OptionsFrame(Shoot control, JFrame prevFrame) {
 		super("Options");
 		
 		this.control = control;
 		this.prevFrame = prevFrame;
+		arrowbuttons = new ArrayList<JButton>();
 		
 		setBounds(new Rectangle(800,600));
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -130,16 +133,15 @@ public class OptionsFrame extends JFrame implements ActionListener, ListSelectio
 		ssPanel.add(ssLabel);
 		ssPanel.add(width);
 		ssPanel.add(new JLabel("px"));
+		ssPanel.add(addArrowButtons("widtharr"));
 		ssPanel.add(new JLabel("   "));
 		ssLabel = new JLabel("Height:");
 		ssPanel.add(ssLabel);
 		ssPanel.add(height);
 		ssPanel.add(new JLabel("px"));
-//		ssPanel.setAlignmentX(Component.CENTER_ALIGNMENT);
+		ssPanel.add(addArrowButtons("heightarr"));
+		
 		mainPanel.add(ssPanel);
-//		JPanel filler = new JPanel();
-//		filler.add(new JTextField("r"));
-//		mainPanel.add(filler);
 		
 		getContentPane().add(pPanel, BorderLayout.WEST);
 		getContentPane().add(panel, BorderLayout.SOUTH);
@@ -148,6 +150,26 @@ public class OptionsFrame extends JFrame implements ActionListener, ListSelectio
 		setLocationRelativeTo(getRootPane());
 		setUndecorated(true);
 		setVisible(true);
+	}
+	
+	public JPanel addArrowButtons(String command) {
+		JButton arrowButton = new JButton(new ImageIcon("resource/images/arrowup.gif"));
+		arrowButton.addActionListener(this);
+		arrowButton.setActionCommand(command+"up");
+		arrowButton.setPreferredSize(new Dimension(10,10));
+		arrowButton.setFont(new Font("Button", arrowButton.getFont().getStyle(), 8));
+		arrowbuttons.add(arrowButton);
+		JPanel arrowPanel = new JPanel();
+		arrowPanel.setLayout(new BoxLayout(arrowPanel, BoxLayout.PAGE_AXIS));
+		arrowPanel.add(arrowButton);
+		arrowButton = new JButton(new ImageIcon("resource/images/arrowdown.gif"));
+		arrowButton.addActionListener(this);
+		arrowButton.setActionCommand(command+"down");
+		arrowButton.setFont(new Font("Button", arrowButton.getFont().getStyle(), 8));
+		arrowButton.setPreferredSize(new Dimension(10,10));
+		arrowPanel.add(arrowButton);
+		arrowbuttons.add(arrowButton);
+		return arrowPanel;
 	}
 	
 	public static List<String> getProfileNames() {
@@ -172,6 +194,12 @@ public class OptionsFrame extends JFrame implements ActionListener, ListSelectio
 		}
 		else if(e.getActionCommand().equals("newprofile")) {
 			new ProfileFrame();
+		}
+		else if(arrowbuttons.contains(e.getSource())) {
+			if(e.getActionCommand().equals("widtharrup") && Integer.parseInt(width.getText()) < 750) width.setText("" + (Integer.parseInt(width.getText())+50));
+			else if(e.getActionCommand().equals("widtharrdown") && Integer.parseInt(width.getText()) > 400) width.setText("" + (Integer.parseInt(width.getText())-50));
+			else if(e.getActionCommand().equals("heightarrup") && Integer.parseInt(height.getText()) < 750) height.setText("" + (Integer.parseInt(height.getText())+50));
+			else if(e.getActionCommand().equals("heightarrdown") && Integer.parseInt(height.getText()) > 400) height.setText("" + (Integer.parseInt(height.getText())-50));
 		}
 	}
 

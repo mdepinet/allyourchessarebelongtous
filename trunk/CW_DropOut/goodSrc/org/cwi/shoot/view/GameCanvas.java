@@ -38,7 +38,7 @@ public class GameCanvas extends Canvas {
 	private Rectangle bounds;
 	
 	public GameCanvas(Rectangle bounds) {
-		if(bounds.getWidth() < GameFrame.WIDTH && bounds.getHeight() < GameFrame.HEIGHT) {
+		if(bounds.getWidth() < GameFrame.WIDTH || bounds.getHeight() < GameFrame.HEIGHT) {
 			smallerFrame = true;
 			this.bounds = bounds;
 		}

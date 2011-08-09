@@ -15,6 +15,7 @@ import java.util.Set;
 import java.util.TreeMap;
 
 import javax.imageio.ImageIO;
+import javax.swing.JPanel;
 
 import org.cwi.shoot.ai.objective.Objective;
 import org.cwi.shoot.map.GameMap;
@@ -159,5 +160,8 @@ public class SurvivalMode extends GameMode {
 	public boolean handlesRespawn(){
 		return true;
 	}
-
+	public Map<String, Object> getOptions() {
+		
+		return null;
+	}
 }
