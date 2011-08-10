@@ -157,15 +157,16 @@ public class OddBallMode extends GameMode{
 	}
 	
 	@Override
-	public void drawModeMapPre(Graphics2D g) {
+	public void drawModeMapPre(Graphics2D g, Point2D.Double playerLoc) {
 	}
 	
 	@Override
-	public void drawModeMapPost(Graphics2D g, List<Player> players) {
+	public void drawModeMapPost(Graphics2D g, List<Player> players, Point2D.Double playerLoc) {
 		Point2D.Double drawLoc = null;
 		if (lastBallHolder == null){
 			if (oddLoc != null){
 				drawLoc = GameMap.fromGridPoint(oddLoc);
+				
 			}
 		}
 		else{
@@ -173,7 +174,8 @@ public class OddBallMode extends GameMode{
 		}
 		if (drawLoc != null){
 			g.setColor(Color.CYAN);
-			g.fillOval((int) (drawLoc.x-BALL_RADIUS), (int) (drawLoc.y-BALL_RADIUS), BALL_RADIUS*2, BALL_RADIUS*2);
+			if(playerLoc!=null) g.fillOval((int) (drawLoc.x-BALL_RADIUS) - (int)playerLoc.x, (int) (drawLoc.y-BALL_RADIUS) - (int)playerLoc.y, BALL_RADIUS*2, BALL_RADIUS*2);
+			else g.fillOval((int) (drawLoc.x-BALL_RADIUS), (int) (drawLoc.y-BALL_RADIUS), BALL_RADIUS*2, BALL_RADIUS*2);
 		}
 	}
 	public Map<String, Object> getOptions() {

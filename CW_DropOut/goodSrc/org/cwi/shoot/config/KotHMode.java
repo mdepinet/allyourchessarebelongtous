@@ -3,6 +3,7 @@ package org.cwi.shoot.config;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Point;
+import java.awt.geom.Point2D;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -288,27 +289,27 @@ public class KotHMode extends GameMode {
 	}
 
 	@Override
-	public void drawModeMapPre(Graphics2D g) {
-		// TODO Auto-generated method stub
+	public void drawModeMapPre(Graphics2D g, Point2D.Double playerLoc) {
 		g.setColor(new Color(0f,1f,0f,0.5f));
-		for(Point p : zone.keySet())
-			g.fillRect((int)p.getX()*GameMap.GRID_PIXELS, (int)p.getY()*GameMap.GRID_PIXELS, GameMap.GRID_PIXELS, GameMap.GRID_PIXELS);
+		for(Point p : zone.keySet()) {
+			if(playerLoc!=null) g.fillRect((int)p.getX()*GameMap.GRID_PIXELS - (int)playerLoc.x, (int)p.getY()*GameMap.GRID_PIXELS - (int)playerLoc.y, GameMap.GRID_PIXELS, GameMap.GRID_PIXELS);
+			else g.fillRect((int)p.getX()*GameMap.GRID_PIXELS, (int)p.getY()*GameMap.GRID_PIXELS, GameMap.GRID_PIXELS, GameMap.GRID_PIXELS);
+		}
 	}
 
 	@Override
-	public void drawModeMapPost(Graphics2D g, List<Player> players) {
-		// TODO Auto-generated method stub
+	public void drawModeMapPost(Graphics2D g, List<Player> players, Point2D.Double playerLoc) {
 	}
 	public Map<String, Object> getOptions() {
 		Map<String, Object> options = new HashMap<String, Object>();
 		Integer[] vals = { (int)TIME_TO_WIN-1, 10, 600 };
 		options.put("Time to win:", vals);
 		Integer[] vals2 = { (int)HILL_IDLE_TIME, 1, 60 };
-		options.put("Amount of time idle hill moves:", vals2);
+		options.put("Amount of time idle before hill moves:", vals2);
 		return options;
 	}
 	public void defineSettings(String key, Object value) {
 		if(key.equals("Time to win:")) ttw = Long.parseLong((String)value)+1;
-		else if(key.equals("Amount of time idle hill moves:")) hit = Long.parseLong((String)value);
+		else if(key.equals("Amount of time before idle hill moves:")) hit = Long.parseLong((String)value);
 	}
 }

@@ -83,7 +83,7 @@ public class GameCanvas extends Canvas {
 		backg.clearRect(0, 0, GameFrame.WIDTH, GameFrame.HEIGHT);
 		
 		//Draw mode specific stuff
-		mode.drawModeMapPre(backg);
+		mode.drawModeMapPre(backg, null);
 		backg.setColor(Color.black);
 		//Draw map
 		for(int i = 0; i < gameMap.getMap().length;i++) {
@@ -131,7 +131,7 @@ public class GameCanvas extends Canvas {
 			}
 		}
 		
-		mode.drawModeMapPost(backg, gameMap.getPlayers());
+		mode.drawModeMapPost(backg, gameMap.getPlayers(), null);
 		
 		//Draw explosions
 		for(Explosion e: gameMap.getExplosions()) {
@@ -165,7 +165,7 @@ public class GameCanvas extends Canvas {
 		backg.clearRect(0-(int)playerLoc.x, 0-(int)playerLoc.y, GameFrame.WIDTH, GameFrame.HEIGHT);
 		
 		//Draw mode specific stuff
-		mode.drawModeMapPre(backg);
+		mode.drawModeMapPre(backg, playerLoc);
 		backg.setColor(Color.black);
 		//Draw map
 		for(int i = 0; i < gameMap.getMap().length;i++) {
@@ -229,7 +229,7 @@ public class GameCanvas extends Canvas {
 			}
 		}
 		
-		mode.drawModeMapPost(backg, gameMap.getPlayers());
+		mode.drawModeMapPost(backg, gameMap.getPlayers(), playerLoc);
 		
 		//Draw explosions
 		for(Explosion e: gameMap.getExplosions()) {
