@@ -73,6 +73,8 @@ public abstract class GameMode {
 			stats.put("TotalScore:", score);
 			stats.put("Kills:", map.getPlayer().getStats().getKillsMinusSuicides());
 			stats.put("Deaths:", map.getPlayer().getStats().getNumDeaths());
+			if(getWinningTeam(map.getPlayers())==map.getPlayer().getTeam()) stats.put("Wins:", 1);
+			else stats.put("Losses:", 1);
 //			stats.put("Bullets-shot:", map.getPlayer().getStats().getShotsFired());
 			setup.getProfile().addStats(stats);
 			setup.getProfile().writeToFile();
