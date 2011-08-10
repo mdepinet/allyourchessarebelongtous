@@ -146,15 +146,16 @@ public class SurvivalMode extends GameMode {
 
 	}
 	@Override
-	public void drawModeMapPre(Graphics2D g) {
+	public void drawModeMapPre(Graphics2D g, Point2D.Double playerLoc) {
 		for(Point p : healthPacks){
 			Point2D.Double converted = GameMap.fromGridPoint(p);
-			g.drawImage(health,(int)converted.x,(int)converted.y, 15, 15, null);
+			if(playerLoc!=null) g.drawImage(health,(int)converted.x - (int)playerLoc.x,(int)converted.y - (int)playerLoc.y, 15, 15, null);
+			else g.drawImage(health,(int)converted.x,(int)converted.y, 15, 15, null);
 
 		}	
 	}
 	@Override
-	public void drawModeMapPost(Graphics2D g, List<Player> players) {
+	public void drawModeMapPost(Graphics2D g, List<Player> players, Point2D.Double playerLoc) {
 
 	}
 	public boolean handlesRespawn(){

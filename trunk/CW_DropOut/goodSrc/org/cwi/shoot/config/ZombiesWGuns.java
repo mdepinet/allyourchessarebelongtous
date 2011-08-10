@@ -2,6 +2,7 @@ package org.cwi.shoot.config;
 
 import java.awt.Graphics2D;
 import java.awt.Point;
+import java.awt.geom.Point2D;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -272,13 +273,13 @@ public class ZombiesWGuns extends GameMode {
 	}
 
 	@Override
-	public void drawModeMapPre(Graphics2D g) {
+	public void drawModeMapPre(Graphics2D g, Point2D.Double playerLoc) {
 		
 	}
 
 	@Override
 	public void drawModeMapPost(Graphics2D g,
-			List<org.cwi.shoot.model.Player> players) {
+			List<org.cwi.shoot.model.Player> players, Point2D.Double playerLoc) {
 		
 	}
 	

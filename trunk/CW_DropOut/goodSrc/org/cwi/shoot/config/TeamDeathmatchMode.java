@@ -1,6 +1,7 @@
 package org.cwi.shoot.config;
 
 import java.awt.Graphics2D;
+import java.awt.geom.Point2D;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -92,12 +93,12 @@ public class TeamDeathmatchMode extends GameMode {
 
 	}
 	@Override
-	public void drawModeMapPre(Graphics2D g) {
+	public void drawModeMapPre(Graphics2D g, Point2D.Double playerLoc) {
 		// TODO Auto-generated method stub
 		
 	}
 	@Override
-	public void drawModeMapPost(Graphics2D g, List<Player> players) {
+	public void drawModeMapPost(Graphics2D g, List<Player> players, Point2D.Double playerLoc) {
 		// TODO Auto-generated method stub
 		
 	}

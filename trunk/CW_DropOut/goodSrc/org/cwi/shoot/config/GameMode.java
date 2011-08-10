@@ -2,6 +2,7 @@ package org.cwi.shoot.config;
 
 import java.awt.Graphics2D;
 import java.awt.Point;
+import java.awt.geom.Point2D;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -46,8 +47,8 @@ public abstract class GameMode {
 	public abstract List<Objective> getObjectives(GameMap map, Player p);
 	public abstract void onPlayerDeath(Player p);
 	public abstract void onPlayerRespawn(Player p);
-	public abstract void drawModeMapPre(Graphics2D g);
-	public abstract void drawModeMapPost(Graphics2D g, List<Player> players);
+	public abstract void drawModeMapPre(Graphics2D g, Point2D.Double playerLoc);
+	public abstract void drawModeMapPost(Graphics2D g, List<Player> players, Point2D.Double playerLoc);
 	
 	public void onStartup(GameMap map, GameOptions setup){
 		if(setup.getPlayerTeam()==-1)

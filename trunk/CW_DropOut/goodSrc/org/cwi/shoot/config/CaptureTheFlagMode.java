@@ -3,6 +3,7 @@ package org.cwi.shoot.config;
 import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.Point;
+import java.awt.geom.Point2D;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
@@ -239,26 +240,32 @@ public class CaptureTheFlagMode extends GameMode {
 	}
 
 	@Override
-	public void drawModeMapPre(Graphics2D g) {
-		for(Integer i : flagSpawnLocs.keySet())
-			g.drawOval((int)flagSpawnLocs.get(i).getX()*GameMap.GRID_PIXELS-GameMap.GRID_PIXELS/2, (int)flagSpawnLocs.get(i).getY()*GameMap.GRID_PIXELS-GameMap.GRID_PIXELS/2, GameMap.GRID_PIXELS*2, GameMap.GRID_PIXELS*2);
+	public void drawModeMapPre(Graphics2D g, Point2D.Double playerLoc) {
+		for(Integer i : flagSpawnLocs.keySet()) {
+			if(playerLoc==null) g.drawOval((int)flagSpawnLocs.get(i).getX()*GameMap.GRID_PIXELS-GameMap.GRID_PIXELS/2, (int)flagSpawnLocs.get(i).getY()*GameMap.GRID_PIXELS-GameMap.GRID_PIXELS/2, GameMap.GRID_PIXELS*2, GameMap.GRID_PIXELS*2);
+			else g.drawOval((int)flagSpawnLocs.get(i).getX()*GameMap.GRID_PIXELS-GameMap.GRID_PIXELS/2 - (int)playerLoc.x, (int)flagSpawnLocs.get(i).getY()*GameMap.GRID_PIXELS-GameMap.GRID_PIXELS/2 - (int)playerLoc.y, GameMap.GRID_PIXELS*2, GameMap.GRID_PIXELS*2);
+		}
 		for(int i = 0; i < modeMap.length;i++) {
 			for(int j = 0; j < modeMap[i].length;j++) {
 				if(Arrays.binarySearch(FLAG_CHARS, modeMap[i][j])>=0) {
 					Image img = Weapon.getWeaponImg(new Weapon(modeMap[i][j], new Point()).getImgLoc());
-					if(img!=null)
-						g.drawImage(img,i*GameMap.GRID_PIXELS, j*GameMap.GRID_PIXELS+GameMap.GRID_PIXELS/4, 30, 15, null);
+					if(img!=null) {
+						if(playerLoc==null) g.drawImage(img,i*GameMap.GRID_PIXELS, j*GameMap.GRID_PIXELS+GameMap.GRID_PIXELS/4, 30, 15, null);
+						else g.drawImage(img,i*GameMap.GRID_PIXELS - (int)playerLoc.x, j*GameMap.GRID_PIXELS+GameMap.GRID_PIXELS/4 - (int)playerLoc.y, 30, 15, null);
+					}
 				}
 			}
 		}
 	}
 	
-	public void drawModeMapPost(Graphics2D g, List<Player> p) {
+	public void drawModeMapPost(Graphics2D g, List<Player> p, Point2D.Double playerLoc) {
 		// TODO Auto-generated method stub
 		for(int i = 0; i < p.size(); i++) {
 			Player player = p.get(i);
-			if(playerHasFlag(player))
-				g.drawImage(Weapon.getWeaponImg(player.getCurrWeapon().getImgLoc()), (int)player.getLocation().getX()+6, (int)player.getLocation().getY()-15,30,15, null);
+			if(playerHasFlag(player)) {
+				if(playerLoc==null) g.drawImage(Weapon.getWeaponImg(player.getCurrWeapon().getImgLoc()), (int)player.getLocation().getX()+6, (int)player.getLocation().getY()-15,30,15, null);
+				else g.drawImage(Weapon.getWeaponImg(player.getCurrWeapon().getImgLoc()), (int)player.getLocation().getX()+6 - (int)playerLoc.x, (int)player.getLocation().getY()-15 - (int)playerLoc.y,30,15, null);
+			}
 		}
 	}
 	
