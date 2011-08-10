@@ -20,6 +20,7 @@ import org.cwi.shoot.config.GameMode;
 import org.cwi.shoot.config.GameOptions;
 import org.cwi.shoot.map.GameMap;
 import org.cwi.shoot.menu.MainMenu;
+import org.cwi.shoot.model.Player;
 import org.cwi.shoot.model.Weapon;
 import org.cwi.shoot.profile.Profile;
 import org.cwi.shoot.util.VectorTools;
@@ -151,6 +152,14 @@ public class Shoot implements KeyListener, MouseListener, MouseMotionListener, C
 		        }
 	        }
 	        else holdCounter = -1;
+			int winner;
+			if((winner = mode.getWinningTeam(statsFrame.getPlayers())) != -1) {
+				mode.showGameEndDialog(map, winner);
+				map.win();
+				for(int i = 0; i < statsFrame.getPlayers().size(); i++) {
+					if(statsFrame.getPlayers().get(i).getName().equals("Turret")) statsFrame.getPlayers().remove(i--);
+				}
+			}
 	        map.gameUpdate();
 	        statsFrame.updateStats(map.getPlayers());
 	        // Refresh the display
@@ -249,6 +258,16 @@ public class Shoot implements KeyListener, MouseListener, MouseMotionListener, C
 				else {
 					map.pause();
 					pause = new PauseFrame(this);
+				}
+				break;
+			case KeyEvent.VK_T:
+				if(map.getPlayer().getNumTurrets()>0) {
+					map.getPlayer().setNumTurrets(map.getPlayer().getNumTurrets()-1);
+					Player turret = new Player("Turret", map.getPlayers().size()+1);
+					turret.respawn(map.getPlayer().getLocation(), mode);
+					turret.setTeam(map.getPlayer().getTeam());
+					map.getPlayers().add(turret);
+					map.getPlayer().setDeployedTurret(true);
 				}
 				break;
 			default:

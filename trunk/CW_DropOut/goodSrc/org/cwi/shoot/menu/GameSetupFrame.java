@@ -518,7 +518,6 @@ public class GameSetupFrame extends JFrame implements ActionListener, ListSelect
 		@Override
 		public Object getValueAt(int rowIndex, int columnIndex) {
 			if(rowIndex==0) return profile.getRankAndName();
-			if(rowIndex==getRowCount()-1) return "Add Player";
 			return null;
 		}
 		

@@ -17,7 +17,7 @@ public class Player implements Comparable<Player>, MapUpdatable {
 	public static final double radius = 8;
 	public static final char[] SPAWNLOC_CHARS ={'1','2','3','4'};
 	public enum PlayerType {
-		HUMAN, COMPUTER, REMOTE, TRANSITION
+		HUMAN, COMPUTER, REMOTE, TRANSITION, TURRET
 	}
 	private static double regenSpeed = 1/15.;
 	
@@ -37,9 +37,14 @@ public class Player implements Comparable<Player>, MapUpdatable {
 	private PlayerStats stats;
 	
 	private boolean friendlyFire;
+	private boolean canMove;
+	private String turretPlayerName;
+	private boolean deployedTurret;
+	private int ID;
+	private int numTurrets;
 	
-	public Player(String pname){
-		name = pname;
+	public Player(String pname, int id){
+		ID = id;
 		health = 100;
 		team = 0;
 		location = new Point2D.Double(12,12);
@@ -47,23 +52,53 @@ public class Player implements Comparable<Player>, MapUpdatable {
 		direction = new Point2D.Double(0,0);
 		weapons = Collections.synchronizedList(new ArrayList<Weapon>());
 		currWeapon = 0;
-		type = PlayerType.COMPUTER;
+		if(pname.contains("Turret")) {
+			name = pname.substring(0,"Turret".length());
+			turretPlayerName = pname.substring("Turret".length());
+			type = PlayerType.TURRET;
+			canMove = false;
+		}
+		else {
+			name = pname;
+			type = PlayerType.COMPUTER;
+			canMove = true;
+		}
 		brain = new DefaultBrain();
 		stats = new PlayerStats();
 		friendlyFire = false;
+		deployedTurret = false;
+		numTurrets = 2;
 	}
-	
-	
+	public int getNumTurrets() {
+		return numTurrets;
+	}
+	public void setNumTurrets(int t) {
+		numTurrets = t;
+	}
+	public int getID() {
+		return ID;
+	}
+	public boolean hasDeployedTurret() {
+		return deployedTurret;
+	}
+	public void setDeployedTurret(boolean t) {
+		deployedTurret = t;
+	}
+	public String getTurretPlayerName() {
+		return turretPlayerName;
+	}
+	public boolean isCanMove() {
+		return canMove;
+	}
+	public void setCanMove(boolean canMove) {
+		this.canMove = canMove;
+	}
 	public boolean isFriendlyFire() {
 		return friendlyFire;
 	}
-
-
 	public void setFriendlyFire(boolean friendlyFire) {
 		this.friendlyFire = friendlyFire;
 	}
-
-
 	public String getName() {
 		return name;
 	}
@@ -156,7 +191,7 @@ public class Player implements Comparable<Player>, MapUpdatable {
 	}
 	public void update(GameMode mode, GameMap map) {
 		update();
-		if (type == PlayerType.COMPUTER) brain.makeMove(mode, map, this);
+		if (type == PlayerType.COMPUTER || type == PlayerType.TURRET) brain.makeMove(mode, map, this);
 	}
 	
 	public void removeWeapon(Weapon weapon) {
@@ -223,8 +258,11 @@ public class Player implements Comparable<Player>, MapUpdatable {
 		health = 0;
 		weapons.clear();
 		direction = new Point2D.Double(0,0);
+		deployedTurret = false;
+		numTurrets = 2;
 	}
 	public void reset() {
+		numTurrets = 2;
 		currWeapon = 0;
 		stats = new PlayerStats();
 		health = 100;

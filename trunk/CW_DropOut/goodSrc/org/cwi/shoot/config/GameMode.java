@@ -17,6 +17,7 @@ import org.cwi.shoot.ai.objective.Objective;
 import org.cwi.shoot.map.GameMap;
 import org.cwi.shoot.model.Player;
 import org.cwi.shoot.model.Weapon;
+import org.cwi.shoot.model.Player.PlayerType;
 import org.cwi.shoot.threads.RespawnThread;
 
 public abstract class GameMode {
@@ -56,7 +57,7 @@ public abstract class GameMode {
 		for(int i = 1; i<=Math.min(setup.getNumTeams(), getMaxNumTeams()); i++) {
 			for(int j = 0; j < setup.getPlayersPerTeam(); j++) {
 				if(i == setup.getPlayerTeam() && j == 0) continue;
-				Player p2 = new Player(setup.getNameGen().compose((int)(Math.random()*3)+2));
+				Player p2 = new Player(setup.getNameGen().compose((int)(Math.random()*3)+2), map.getPlayers().size()+1);
 				p2.setTeam(i);
 				map.getPlayers().add(p2);
 			}
@@ -79,9 +80,13 @@ public abstract class GameMode {
 			setup.getProfile().addStats(stats);
 			setup.getProfile().writeToFile();
 		}
-		for(Player p : map.getPlayers()) {
-			p.reset();
-			map.spawn(p);
+		for(int i = 0; i < map.getPlayers().size(); i++) {
+			Player p = map.getPlayers().get(i);
+			if(p.getType() == PlayerType.TURRET) map.getPlayers().remove(i--);
+			else {
+				p.reset();
+				map.spawn(p);
+			}
 		}
 		if (!handlesRespawn()){
 			for(int i = 0; i < map.getThreads().size(); i++) { 

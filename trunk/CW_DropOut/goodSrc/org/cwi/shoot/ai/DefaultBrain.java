@@ -13,7 +13,7 @@ public class DefaultBrain extends AbstractBrain {
 	public void makeMove(GameMode mode, GameMap map, Player p){
 		Player enemy = getClosestEnemy(map,p);
 		Point2D.Double location = p.getLocation();
-		Point2D.Double newLoc;
+		Point2D.Double newLoc = null;
 		Point2D.Double destLoc = null;
 		
 		//Pick objective
@@ -21,7 +21,7 @@ public class DefaultBrain extends AbstractBrain {
 		destLoc = objective.getTargetPoint(p, map);
 		
 		if(destLoc!=null){
-			newLoc = getSmartDirectionToLoc(location,destLoc,map);
+			if(p.isCanMove()) newLoc = getSmartDirectionToLoc(location,destLoc,map);
 			if(enemy!=null) {
 				turn(VectorTools.getOrientationToPoint(location,enemy.getLocation()),p);
 				if(p.getNumWeapons()>1 && p.getCurrWeapon().getTypes().contains(Weapon.WeaponType.PISTOL)) p.nextWeapon();
@@ -31,7 +31,7 @@ public class DefaultBrain extends AbstractBrain {
 					}
 				}
 			}
-			move(newLoc,p);
+			if(p.isCanMove()) move(newLoc,p);
 		}
 	}
 }

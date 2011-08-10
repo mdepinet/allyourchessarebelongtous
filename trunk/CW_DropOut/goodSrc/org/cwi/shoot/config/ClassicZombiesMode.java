@@ -66,7 +66,7 @@ public class ClassicZombiesMode extends ZombiesWGuns {
 			e.printStackTrace();
 		}
 		for(int i = 1; i < num; i++) {
-			Player foe = new Player(gen.compose((int)(Math.random()*3)+2));
+			Player foe = new Player(gen.compose((int)(Math.random()*3)+2), 0);
 			foe.setTeam(ZOMBIES_TEAM_NUM);
 			foe.setType(PlayerType.COMPUTER);
 			foe.setLocation(GameMap.fromGridPoint(spawnLocs.get((int)(spawnLocs.size()*Math.random()))));

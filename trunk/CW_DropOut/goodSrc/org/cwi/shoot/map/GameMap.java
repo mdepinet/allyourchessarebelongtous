@@ -38,9 +38,11 @@ public class GameMap{
 	private Map<Integer, List<Point2D.Double>> spawnLocs;
 	private List<Point2D.Double> droppedWeps;
 	private boolean paused;
+	private boolean win;
 	
 	public GameMap(GameOptions setup) {
 		this.setup = setup;
+		win = false;
 		init();
 	}
 	public void init() {
@@ -54,7 +56,7 @@ public class GameMap{
 		
 		setupSpawnLocs();
 		
-		Player player = new Player(setup.getPlayerName());
+		Player player = new Player(setup.getPlayerName(), 1);
 		player.setTeam(setup.getPlayerTeam());
 		player.setType(Player.PlayerType.HUMAN);
 		players.add(player);
@@ -70,6 +72,7 @@ public class GameMap{
 		
 		setup.getMode().onReset(this, setup);
 		setup.getMode().loadGameObjects(this);
+		win = false;
 	}
 	private void setupSpawnLocs(){
 		spawnLocs = new HashMap<Integer, List<Point2D.Double>>();
@@ -113,7 +116,7 @@ public class GameMap{
 		return droppedWeps;
 	}
 	public Player getPlayer() {
-		if(players.get(0).getType()==PlayerType.HUMAN) return players.get(0);
+		if(players.size() > 0 && players.get(0).getType()==PlayerType.HUMAN) return players.get(0);
 		return null;
 	}
 	public void setPlayer(Player player) {
@@ -228,9 +231,7 @@ public class GameMap{
 	public void gameUpdate() {
 		if(!paused) {
 			setup.getMode().update(players);
-			int winner;
-			if((winner = setup.getMode().getWinningTeam(players)) != -1) {
-				setup.getMode().showGameEndDialog(this, winner);
+			if(win) {
 				resetGame();
 			}
 			OUTTER: for(int i=0;i<bullets.size();i++) {
@@ -273,8 +274,8 @@ public class GameMap{
 					if (b.getDistanceTraveled() > effRange) damage -= ((b.getDistanceTraveled() - effRange)/effRange)*damage;
 					hit.takeDamage(damage);
 					if (hit.getHealth()<=0) {
-						if(hit!=b.getPlayer()) b.getPlayer().getStats().incNumKills();
-						else b.getPlayer().getStats().incNumSuicides();
+						if(hit!=b.getPlayer() && hit.getType()!=PlayerType.TURRET) b.getPlayer().getStats().incNumKills();
+						else if(hit.getType() != PlayerType.TURRET) b.getPlayer().getStats().incNumSuicides();
 						kill(hit);
 					}
 					explode(b);
@@ -293,7 +294,7 @@ public class GameMap{
 					if(hit!=null) {
 						hit.takeDamage(p.getCurrWeapon().getPower());
 						if (hit.getHealth()<=0) {
-							p.getStats().incNumKills();
+							if(hit.getType()!=PlayerType.TURRET) p.getStats().incNumKills();
 							kill(hit);
 						}
 					}
@@ -504,7 +505,7 @@ public class GameMap{
 			if(distance<splash) {
 				p.takeDamage(b.getWeapon().getPower()*((splash-distance)/splash));
 				if (p.getHealth() <= 0){ 
-					if(p!=b.getPlayer()) b.getPlayer().getStats().incNumKills();
+					if(p!=b.getPlayer() && p.getType()!=PlayerType.TURRET) b.getPlayer().getStats().incNumKills();
 					else b.getPlayer().getStats().incNumSuicides();
 					kill(p);
 					i--;
@@ -528,7 +529,7 @@ public class GameMap{
 				break;
 			}
 		}
-		if (!setup.getMode().handlesRespawn()){
+		if (!setup.getMode().handlesRespawn() && p.getType()!=PlayerType.TURRET){
 			threads.add(new RespawnThread(this, p, i == 0 && p.getType()==PlayerType.HUMAN, 5000));
 			threads.get(threads.size()-1).start();
 		}
@@ -544,5 +545,8 @@ public class GameMap{
 	}
 	public boolean isPaused() {
 		return paused;
+	}
+	public void win() {
+		win = true;
 	}
 }
