@@ -39,6 +39,7 @@ public class ZombiesWGuns extends GameMode {
 	protected boolean humanPlaying;
 	protected Player originalPlayer;
 	protected Map<String, Object> stats;
+	private boolean dead;
 	
 	public ZombiesWGuns() {
 		wave = 1;
@@ -48,6 +49,7 @@ public class ZombiesWGuns extends GameMode {
 	}
 	
 	public void onStartup(GameMap map, GameOptions setup){
+		dead = false;
 		for(int r = 0; r < modeMap.length; r++) 
 			for(int c = 0; c < modeMap[r].length; c++)
 				if(modeMap[r][c]!='X' && GameMap.getGridPoint(map.getPlayer().getLocation()).x!=c && GameMap.getGridPoint(map.getPlayer().getLocation()).y !=r)
@@ -61,7 +63,7 @@ public class ZombiesWGuns extends GameMode {
 		}
 		else {
 			map.getPlayers().clear();
-			Player p = new Player(setup.getNameGen().compose((int)(Math.random()*3)+2));
+			Player p = new Player(setup.getNameGen().compose((int)(Math.random()*3)+2), 1);
 			p.setTeam(1);
 			p.setBrain(new SmartBrain());
 			map.getPlayers().add(p);
@@ -76,6 +78,7 @@ public class ZombiesWGuns extends GameMode {
 			
 	}
 	public void onReset(GameMap map, GameOptions setup){
+		dead = false;
 		map.getPlayers().clear();
 		for(int i = 0; i < map.getThreads().size(); i++) { 
 			RespawnThread t = map.getThreads().get(i); 
@@ -86,25 +89,15 @@ public class ZombiesWGuns extends GameMode {
 		if(humanPlaying) {
 			setup.getProfile().addStats(stats);
 			setup.getProfile().writeToFile();
-			Player player = new Player(setup.getPlayerName());
-			player.setTeam(setup.getPlayerTeam());
-			player.setType(Player.PlayerType.HUMAN);
-			map.getPlayers().add(0,player);
-			map.spawn(player);
-			map.getPlayer().removeWeapon(new Weapon("Default"));
-			map.getPlayer().addWeapon(new Weapon('T', new Point()), this);
-			map.getPlayer().setCurrWeapon(new Weapon('T', new Point()));
-			
 		}
-		else {
-			map.getPlayers().clear();
-			map.getPlayers().add(0,originalPlayer);
-			map.getPlayers().get(0).getWeapons().clear();
-			map.spawn(originalPlayer);
-			map.getPlayers().get(0).removeWeapon(new Weapon("Default"));
-			map.getPlayers().get(0).addWeapon(new Weapon('T', new Point()), this);
-			map.getPlayers().get(0).setCurrWeapon(new Weapon('T', new Point()));
-		}
+		map.getPlayers().clear();
+		map.getPlayers().add(0,originalPlayer);
+		map.getPlayers().get(0).getWeapons().clear();
+		map.spawn(originalPlayer);
+		map.getPlayers().get(0).removeWeapon(new Weapon("Default"));
+		map.getPlayers().get(0).addWeapon(new Weapon('T', new Point()), this);
+		map.getPlayers().get(0).setCurrWeapon(new Weapon('T', new Point()));
+		
 		
 		setWave(1);
 		setWaveStartTime(System.currentTimeMillis());
@@ -133,7 +126,7 @@ public class ZombiesWGuns extends GameMode {
 			e.printStackTrace();
 		}
 		for(int i = 1; i < num; i++) {
-			Player foe = new Player(gen.compose((int)(Math.random()*3)+2));
+			Player foe = new Player(gen.compose((int)(Math.random()*3)+2), 0);
 			foe.setTeam(ZOMBIES_TEAM_NUM);
 			foe.setType(PlayerType.COMPUTER);
 			foe.setLocation(GameMap.fromGridPoint(spawnLocs.get((int)(spawnLocs.size()*Math.random()))));
@@ -207,17 +200,7 @@ public class ZombiesWGuns extends GameMode {
 
 	@Override
 	public int getWinningTeam(List<org.cwi.shoot.model.Player> players) {
-		if(humanPlaying) {
-			for(int i = 0; i < players.size(); i++)
-				if(players.get(i).getType()==PlayerType.HUMAN)
-					return -1;
-		}
-		else {
-			for(int i = 0; i < players.size(); i++)
-				if(players.get(0).getTeam()!=ZOMBIES_TEAM_NUM)
-					return -1;
-		}
-		return ZOMBIES_TEAM_NUM;
+		return dead ? ZOMBIES_TEAM_NUM : -1;
 	}
 	public void showGameEndDialog(GameMap map, int winner){
 		Weapon w = new Weapon((char)(76), new Point());
@@ -256,14 +239,14 @@ public class ZombiesWGuns extends GameMode {
 			deadZombies.add(p);
 		}
 		else {
+			dead = true;
 			if(p.getType()==PlayerType.HUMAN) {
 				stats = new HashMap<String, Object>();
 				int score = 5 * ((int)(System.currentTimeMillis() - getStartTime())/1000 - 30) +(int)(1/5 *p.getStats().getKillsMinusSuicides() - p.getStats().getNumDeaths());
 				stats.put("TotalScore:", score);
-				stats.put("Bullets-shot:", p.getStats().getShotsFired());
+//				stats.put("Bullets-shot:", p.getStats().getShotsFired());
 			}
 			p.reset();
-			originalPlayer = p;
 		}
 	}
 

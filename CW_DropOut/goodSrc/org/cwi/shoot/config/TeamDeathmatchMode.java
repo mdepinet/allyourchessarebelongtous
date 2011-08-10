@@ -11,6 +11,7 @@ import java.util.TreeMap;
 import org.cwi.shoot.ai.objective.Objective;
 import org.cwi.shoot.map.GameMap;
 import org.cwi.shoot.model.Player;
+import org.cwi.shoot.model.Player.PlayerType;
 import org.cwi.shoot.model.Weapon;
 
 public class TeamDeathmatchMode extends GameMode {
@@ -28,9 +29,10 @@ public class TeamDeathmatchMode extends GameMode {
 	@Override
 	public String getScoreForTeam(int team, List<Player> players) {
 		int kills = 0;
-		for(int i = 0; i < players.size();i++)
+		for(int i = 0; i < players.size();i++) {
 			if(players.get(i).getTeam()==team)
 				kills += players.get(i).getStats().getNumKills() - players.get(i).getStats().getNumSuicides();
+		}
 		return ""+kills;
 	}
 
@@ -54,7 +56,6 @@ public class TeamDeathmatchMode extends GameMode {
 			int team = p.getTeam();
 			if (teamKills.containsKey(team)) teamKills.put(team, teamKills.get(team)+p.getStats().getKillsMinusSuicides());
 			else teamKills.put(team, p.getStats().getKillsMinusSuicides());
-			
 		}
 		for(int i : teamKills.keySet())
 			if(teamKills.get(i)>=ktw)

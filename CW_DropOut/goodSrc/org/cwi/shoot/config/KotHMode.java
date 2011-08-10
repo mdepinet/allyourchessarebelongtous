@@ -96,7 +96,7 @@ public class KotHMode extends GameMode {
 		for(int i = 1; i<=Math.min(setup.getNumTeams(), getMaxNumTeams()); i++) {
 			for(int j = 0; j < setup.getPlayersPerTeam(); j++) {
 				if(i == setup.getPlayerTeam() && j == 0) continue;
-				Player p2 = new Player(setup.getNameGen().compose((int)(Math.random()*3)+2));
+				Player p2 = new Player(setup.getNameGen().compose((int)(Math.random()*3)+2), map.getPlayers().size()+1);
 				p2.setTeam(i);
 				map.getPlayers().add(p2);
 			}

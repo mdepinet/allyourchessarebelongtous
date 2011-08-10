@@ -98,11 +98,19 @@ public class StatsFrame extends JFrame {
 				return players.get(i);
 		return null;
 	}
+	public List<Player> getPlayers() {
+		return players;
+	}
 	public void updatePlayer(Player p)
 	{
+		boolean inPlayers = false;
 		for(int i = 0; i < players.size();i++)
-			if(players.get(i).getName().equals(p.getName()))
+			if(players.get(i).getID()==p.getID()) {
 				players.set(i, p);
+				inPlayers = true;
+			}
+		if(!inPlayers) players.add(p);
+			
 	}
 	public void updateStats(List<Player> p) {
 		for(int i = 0; i<p.size(); i++) {
@@ -113,7 +121,14 @@ public class StatsFrame extends JFrame {
 		for(int i = 0; i < teams.length;i++) {
 			labels.get(i).setText(gameMode.getScoreForTeam(teams[i]-75, players));
 		}
-		for(int i = 0; i < players.size();i++) labels.get(i+teams.length).setText(gameMode.getScoreForPlayer(players.get(i)));
+		int i = 0;
+		for(Player player : players) {
+			if(players.get(i).getType()==PlayerType.TURRET || players.get(i).getTeam()==0) continue;
+			else {
+				labels.get(i+teams.length).setText(gameMode.getScoreForPlayer(players.get(i)));
+				i++;
+			}
+		}
 		
 		if(players.get(0).getType()==PlayerType.HUMAN) playerInfoCanvas.setPlayer(players.get(0));
 		if(hasPlayer) playerInfoCanvas.updateGraphics();
