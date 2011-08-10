@@ -107,19 +107,7 @@ public class KotHMode extends GameMode {
 		}
 	}
 	public void onReset(GameMap map, GameOptions setup){
-		for(Player p : map.getPlayers()) {
-			p.reset();
-			map.spawn(p);
-		}
-		if (!handlesRespawn()){
-			for(int i = 0; i < map.getThreads().size(); i++) { 
-				RespawnThread t = map.getThreads().get(i); 
-				t.respawn(); 
-				t.resetPlayer();
-				t.kill(); 
-			}
-			map.getThreads().clear();
-		}
+		super.onReset(map,setup);
 		zone.clear();
 		loadGameObjects(map);
 		teamPoints = new HashMap<Integer, Integer>();

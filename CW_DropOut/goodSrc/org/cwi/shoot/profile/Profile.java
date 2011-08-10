@@ -29,6 +29,8 @@ public class Profile {
 	private String prevWepSet;
 	private Point screensize;
 	private int numPlayersPerTeam;
+	private int wins;
+	private int losses;
 	
 	public Profile(String profileName) {
 		name = profileName;
@@ -56,6 +58,14 @@ public class Profile {
 			score = Integer.parseInt(scan.next());
 			if(score > 9000) rank="Private";
 			data.put(item, score);
+		}
+		else if(item.equals("Wins:")) {
+			wins = Integer.parseInt(scan.next());
+			data.put(item, wins);
+		}
+		else if(item.equals("Losses:")) {
+			losses = Integer.parseInt(scan.next());
+			data.put(item, losses);
 		}
 		else if(item.equals("Kills:")) {
 			kills = Integer.parseInt(scan.next());
@@ -99,6 +109,23 @@ public class Profile {
 	public int getScore() {
 		return score;
 	}
+	public int getWins() {
+		return wins;
+	}
+	public void setWins(int win) {
+		wins = win;
+	}
+	public int getLosses() {
+		return losses;
+	}
+	public void setLosses(int losses) {
+		this.losses = losses;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
 	public int getKills() {
 		return kills;
 	}
