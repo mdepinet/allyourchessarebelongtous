@@ -11,7 +11,6 @@ import java.util.TreeMap;
 import org.cwi.shoot.ai.objective.Objective;
 import org.cwi.shoot.map.GameMap;
 import org.cwi.shoot.model.Player;
-import org.cwi.shoot.model.Player.PlayerType;
 import org.cwi.shoot.model.Weapon;
 
 public class TeamDeathmatchMode extends GameMode {

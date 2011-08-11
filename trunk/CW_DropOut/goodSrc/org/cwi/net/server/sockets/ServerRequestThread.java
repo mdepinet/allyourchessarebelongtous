@@ -31,7 +31,17 @@ public class ServerRequestThread extends Thread {
 			Request req = (Request) ois.readObject();
 			switch (req){
 			case GAME_LIST:
-				handleGameListRequest(ois, oos); break;
+				handleGameListRequest(ois, oos);
+				Request req2 = (Request) ois.readObject();
+				switch (req2){
+				case JOIN_PLAYER:
+					handleJoinPlayerRequest(s); break;
+				case JOIN_TEAM:
+					handleJoinTeamRequest(s); break;
+				case NEW_GAME:
+					handleNewGameRequest(s); break;
+				}
+				break;
 			case JOIN_PLAYER:
 				handleJoinPlayerRequest(s); break;
 			case JOIN_TEAM:
@@ -43,8 +53,6 @@ public class ServerRequestThread extends Thread {
 			ex.printStackTrace();
 		} catch (ClassNotFoundException e) {
 			e.printStackTrace();
-		} finally {
-			try{ois.close();oos.close();}catch(Throwable t){}
 		}
 	}
 
@@ -70,8 +78,6 @@ public class ServerRequestThread extends Thread {
 			oos.writeObject(games);
 		} catch (IOException e) {
 			e.printStackTrace();
-		} finally {
-			try{ois.close();oos.close();} catch(Throwable t){}
 		}
 		
 	}
@@ -96,7 +102,7 @@ public class ServerRequestThread extends Thread {
 						Server.PCs.get(prevController).remove(p);
 						Server.controllers.put(p, ip);
 						oos.writeObject(Response.APPROVED);
-						oos.writeObject(game);
+						Server.playerOutputMap.put(ip, oos);
 						foundPlayer = true;
 						break;
 					}
@@ -105,15 +111,13 @@ public class ServerRequestThread extends Thread {
 					oos.writeObject(Response.DENIED_FULL);
 				}
 				else {
-					new ServerGameThread(s).start();
+					new ServerGameThread(ois,ip).start();
 				}
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
 		} catch (ClassNotFoundException e) {
 			e.printStackTrace();
-		} finally {
-			try{ois.close();oos.close();}catch(Throwable t){}
 		}
 	}
 	private void handleJoinTeamRequest(Socket s){
@@ -132,6 +136,7 @@ public class ServerRequestThread extends Thread {
 				boolean foundTeam = false;
 				Map<Integer, List<Player>> teamPlayers = new TreeMap<Integer, List<Player>>();
 				for (Player p : game.getMap().getPlayers()){
+					if (p.getType() != Player.PlayerType.HUMAN) p.setType(Player.PlayerType.REMOTE);
 					int team = p.getTeam();
 					if (teamPlayers.get(team) == null) teamPlayers.put(team, new LinkedList<Player>());
 					teamPlayers.get(team).add(p);
@@ -147,13 +152,14 @@ public class ServerRequestThread extends Thread {
 					if (allNPCs){
 						foundTeam = true;
 						for (Player p : players){
-							p.setType(Player.PlayerType.TRANSITION);
+							p.setType(Player.PlayerType.COMPUTER);
 							String prevController = Server.controllers.get(p);
 							Server.PCs.get(prevController).remove(p);
 							Server.controllers.put(p, ip);
 						}
+						players.get(0).setType(Player.PlayerType.HUMAN);
 						oos.writeObject(Response.APPROVED);
-						oos.writeObject(game);
+						Server.playerOutputMap.put(ip, oos);
 						break;
 					}
 				}
@@ -161,15 +167,13 @@ public class ServerRequestThread extends Thread {
 					oos.writeObject(Response.DENIED_FULL);
 				}
 				else {
-					new ServerGameThread(s).start();
+					new ServerGameThread(ois, ip).start();
 				}
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
 		} catch (ClassNotFoundException e) {
 			e.printStackTrace();
-		} finally {
-			try{ois.close();oos.close();}catch(Throwable t){}
 		}
 	}
 	private void handleNewGameRequest(Socket s){
@@ -191,15 +195,15 @@ public class ServerRequestThread extends Thread {
 				for (Player p : game.getMap().getPlayers()){
 					Server.controllers.put(p, ip);
 				}
+				Server.playerOutputMap.put(ip, oos);
 				oos.writeObject(Response.APPROVED);
-				new ServerGameThread(s).start();
+				new ServerGameThread(ois, ip).start();
+				new ServerUpdateThread(gameId).start();
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
 		} catch (ClassNotFoundException e) {
 			e.printStackTrace();
-		} finally {
-			try{ois.close();oos.close();}catch(Throwable t){}
 		}
 	}
 }
