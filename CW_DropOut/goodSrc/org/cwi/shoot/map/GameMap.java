@@ -39,6 +39,7 @@ public class GameMap{
 	private List<Point2D.Double> droppedWeps;
 	private boolean paused;
 	private boolean win;
+	private List<Point2D.Double> turretLocs;
 	
 	public GameMap(GameOptions setup) {
 		this.setup = setup;
@@ -53,6 +54,7 @@ public class GameMap{
 		threads = Collections.synchronizedList(new ArrayList<RespawnThread>());
 		players = Collections.synchronizedList(new LinkedList<Player>());
 		droppedWeps = Collections.synchronizedList(new ArrayList<Point2D.Double>());
+		turretLocs = new ArrayList<Point2D.Double>();
 		
 		setupSpawnLocs();
 		
@@ -69,6 +71,7 @@ public class GameMap{
 		bullets.clear();
 		explosions.clear();
 		droppedWeps.clear();
+		turretLocs.clear();
 		
 		setup.getMode().onReset(this, setup);
 		setup.getMode().loadGameObjects(this);
@@ -308,7 +311,11 @@ public class GameMap{
 					else
 						p.setLocation(loc);
 				}
-				
+				if(p.getType()==PlayerType.TURRET && !turretLocs.contains(p.getLocation())) {
+//					Point point = GameMap.getGridPoint(p.getLocation());
+//					if(map[point.x][point.y]!='X') map[point.x][point.y]='X';
+					turretLocs.add(p.getLocation());
+				}
 				Weapon w;
 				if((w = getWeapon(p))!=null){
 					if(p.addWeapon(w,setup.getMode())) {
@@ -431,6 +438,9 @@ public class GameMap{
 				if(map[i][j] == GameOptions.WALL_CHARACTER && circleIntersectsRect(loc, radius,new Rectangle(i*GRID_PIXELS,j*GRID_PIXELS,GRID_PIXELS,GRID_PIXELS)))
 						return false;
 		}
+		for(Point2D.Double d : turretLocs)
+			if(circleIntersectsRect(loc, radius, new Rectangle((int)(d.x-radius), (int)(d.y-radius), radius*2, radius*2)))
+				return false;
 		return true;
 	}
 	
@@ -472,10 +482,10 @@ public class GameMap{
 		}
 		return null;
 	}
-	private int getPlayerGridX(Player p){
+	public int getPlayerGridX(Player p){
 		return (int) (Math.floor(p.getLocation().x/GRID_PIXELS));
 	}
-	private int getPlayerGridY(Player p){
+	public int getPlayerGridY(Player p){
 		return (int) (Math.floor(p.getLocation().y/GRID_PIXELS));
 	}
 	public static Point getGridPoint(Point2D.Double p){
@@ -520,7 +530,12 @@ public class GameMap{
 			map[getPlayerGridX(p)][getPlayerGridY(p)]=p.getCurrWeapon().getCharacter();
 			droppedWeps.add(new Point2D.Double(getPlayerGridX(p),getPlayerGridY(p)));
 			new WeaponRemoverThread(p.getCurrWeapon(), new Point2D.Double(getPlayerGridX(p),getPlayerGridY(p)), this).start();
-		} 
+		}
+		if(p.getType()==PlayerType.TURRET) {
+//			Point point = GameMap.getGridPoint(p.getLocation());
+//			if(map[point.x][point.y]=='X') map[point.x][point.y] = '_';
+			turretLocs.remove(p.getLocation()); 
+		}
 		p.die(setup.getMode());
 		int i;
 		for (i = 0; i<players.size(); i++){

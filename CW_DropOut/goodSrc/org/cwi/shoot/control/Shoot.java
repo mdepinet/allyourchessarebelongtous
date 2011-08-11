@@ -23,6 +23,7 @@ import org.cwi.shoot.menu.MainMenu;
 import org.cwi.shoot.model.Player;
 import org.cwi.shoot.model.Weapon;
 import org.cwi.shoot.profile.Profile;
+import org.cwi.shoot.threads.WeaponRemoverThread;
 import org.cwi.shoot.util.VectorTools;
 import org.cwi.shoot.util.WeaponLoader;
 import org.cwi.shoot.view.GameFrame;
@@ -264,10 +265,21 @@ public class Shoot implements KeyListener, MouseListener, MouseMotionListener, C
 				if(map.getPlayer().getNumTurrets()>0) {
 					map.getPlayer().setNumTurrets(map.getPlayer().getNumTurrets()-1);
 					Player turret = new Player("Turret", map.getPlayers().size()+1);
-					turret.respawn(map.getPlayer().getLocation(), mode);
+					turret.respawn(new Point2D.Double(map.getPlayer().getLocation().x+Math.round(Math.cos(map.getPlayer().getOrientation()+Math.PI/2))*Player.radius*3 , map.getPlayer().getLocation().y+Player.radius*3*Math.sin(map.getPlayer().getOrientation()+Math.PI/2)), mode);
 					turret.setTeam(map.getPlayer().getTeam());
 					map.getPlayers().add(turret);
 					map.getPlayer().setDeployedTurret(true);
+				}
+				break;
+			case KeyEvent.VK_F:
+				if(map.getPlayer().getCurrWeapon().getClipCount()!=-1) {
+					Weapon wep = map.getPlayer().dropWeapon(map.getPlayer().getCurrWeapon());
+					Point point = GameMap.getGridPoint(new Point2D.Double(map.getPlayer().getLocation().x+Math.round(Math.cos(map.getPlayer().getOrientation()+Math.PI/2))*Player.radius*3 , map.getPlayer().getLocation().y+Player.radius*3*Math.sin(map.getPlayer().getOrientation()+Math.PI/2)));
+					if(map.getMap()[point.x][point.y]=='_') {
+						map.getMap()[point.x][point.y] = wep.getCharacter();
+						map.getDroppedWeps().add(new Point2D.Double(point.x, point.y));
+						new WeaponRemoverThread(map.getPlayer().getCurrWeapon(), new Point2D.Double(map.getPlayerGridX(map.getPlayer()),map.getPlayerGridY(map.getPlayer())), map).start();
+					}
 				}
 				break;
 			default:

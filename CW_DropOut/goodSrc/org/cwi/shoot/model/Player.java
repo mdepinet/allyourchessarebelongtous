@@ -16,6 +16,7 @@ import org.cwi.shoot.map.MapUpdatable;
 public class Player implements Comparable<Player>, MapUpdatable {
 	public static final double radius = 8;
 	public static final char[] SPAWNLOC_CHARS ={'1','2','3','4'};
+	public static int numTurrets = 100;
 	public enum PlayerType {
 		HUMAN, COMPUTER, REMOTE, TRANSITION, TURRET
 	}
@@ -41,7 +42,6 @@ public class Player implements Comparable<Player>, MapUpdatable {
 	private String turretPlayerName;
 	private boolean deployedTurret;
 	private int ID;
-	private int numTurrets;
 	
 	public Player(String pname, int id){
 		ID = id;
@@ -67,7 +67,6 @@ public class Player implements Comparable<Player>, MapUpdatable {
 		stats = new PlayerStats();
 		friendlyFire = false;
 		deployedTurret = false;
-		numTurrets = 2;
 	}
 	public int getNumTurrets() {
 		return numTurrets;
@@ -147,6 +146,13 @@ public class Player implements Comparable<Player>, MapUpdatable {
 	}
 	public void setCurrWeapon(Weapon w) {
 		if (weapons.contains(w)) currWeapon = weapons.indexOf(w);
+	}
+	public Weapon dropWeapon(Weapon w) {
+		if(weapons.contains(w)) {
+			nextWeapon();
+			return weapons.remove(weapons.indexOf(w));
+		}
+		return null;
 	}
 	public PlayerType getType() {
 		return type;
@@ -266,6 +272,7 @@ public class Player implements Comparable<Player>, MapUpdatable {
 		currWeapon = 0;
 		stats = new PlayerStats();
 		health = 100;
+		direction = new Point2D.Double(0,0);
 	}
 	public void respawn(Point2D.Double loc, GameMode mode){
 		currWeapon = 0;
