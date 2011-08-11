@@ -11,13 +11,11 @@ import java.util.Map;
 
 import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
-import javax.swing.JPanel;
 
 import org.cwi.shoot.ai.objective.Objective;
 import org.cwi.shoot.map.GameMap;
 import org.cwi.shoot.model.Player;
 import org.cwi.shoot.model.Weapon;
-import org.cwi.shoot.model.Player.PlayerType;
 import org.cwi.shoot.threads.RespawnThread;
 
 public abstract class GameMode {
@@ -82,7 +80,7 @@ public abstract class GameMode {
 		}
 		for(int i = 0; i < map.getPlayers().size(); i++) {
 			Player p = map.getPlayers().get(i);
-			if(p.getType() == PlayerType.TURRET) map.getPlayers().remove(i--);
+			if(p.isTurret()) map.getPlayers().remove(i--);
 			else {
 				p.reset();
 				map.spawn(p);

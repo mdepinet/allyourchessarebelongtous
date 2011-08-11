@@ -10,7 +10,6 @@ import org.cwi.shoot.model.Weapon;
 import org.cwi.shoot.profile.Profile;
 import org.cwi.shoot.util.NameGenerator;
 import org.cwi.shoot.util.OtherNameGenerator;
-import org.cwi.shoot.util.WeaponLoader;
 
 
 public class GameOptions {

@@ -277,8 +277,8 @@ public class GameMap{
 					if (b.getDistanceTraveled() > effRange) damage -= ((b.getDistanceTraveled() - effRange)/effRange)*damage;
 					hit.takeDamage(damage);
 					if (hit.getHealth()<=0) {
-						if(hit!=b.getPlayer() && hit.getType()!=PlayerType.TURRET) b.getPlayer().getStats().incNumKills();
-						else if(hit.getType() != PlayerType.TURRET) b.getPlayer().getStats().incNumSuicides();
+						if(hit!=b.getPlayer() && !hit.isTurret()) b.getPlayer().getStats().incNumKills();
+						else if(!hit.isTurret()) b.getPlayer().getStats().incNumSuicides();
 						kill(hit);
 					}
 					explode(b);
@@ -297,7 +297,7 @@ public class GameMap{
 					if(hit!=null) {
 						hit.takeDamage(p.getCurrWeapon().getPower());
 						if (hit.getHealth()<=0) {
-							if(hit.getType()!=PlayerType.TURRET) p.getStats().incNumKills();
+							if(!hit.isTurret()) p.getStats().incNumKills();
 							kill(hit);
 						}
 					}
@@ -311,7 +311,7 @@ public class GameMap{
 					else
 						p.setLocation(loc);
 				}
-				if(p.getType()==PlayerType.TURRET && !turretLocs.contains(p.getLocation())) {
+				if(p.isTurret() && !turretLocs.contains(p.getLocation())) {
 //					Point point = GameMap.getGridPoint(p.getLocation());
 //					if(map[point.x][point.y]!='X') map[point.x][point.y]='X';
 					turretLocs.add(p.getLocation());
@@ -515,7 +515,7 @@ public class GameMap{
 			if(distance<splash) {
 				p.takeDamage(b.getWeapon().getPower()*((splash-distance)/splash));
 				if (p.getHealth() <= 0){ 
-					if(p!=b.getPlayer() && p.getType()!=PlayerType.TURRET) b.getPlayer().getStats().incNumKills();
+					if(p!=b.getPlayer() && !p.isTurret()) b.getPlayer().getStats().incNumKills();
 					else b.getPlayer().getStats().incNumSuicides();
 					kill(p);
 					i--;
@@ -531,7 +531,7 @@ public class GameMap{
 			droppedWeps.add(new Point2D.Double(getPlayerGridX(p),getPlayerGridY(p)));
 			new WeaponRemoverThread(p.getCurrWeapon(), new Point2D.Double(getPlayerGridX(p),getPlayerGridY(p)), this).start();
 		}
-		if(p.getType()==PlayerType.TURRET) {
+		if(p.isTurret()) {
 //			Point point = GameMap.getGridPoint(p.getLocation());
 //			if(map[point.x][point.y]=='X') map[point.x][point.y] = '_';
 			turretLocs.remove(p.getLocation()); 
@@ -544,7 +544,7 @@ public class GameMap{
 				break;
 			}
 		}
-		if (!setup.getMode().handlesRespawn() && p.getType()!=PlayerType.TURRET){
+		if (!setup.getMode().handlesRespawn() && !p.isTurret()){
 			threads.add(new RespawnThread(this, p, i == 0 && p.getType()==PlayerType.HUMAN, 5000));
 			threads.get(threads.size()-1).start();
 		}

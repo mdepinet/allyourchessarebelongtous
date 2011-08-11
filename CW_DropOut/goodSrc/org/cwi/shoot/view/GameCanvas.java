@@ -126,7 +126,7 @@ public class GameCanvas extends Canvas {
 					default: break;
 				}
 				FontMetrics metrics = backg.getFontMetrics(backg.getFont());
-				if(p.getType() == PlayerType.TURRET) backg.fillRect((int)Math.round(HRZ_SCALE*(p.getLocation().getX()-Player.radius)),(int)Math.round(VERT_SCALE*(p.getLocation().getY()-Player.radius)), (int) Player.radius*2, (int) Player.radius*2);
+				if(p.isTurret()) backg.fillRect((int)Math.round(HRZ_SCALE*(p.getLocation().getX()-Player.radius)),(int)Math.round(VERT_SCALE*(p.getLocation().getY()-Player.radius)), (int) Player.radius*2, (int) Player.radius*2);
 				else backg.fillOval((int)Math.round(HRZ_SCALE*(p.getLocation().getX()-Player.radius)),(int)Math.round(VERT_SCALE*(p.getLocation().getY()-Player.radius)), (int) Player.radius*2, (int) Player.radius*2);
 				backg.drawString(p.getName(), (int)Math.round(HRZ_SCALE*(p.getLocation().getX()-metrics.stringWidth(p.getName())/2)), (int)Math.round(VERT_SCALE*(p.getLocation().getY()-Player.radius-2)));
 			}
@@ -210,7 +210,7 @@ public class GameCanvas extends Canvas {
 				}
 				if(p.getType()!=PlayerType.HUMAN) {
 					FontMetrics metrics = backg.getFontMetrics(backg.getFont());	
-					if(p.getType() == PlayerType.TURRET) backg.fillRect((int)Math.round(HRZ_SCALE*(p.getLocation().getX()-Player.radius))-(int)playerLoc.x,(int)Math.round(VERT_SCALE*(p.getLocation().getY()-Player.radius))-(int)playerLoc.y, (int) Player.radius*2, (int) Player.radius*2);
+					if(p.isTurret()) backg.fillRect((int)Math.round(HRZ_SCALE*(p.getLocation().getX()-Player.radius))-(int)playerLoc.x,(int)Math.round(VERT_SCALE*(p.getLocation().getY()-Player.radius))-(int)playerLoc.y, (int) Player.radius*2, (int) Player.radius*2);
 					else backg.fillOval((int)Math.round(HRZ_SCALE*(p.getLocation().getX()-Player.radius))-(int)playerLoc.x,(int)Math.round(VERT_SCALE*(p.getLocation().getY()-Player.radius))-(int)playerLoc.y, (int) Player.radius*2, (int) Player.radius*2);
 					backg.drawString(p.getName(), (int)Math.round(HRZ_SCALE*(p.getLocation().getX()-metrics.stringWidth(p.getName())/2))-(int)playerLoc.x, (int)Math.round(VERT_SCALE*(p.getLocation().getY()-Player.radius-2))-(int)playerLoc.y);
 				}

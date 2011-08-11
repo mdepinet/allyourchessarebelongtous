@@ -18,8 +18,10 @@ public class Player implements Comparable<Player>, MapUpdatable {
 	public static final char[] SPAWNLOC_CHARS ={'1','2','3','4'};
 	public static int numTurrets = 100;
 	public enum PlayerType {
-		HUMAN, COMPUTER, REMOTE, TRANSITION, TURRET
+		HUMAN, COMPUTER, REMOTE
 	}
+	private long GAME_ID = -1;
+	private boolean turret = false;
 	private static double regenSpeed = 1/15.;
 	
 	private String name;
@@ -55,7 +57,7 @@ public class Player implements Comparable<Player>, MapUpdatable {
 		if(pname.contains("Turret")) {
 			name = pname.substring(0,"Turret".length());
 			turretPlayerName = pname.substring("Turret".length());
-			type = PlayerType.TURRET;
+			turret = true;
 			canMove = false;
 		}
 		else {
@@ -197,7 +199,7 @@ public class Player implements Comparable<Player>, MapUpdatable {
 	}
 	public void update(GameMode mode, GameMap map) {
 		update();
-		if (type == PlayerType.COMPUTER || type == PlayerType.TURRET) brain.makeMove(mode, map, this);
+		if (type == PlayerType.COMPUTER || turret) brain.makeMove(mode, map, this);
 	}
 	
 	public void removeWeapon(Weapon weapon) {
@@ -288,5 +290,18 @@ public class Player implements Comparable<Player>, MapUpdatable {
 	}
 	public static void setRegenSpeed(double regen) {
 		regenSpeed = regen;
+	}
+	
+	public boolean isTurret(){
+		return turret;
+	}
+	public void setTurret(boolean turret){
+		this.turret = turret;
+	}
+	public long getGAME_ID() {
+		return GAME_ID;
+	}
+	public void setGAME_ID(long GAME_ID) {
+		this.GAME_ID = GAME_ID;
 	}
 }

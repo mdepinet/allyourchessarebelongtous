@@ -381,6 +381,9 @@ public class Shoot implements KeyListener, MouseListener, MouseMotionListener, C
 	}
 	public void setID(long _ID) {
 		this._ID = _ID;
+		for (Player p : getMap().getPlayers()){
+			p.setGAME_ID(_ID);
+		}
 	}
 	public boolean isFull(){
 		return false;

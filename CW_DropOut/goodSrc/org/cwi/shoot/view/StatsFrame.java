@@ -123,7 +123,7 @@ public class StatsFrame extends JFrame {
 		}
 		int i = 0;
 		for(Player player : players) {
-			if(players.get(i).getType()==PlayerType.TURRET || players.get(i).getTeam()==0) continue;
+			if(players.get(i).isTurret() || players.get(i).getTeam()==0) continue;
 			else {
 				labels.get(i+teams.length).setText(gameMode.getScoreForPlayer(players.get(i)));
 				i++;

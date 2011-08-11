@@ -11,15 +11,12 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import javax.swing.JPanel;
-
 import org.cwi.shoot.ai.objective.KillObjective;
 import org.cwi.shoot.ai.objective.LocationObjective;
 import org.cwi.shoot.ai.objective.Objective;
 import org.cwi.shoot.map.GameMap;
 import org.cwi.shoot.model.Player;
 import org.cwi.shoot.model.Weapon;
-import org.cwi.shoot.threads.RespawnThread;
 
 public class KotHMode extends GameMode {
 	public static final long TIME_TO_WIN = 91;
