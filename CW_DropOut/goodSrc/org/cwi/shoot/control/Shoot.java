@@ -41,7 +41,6 @@ public class Shoot implements KeyListener, MouseListener, MouseMotionListener, C
 	private int holdCounter;
 	private Point mouseLoc;
 	private boolean stop;
-	private Profile profile;
 	private PauseFrame pause;
 	
 	//used by server
@@ -69,8 +68,6 @@ public class Shoot implements KeyListener, MouseListener, MouseMotionListener, C
 		holdCounter = -1;
 		map = new GameMap(setup);
 		this.mode = mode;
-		this.profile = profile;
-		
 		mouseLoc = new Point();
 		if(profile.getScreenSize()==null) frame = new GameFrame("Shoot", map, -1, -1);
 		else frame = new GameFrame("Shoot", map, profile.getScreenSize().x, profile.getScreenSize().y);
@@ -108,7 +105,6 @@ public class Shoot implements KeyListener, MouseListener, MouseMotionListener, C
 		gameThread.start();
 	}
 	public void resetFrame(Profile profile) {
-		this.profile = profile;
 		frame.dispose();
 		frame = new GameFrame("Shoot", map, profile.getScreenSize().x, profile.getScreenSize().y);
 		frame.setFocusable(true);
@@ -255,7 +251,10 @@ public class Shoot implements KeyListener, MouseListener, MouseMotionListener, C
 				map.getPlayer().getCurrWeapon().reload();
 				break;
 			case KeyEvent.VK_P:
-				if(map.isPaused()) map.unpause();
+				if(map.isPaused()) {
+					pause.dispose();
+					map.unpause();
+				}
 				else {
 					map.pause();
 					pause = new PauseFrame(this);

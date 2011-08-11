@@ -500,6 +500,8 @@ public class GameSetupFrame extends JFrame implements ActionListener, ListSelect
 	}
 	
 	private class PlayerTableModel extends AbstractTableModel {
+		private static final long serialVersionUID = -2108584759669336641L;
+
 		public String getColumnName(int index) {
 			return "Players";
 		}

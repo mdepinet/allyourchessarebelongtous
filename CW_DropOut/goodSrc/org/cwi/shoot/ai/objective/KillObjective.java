@@ -31,7 +31,7 @@ public class KillObjective extends Objective {
 		if (assassin.getCurrWeapon() != null && assassin.getLocation().distance(target.getLocation()) < assassin.getCurrWeapon().getEffRange()+EPSILON){
 			double angle = VectorTools.getOrientationToPoint(target.getLocation(), assassin.getLocation())+ANGLE_CHANGE;
 			Point2D.Double nextPoint = VectorTools.addVectors(target.getLocation(),VectorTools.scaleVector(new Point2D.Double(Math.cos(angle), Math.sin(angle)), assassin.getCurrWeapon().getEffRange()-EPSILON));
-			if(map.isValid(nextPoint, (int)assassin.radius))
+			if(map.isValid(nextPoint, (int)Player.radius))
 				return nextPoint;
 		}
 		Point2D.Double moveToward = target.getLocation();//AbstractBrain.getSmartDirectionToLoc(assassin.getLocation(),target.getLocation(),null);

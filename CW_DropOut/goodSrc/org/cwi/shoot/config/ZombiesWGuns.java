@@ -119,7 +119,7 @@ public class ZombiesWGuns extends GameMode {
 		ArrayList<Player> zombiesToAdd = new ArrayList<Player>();
 		NameGenerator gen = null;
 		try {
-			if(GameOptions.NAME_RESOURCE.equals("resource/namePartsNativeAmericanEnglishTranslation.txt"))
+			if(GameOptions.NAME_RESOURCE.contains("/bonus/") || GameOptions.NAME_RESOURCE.contains("\\bonus\\"))
 				gen = new OtherNameGenerator(GameOptions.NAME_RESOURCE);
 			else gen = new NameGenerator(GameOptions.NAME_RESOURCE);
 		} catch (IOException e) {

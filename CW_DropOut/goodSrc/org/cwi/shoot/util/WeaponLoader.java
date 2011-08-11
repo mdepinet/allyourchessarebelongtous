@@ -6,7 +6,6 @@ import java.util.Map;
 import java.util.Scanner;
 import java.util.TreeMap;
 
-import org.cwi.shoot.config.GameOptions;
 import org.cwi.shoot.model.Weapon;
 
 public class WeaponLoader {

@@ -161,22 +161,24 @@ public class Profile {
 	}
 	
 	
+	@SuppressWarnings("unchecked")
 	public void addStats(Map<String, Object> stats) {
 		for(String s : stats.keySet()) {
-			if(data.containsKey(s) && data.get(s) instanceof Collection) ((Collection)data.get(s)).addAll((Collection) stats.get(s));
+			if(data.containsKey(s) && data.get(s) instanceof Collection) ((Collection<Object>)data.get(s)).addAll((Collection<Object>) stats.get(s));
 			else if(data.containsKey(s)) {
 				data.put(s, ((Integer)data.get(s))+(Integer)stats.get(s));
 			}
 			else data.put(s, stats.get(s));
 		}
 	}
+	@SuppressWarnings("unchecked")
 	public void writeToFile() {
 		try {
 			BufferedWriter writer = new BufferedWriter(new FileWriter(PROFILE_LOCATION+name+".pprf"));
 			for(String s : data.keySet()) {
 				if(data.get(s) instanceof Collection) {
 					writer.write(s+" ");
-					for(Object o : (Collection)data.get(s)) writer.write(o.toString()+" ");
+					for(Object o : (Collection<Object>)data.get(s)) writer.write(o.toString()+" ");
 					writer.write("\n");
 				}
 				else {
