@@ -2,7 +2,6 @@ package org.cwi.shoot.view;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
@@ -43,10 +42,8 @@ import org.cwi.shoot.profile.Profile;
 public class OptionsFrame extends JFrame implements ActionListener, ListSelectionListener, KeyListener {
 	private static final long serialVersionUID = 1L;
 	private Shoot control;
-	private JPanel buttonPanel;
 	private JPanel panel;
 	private ArrayList<JButton> buttonGroup;
-	private String[] profiles;
 	private JTable table;
 	private JButton createNewProf;
 	private JPanel pPanel;
@@ -97,7 +94,7 @@ public class OptionsFrame extends JFrame implements ActionListener, ListSelectio
 		
 		buttonGroup = new ArrayList<JButton>();
 		panel = new JPanel(new FlowLayout());
-		buttonPanel = new JPanel(new FlowLayout());
+		new JPanel(new FlowLayout());
 		JButton button = new JButton("Back", new ImageIcon(MainMenu.IMG_LOC + "MenuButton" + ".png"));
 		button.setVerticalTextPosition(JButton.BOTTOM);
 		button.setHorizontalTextPosition(JButton.CENTER);
@@ -304,6 +301,7 @@ public class OptionsFrame extends JFrame implements ActionListener, ListSelectio
 			return cols;
 		}
 
+		@SuppressWarnings("unchecked")
 		@Override
 		public Object getValueAt(int rowIndex, int columnIndex) {
 			// TODO Auto-generated method stub
@@ -314,13 +312,13 @@ public class OptionsFrame extends JFrame implements ActionListener, ListSelectio
 				if(i==rowIndex) {
 					if(columnIndex==0) return ent.getKey();
 					if(ent.getValue() instanceof List)  {
-						for(int j = cols; j < ((List)ent.getValue()).size()+1; j++) {
+						for(int j = cols; j < ((List<Object>)ent.getValue()).size()+1; j++) {
 							profileTable.addColumn(new TableColumn(j));
 							((AbstractTableModel)this).fireTableDataChanged();
 							profileTable.convertColumnIndexToModel(j);
 						}
-						cols = ((List)ent.getValue()).size()+1;
-						return ((List)ent.getValue()).get(columnIndex-1);
+						cols = ((List<Object>)ent.getValue()).size()+1;
+						return ((List<Object>)ent.getValue()).get(columnIndex-1);
 					}
 					if(columnIndex>1) return null;
 					return ent.getValue();

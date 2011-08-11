@@ -216,7 +216,7 @@ public class GameCanvas extends Canvas {
 				}
 				else {
 					playerLoc = new Point2D.Double(HRZ_SCALE*(p.getLocation().getX()-Player.radius)-bounds.getWidth()/2, VERT_SCALE*(p.getLocation().getY()-Player.radius)-bounds.getHeight()/2);
-					FontMetrics metrics = backg.getFontMetrics(backg.getFont());
+					
 					backg.fillOval((int)bounds.getWidth()/2,(int)bounds.getHeight()/2, (int) Player.radius*2, (int) Player.radius*2);
 					backg.drawString(p.getName(), (int)bounds.getWidth()/2,(int)bounds.getHeight()/2);
 					if(p.getCurrWeapon()!=null) {

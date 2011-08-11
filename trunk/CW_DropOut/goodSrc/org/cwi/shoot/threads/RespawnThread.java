@@ -2,7 +2,6 @@ package org.cwi.shoot.threads;
 
 import org.cwi.shoot.map.GameMap;
 import org.cwi.shoot.model.Player;
-import org.cwi.shoot.model.PlayerStats;
 
 
 public class RespawnThread extends Thread {

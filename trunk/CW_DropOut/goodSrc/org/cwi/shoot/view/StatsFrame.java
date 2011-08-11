@@ -122,7 +122,7 @@ public class StatsFrame extends JFrame {
 			labels.get(i).setText(gameMode.getScoreForTeam(teams[i]-75, players));
 		}
 		int i = 0;
-		for(Player player : players) {
+		for(int j = 0; j < players.size(); j++) {
 			if(players.get(i).isTurret() || players.get(i).getTeam()==0) continue;
 			else {
 				labels.get(i+teams.length).setText(gameMode.getScoreForPlayer(players.get(i)));

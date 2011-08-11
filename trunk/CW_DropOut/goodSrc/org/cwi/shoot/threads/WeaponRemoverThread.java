@@ -1,6 +1,5 @@
 package org.cwi.shoot.threads;
 
-import java.awt.Point;
 import java.awt.geom.Point2D;
 
 import org.cwi.shoot.map.GameMap;
