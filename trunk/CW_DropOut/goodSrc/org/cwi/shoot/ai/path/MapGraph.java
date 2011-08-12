@@ -79,12 +79,12 @@ public class MapGraph {
 		List<Vertex> pathCopy = new LinkedList<Vertex>();
 		pathCopy.addAll(path);
 		answers.put(key,last);
-		//answers.put(key.flip(), path.get(path.size()-1)); might work, might not
+		if (path.size() >= 2) answers.put(key.flip(), path.get(path.size()-2)); //path.get(path.size()-1 should be endV
 		while (pathCopy.size()>1){
 			Vertex v = pathCopy.remove(0);
 			key = new Pair<Vertex, Vertex>(v,endV);
 			answers.put(key,pathCopy.get(0));
-			//answers.put(key.flip(),pathCopy.get(pathCopy.size()-1)); might work, might not
+			if (pathCopy.size() >= 2) answers.put(key.flip(),pathCopy.get(pathCopy.size()-2)); //path.get(path.size()-1 should be endV
 		}
 		return new Point(last.row,last.col);
 	}
