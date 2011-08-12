@@ -35,7 +35,7 @@ public class MapGraph {
 						v.addVertex(other, 10000);
 					}
 					other = getVertexByLocation(r-1,c-1); //up left
-					if (other != null){
+					if (other != null && (getVertexByLocation(r,c-1) != null || getVertexByLocation(r-1,c) != null)){
 						other.addVertex(v,14142);
 						v.addVertex(other, 14142);
 					}
@@ -45,32 +45,10 @@ public class MapGraph {
 						v.addVertex(other, 10000);
 					}
 					other = getVertexByLocation(r-1,c+1); //up right
-					if (other != null){
+					if (other != null && (getVertexByLocation(r,c+1) != null || getVertexByLocation(r-1,c) != null)){
 						other.addVertex(v,14142);
 						v.addVertex(other, 14142);
 					}
-					//Unnecessary code...
-					other = getVertexByLocation(r,c+1); //right
-					if (other != null){
-						other.addVertex(v,10000);
-						v.addVertex(other, 10000);
-					}
-					other = getVertexByLocation(r+1,c+1); //down right
-					if (other != null){
-						other.addVertex(v,14142);
-						v.addVertex(other, 14142);
-					}
-					other = getVertexByLocation(r+1,c); //down
-					if (other != null){
-						other.addVertex(v,10000);
-						v.addVertex(other, 10000);
-					}
-					other = getVertexByLocation(r+1,c-1); //down left
-					if (other != null){
-						other.addVertex(v,14142);
-						v.addVertex(other, 14142);
-					}
-					//End unnecessary
 					vertices.add(v);
 				}
 					
