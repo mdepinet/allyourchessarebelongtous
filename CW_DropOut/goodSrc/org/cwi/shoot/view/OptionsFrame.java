@@ -121,9 +121,9 @@ public class OptionsFrame extends JFrame implements ActionListener, ListSelectio
 		
 		mainPanel.add(new JLabel("Settings:"));
 		JPanel ssPanel = new JPanel();
-		width = new JTextField("" + (profile.getScreenSize()==null ? 750 : profile.getScreenSize().x));
+		width = new JTextField("" + (profile == null || profile.getScreenSize()==null ? 750 : profile.getScreenSize().x));
 		width.setPreferredSize(new Dimension(25,25));
-		height = new JTextField("" + (profile.getScreenSize()==null ? 750 : profile.getScreenSize().y));
+		height = new JTextField("" + (profile == null || profile.getScreenSize()==null ? 750 : profile.getScreenSize().y));
 		height.setPreferredSize(new Dimension(25,25));
 		JLabel ssLabel = new JLabel("Width:");
 		ssPanel.add(new JLabel("Change Screen Size:   "));
