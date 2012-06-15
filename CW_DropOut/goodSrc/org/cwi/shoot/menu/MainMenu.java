@@ -46,7 +46,7 @@ public class MainMenu extends JFrame implements ActionListener, ListSelectionLis
 		super("Shoot");
 		
 		this.control = control;
-		
+		this.addMouseListener(control);
 		if(prof==null) {
 			String profileName = "";
 			try {
@@ -156,7 +156,8 @@ public class MainMenu extends JFrame implements ActionListener, ListSelectionLis
 				JOptionPane.showMessageDialog(buttonGroup.get(0), "You must create a profile before playing.\nYou may do so in 'PROFILE MANAGEMENT'.", "No Profile found", 0);
 				return;
 			}
-			new GameSetupFrame(control, profile);
+			GameSetupFrame frame = new GameSetupFrame(control, profile);
+			frame.addMouseListener(control);
 			try {
 				BufferedWriter writer = new BufferedWriter(new FileWriter(PREFERENCES_LOC));
 				writer.write("Profile: " + profile.getName());
@@ -167,7 +168,8 @@ public class MainMenu extends JFrame implements ActionListener, ListSelectionLis
 			this.dispose();
 		}
 		else if(e.getActionCommand().equals("option3")) {
-			new OptionsFrame(control, this);
+			OptionsFrame frame = new OptionsFrame(control, this);
+			frame.addMouseListener(control);
 			this.dispose();
 		}
 		if(e.getActionCommand().equals("option4")) {

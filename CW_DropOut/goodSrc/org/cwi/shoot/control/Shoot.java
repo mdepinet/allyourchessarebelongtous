@@ -211,11 +211,7 @@ public class Shoot implements KeyListener, MouseListener, MouseMotionListener, C
 				if(map.isPaused()) map.unpause();
 				else map.pause();
 				new PauseFrame(this);
-			}
-			else if(e.getKeyCode()==KeyEvent.VK_X){
-				System.exit(0);
-			}
-			
+			}	
 			return;
 		}
 		switch(e.getKeyCode())
@@ -263,10 +259,6 @@ public class Shoot implements KeyListener, MouseListener, MouseMotionListener, C
 					pause = new PauseFrame(this);
 				}
 				break;
-			case KeyEvent.VK_X:{
-				System.exit(0);
-				break;
-			}
 			case KeyEvent.VK_T:
 				if(map.getPlayer().getNumTurrets()>0) {
 					map.getPlayer().setNumTurrets(map.getPlayer().getNumTurrets()-1);
@@ -310,6 +302,8 @@ public class Shoot implements KeyListener, MouseListener, MouseMotionListener, C
 	public void mousePressed(MouseEvent e) {
 		if(e.getButton() == MouseEvent.BUTTON2)
 			System.exit(0);
+		if(map == null)
+			return;
 		if(map.getPlayer()==null) {
 			holdCounter = -1;
 			return;
@@ -318,6 +312,7 @@ public class Shoot implements KeyListener, MouseListener, MouseMotionListener, C
 	}
 	@Override
 	public void mouseReleased(MouseEvent e) {
+		if(map==null) return;
 		if(map.getPlayer()==null || map.getPlayer().getCurrWeapon() == null) return;
 		if(map.getPlayer().getCurrWeapon().canShoot()) map.shoot(map.getPlayer());
 		holdCounter=-1;
