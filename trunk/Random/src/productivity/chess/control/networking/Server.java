@@ -3,7 +3,6 @@ package productivity.chess.control.networking;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.*;
 
 import productivity.chess.view.PlayerPicker;
 
@@ -16,7 +15,7 @@ public class Server {
 		
 		PlayerPicker picker = new PlayerPicker();
 		try {
-		servSoc = new ServerSocket(3030);
+		servSoc = new ServerSocket(8090);
 			while (true){
 					Socket client = servSoc.accept();
 					picker.addClient(new ServerThread(client));
