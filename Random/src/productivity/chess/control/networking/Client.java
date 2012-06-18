@@ -35,7 +35,7 @@ public class Client {
         	String[] servers = ((String)p.get("servers")).split(",");
         	for (int i = 0; i<servers.length && s == null; i++){
         		try{
-        			s = new Socket(servers[i], 3030);
+        			s = new Socket(servers[i], 8090);
         		} catch (ConnectException ex){
         			s = null;
         		}
