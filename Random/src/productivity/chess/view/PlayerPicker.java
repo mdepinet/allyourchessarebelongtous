@@ -20,7 +20,7 @@ public class PlayerPicker extends JFrame implements ActionListener, ListSelectio
 	private JButton button;
 	List<ServerThread> threads = new LinkedList<ServerThread>();
 	private Socket selected = null;
-	public static final String[] ips = {"/10.0.0.89","/10.0.0.54","/10.0.0.95","/10.0.0.128"};
+	public static final String[] ips = {"/10.0.0.103","/10.0.0.96","/10.0.0.95","/10.0.0.128"};
 	public PlayerPicker()
 	{
 		super("Pick Your Opponent");
