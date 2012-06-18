@@ -20,7 +20,7 @@ public class PlayerPicker extends JFrame implements ActionListener, ListSelectio
 	private JButton button;
 	List<ServerThread> threads = new LinkedList<ServerThread>();
 	private Socket selected = null;
-	public static final String[] ips = {"/10.0.0.103","/10.0.0.96","/10.0.0.95","/10.0.0.128"};
+	public static final String[] ips = {"/10.0.0.103","/10.0.0.96"};
 	public PlayerPicker()
 	{
 		super("Pick Your Opponent");
@@ -83,7 +83,7 @@ public class PlayerPicker extends JFrame implements ActionListener, ListSelectio
 	
 	class MyTableModel extends AbstractTableModel {
 	    private String[] columnNames = {"Player", "Connected"};
-	    private Object[][] data = {{"Will", false}, {"Mike", false}, {"Dillon", false}, {"Eric", false}};
+	    private Object[][] data = {{"Dillon", false}, {"Ian", false}};
 
 	    public int getColumnCount() {
 	        return columnNames.length;
