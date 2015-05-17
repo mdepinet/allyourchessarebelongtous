@@ -1,0 +1,1 @@
+We're bored and real chess is too obvious
